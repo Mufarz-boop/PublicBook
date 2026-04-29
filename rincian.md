@@ -30,6 +30,7 @@ publicbook/
 │   │   │   └── register.html       ← Register Page
 │   │   │
 │   │   ├── user/
+│   │   │   ├── base.html
 │   │   │   ├── dashboard.html      ← Dashboard User
 │   │   │   ├── layanan.html        ← Daftar Layanan
 │   │   │   ├── booking.html        ← Form Booking + QR
@@ -37,6 +38,7 @@ publicbook/
 │   │   │   └── profil.html         ← Profil Pengguna
 │   │   │
 │   │   ├── admin/
+│   │   │   ├── base.html
 │   │   │   ├── dashboard.html      ← Dashboard Admin
 │   │   │   ├── antrean.html        ← Pantau Antrean Real-time
 │   │   │   ├── booking-list.html   ← Daftar Semua Booking
