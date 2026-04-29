@@ -1,0 +1,40 @@
+app/
+    backend/
+        database/
+            database.py
+        models/
+        routes/
+        app.py
+        config.py
+    frontend/
+        assets/
+        auth/
+            login.html
+            register.html
+        componets/
+        pages/
+            admin/
+                base-admin.html
+                booking-list.html
+                dashboard-admin.html
+                kelola-user.html
+                security.html
+                services.html
+            legal/
+                disclaimer.html
+                privacy-policy.html
+                term-and-conditions.html
+            user/
+                base-user.html
+                booking-user.html
+                daftar-layanan.html
+                dashboard-user.html
+                profil-user.html
+        styles/
+            admin/
+            auth/
+            legal/
+            user/
+publicbook/ <--- venv
+README.md
+rincian.md
