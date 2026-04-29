@@ -1,48 +1,85 @@
-publicbook/                  # Nama folder project (root)
-├── app/                     # Semua kode utama ada di sini
-│   ├── __init__.py
-│   ├── main.py              # File utama FastAPI (entry point)
-│   ├── config.py            # Konfigurasi (database, secret key, dll)
-│   ├── database.py          # Koneksi ke MySQL
+publicbook/
+│
+├── backend/
+│   ├── app.py
+│   ├── config.py
+│   ├── requirements.txt
 │   │
-│   ├── models/              # Model database (SQLAlchemy)
-│   │   ├── __init__.py
-│   │   ├── user.py
-│   │   ├── service.py
-│   │   └── booking.py
+│   ├── database/
+│   │   └── database.py
 │   │
-│   ├── schemas/             # Pydantic models (data yang masuk/keluar)
-│   │   ├── __init__.py
-│   │   ├── user.py
-│   │   └── booking.py
-│   │
-│   ├── routers/             # Semua endpoint/API routes
-│   │   ├── __init__.py
-│   │   ├── auth.py          # Login & Register
+│   ├── models/
 │   │   ├── user.py
 │   │   ├── booking.py
-│   │   └── admin.py
+│   │   ├── service.py
+│   │   └── queue.py
 │   │
-│   └── templates/           # HTML files (menggunakan Jinja2)
-│       ├── base.html        # Template dasar (navbar, footer, dll)
-│       ├── auth/
-│       │   ├── login.html
-│       │   └── register.html
-│       ├── user/
-│       │   ├── dashboard.html
-│       │   ├── daftar_layanan.html
-│       │   └── booking.html
-│       └── admin/
-│           ├── dashboard.html
-│           └── kelola_booking.html
+│   └── routes/
+│       ├── auth.py
+│       ├── booking.py
+│       ├── services.py
+│       └── admin.py
 │
-├── static/                  # CSS, JavaScript, gambar
-│   ├── css/
-│   ├── js/
+├── frontend/
+│   │
+│   ├── pages/
+│   │   ├── index.html              ← Landing page
+│   │   │
+│   │   ├── auth/
+│   │   │   ├── login.html          ← Admin Login (dari desain)
+│   │   │   └── register.html       ← Register Page
+│   │   │
+│   │   ├── user/
+│   │   │   ├── dashboard.html      ← Dashboard User
+│   │   │   ├── layanan.html        ← Daftar Layanan
+│   │   │   ├── booking.html        ← Form Booking + QR
+│   │   │   ├── riwayat.html        ← Riwayat Pemesanan
+│   │   │   └── profil.html         ← Profil Pengguna
+│   │   │
+│   │   ├── admin/
+│   │   │   ├── dashboard.html      ← Dashboard Admin
+│   │   │   ├── antrean.html        ← Pantau Antrean Real-time
+│   │   │   ├── booking-list.html   ← Daftar Semua Booking
+│   │   │   ├── layanan.html        ← Kelola Layanan
+│   │   │   ├── pengguna.html       ← Kelola User
+│   │   │   └── security.html       ← Keamanan & Audit
+│   │   │
+│   │   └── legal/
+│   │       ├── disclaimer.html
+│   │       ├── privacy.html
+│   │       └── terms.html
+│   │
 │   └── assets/
+│       │
+│       ├── css/
+│       │   ├── global.css          ← Reset, variable, utility
+│       │   ├── auth.css            ← Login & Register styles
+│       │   ├── user.css            ← User dashboard styles
+│       │   ├── admin.css           ← Admin dashboard styles
+│       │   └── components.css      ← Sidebar, cards, buttons, tables
+│       │
+│       ├── js/
+│       │   ├── main.js             ← Sidebar toggle, navbar active
+│       │   ├── auth.js             ← Login/register logic
+│       │   ├── booking.js          ← Pilih slot, QR generate
+│       │   ├── queue.js            ← Antrean real-time
+│       │   ├── dashboard.js        ← Chart & statistik
+│       │   └── api.js              ← Fetch helper ke backend
+│       │
+│       └── images/
+│           ├── bg/
+│           │   ├── login-bg.jpg    ← Background login page
+│           │   └── hero-bg.jpg     ← Background landing
+│           │
+│           ├── icons/
+│           │   ├── logo.png
+│           │   ├── user-icon.svg
+│           │   ├── admin-icon.svg
+│           │   └── queue-icon.svg
+│           │
+│           └── avatars/
+│               └── default-avatar.png
 │
-├── .env                     # Simpan password database dll (jangan di-upload ke GitHub)
-├── .gitignore
-├── requirements.txt
+├── .env
 ├── README.md
 └── rincian.md
