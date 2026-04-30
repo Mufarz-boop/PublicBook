@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PublicBook - Booking & Queue System</title>
-  <link rel="stylesheet" href="../assets/css/global.css">
+  <link rel="stylesheet" href="/app/frontend/assets/css/global.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      --primary: #6366f1;
-      --primary-light: #818cf8;
-      --primary-dark: #4f46e5;
-      --accent: #06b6d4;
-      --accent-light: #67e8f9;
+      --primary: #f97316;
+      --primary-light: #fb923c;
+      --primary-dark: #ea580c;
+      --accent: #f59e0b;
+      --accent-light: #fbbf24;
       --bg-dark: #0a0f1e;
       --bg-card: #111827;
       --bg-card-hover: #1a2235;
@@ -23,8 +23,8 @@
       --text-secondary: #94a3b8;
       --text-muted: #64748b;
       --border: rgba(255,255,255,0.06);
-      --glow-primary: rgba(99, 102, 241, 0.4);
-      --glow-accent: rgba(6, 182, 212, 0.3);
+      --glow-primary: rgba(249, 115, 22, 0.4);
+      --glow-accent: rgba(245, 158, 11, 0.3);
     }
 
     * {
@@ -61,9 +61,9 @@
       width: 200%;
       height: 200%;
       background: 
-        radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
+        radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.04) 0%, transparent 60%);
       animation: bgFloat 20s ease-in-out infinite;
     }
 
@@ -232,7 +232,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: url('../assets/images/bg/Background PublicBook.jpg') center/cover no-repeat;
+      background: url('/app/frontend/assets/images/bg/Background PublicBook.jpg') center/cover no-repeat;
       filter: brightness(0.35) saturate(1.2);
       z-index: -2;
     }
@@ -285,8 +285,8 @@
       align-items: center;
       gap: 8px;
       padding: 8px 20px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.2);
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.2);
       border-radius: 100px;
       font-size: 13px;
       font-weight: 500;
@@ -305,8 +305,8 @@
     }
 
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
-      50% { box-shadow: 0 0 0 8px rgba(6, 182, 212, 0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+      50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
     }
 
     .hero h2 {
@@ -475,8 +475,8 @@
     .section-tag {
       display: inline-block;
       padding: 6px 16px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.15);
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.15);
       border-radius: 100px;
       font-size: 12px;
       font-weight: 600;
@@ -503,7 +503,7 @@
 
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 24px;
       max-width: 1100px;
       margin: 0 auto;
@@ -541,7 +541,7 @@
     .card:hover {
       transform: translateY(-8px);
       background: var(--bg-card-hover);
-      border-color: rgba(99, 102, 241, 0.2);
+      border-color: rgba(249, 115, 22, 0.2);
       box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px var(--glow-primary);
     }
 
@@ -572,15 +572,21 @@
     }
 
     .card:nth-child(2) .card-icon {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.05));
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05));
       color: var(--accent-light);
-      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.2);
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2);
     }
 
     .card:nth-child(3) .card-icon {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
-      color: #a78bfa;
-      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.2), rgba(234, 88, 12, 0.05));
+      color: #fdba74;
+      box-shadow: 0 4px 20px rgba(234, 88, 12, 0.2);
+    }
+
+    .card:nth-child(4) .card-icon {
+      background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.05));
+      color: #fed7aa;
+      box-shadow: 0 4px 20px rgba(251, 146, 60, 0.2);
     }
 
     .card h4 {
@@ -617,7 +623,7 @@
     .card:hover .card-arrow {
       opacity: 1;
       transform: translateX(0);
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(249, 115, 22, 0.1);
       color: var(--primary-light);
     }
 
@@ -707,8 +713,8 @@
       max-width: 800px;
       margin: 0 auto;
       padding: 64px 40px;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(6, 182, 212, 0.05));
-      border: 1px solid rgba(99, 102, 241, 0.15);
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.08), rgba(6, 182, 212, 0.05));
+      border: 1px solid rgba(249, 115, 22, 0.15);
       border-radius: 24px;
       position: relative;
       overflow: hidden;
@@ -723,7 +729,7 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%);
       animation: rotate 20s linear infinite;
     }
 
@@ -830,7 +836,7 @@
     }
 
     .footer-social a:hover {
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(249, 115, 22, 0.1);
       border-color: rgba(99, 102, 241, 0.3);
       color: var(--primary-light);
       transform: translateY(-2px);
@@ -916,6 +922,8 @@
       }
     }
   </style>
+<base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -925,15 +933,15 @@
 
   <!-- Header -->
   <header id="header">
-    <a href="#" class="logo">
-      <div class="logo-icon"><i class="fas fa-calendar-check"></i></div>
+    <div class="logo">
+      <img src="../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="logo-img" style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover;">
       <div class="logo-text">Public<span>Book</span></div>
-    </a>
+    </div>
     <nav>
       <a href="#features">Fitur</a>
       <a href="#how-it-works">Cara Kerja</a>
-      <a href="auth/login.html">Masuk</a>
-      <a href="auth/register.html" class="btn-nav">Daftar</a>
+      <a href="/app/frontend/auth/login.html">Masuk</a>
+      <a href="/app/frontend/auth/register.html" class="btn-nav">Daftar</a>
     </nav>
   </header>
 
@@ -1055,18 +1063,20 @@
   <footer>
     <div class="footer-content">
       <div class="footer-brand">
-        <div class="footer-brand-icon"><i class="fas fa-calendar-check"></i></div>
+        <img src="../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="footer-logo-img" style="height: 32px; width: auto; border-radius: 8px;">
         <div class="footer-brand-text">PublicBook</div>
       </div>
       <div class="footer-links">
+        <a href="/app/frontend/pages/legal/disclaimer.html">Disclaimer</a>
+        <a href="/app/frontend/pages/legal/privacy.html">Kebijakan Privasi</a>
+        <a href="/app/frontend/pages/legal/terms.html">Syarat & Ketentuan</a>
         <a href="#">Tentang Kami</a>
-        <a href="#">Kebijakan Privasi</a>
         <a href="#">Hubungi Kami</a>
       </div>
       <div class="footer-social">
-        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-github"></i></a>
+        <a href="#"><i class="fab fa-tiktok"></i></a>
         <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1134,7 +1144,7 @@
     });
 
     function goToRegister() {
-      window.location.href = 'auth/register.html';
+      window.location.href = '/app/frontend/auth/register.html';
     }
   </script>
 
