@@ -223,7 +223,7 @@
     .logo-img {
       width: 42px;
       height: 42px;
-      border-radius: 12px;
+      border-radius: 50%;
       object-fit: cover;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       transition: transform var(--transition-base);
@@ -298,70 +298,9 @@
       transform: translateY(0);
     }
 
-    /* ===== BREADCRUMB ===== */
-    .breadcrumb {
-      padding: 120px 48px 0;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .breadcrumb-list {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .breadcrumb-list li {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .breadcrumb-list a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: all var(--transition-fast);
-      position: relative;
-    }
-
-    .breadcrumb-list a::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent-orange), var(--accent-amber));
-      transition: width var(--transition-base);
-    }
-
-    .breadcrumb-list a:hover {
-      color: var(--accent-orange-light);
-    }
-
-    .breadcrumb-list a:hover::after {
-      width: 100%;
-    }
-
-    .breadcrumb-list i {
-      font-size: 10px;
-      color: var(--text-muted);
-      opacity: 0.6;
-    }
-
-    .breadcrumb-list .active {
-      color: var(--accent-orange-light);
-      font-weight: 600;
-    }
-
     /* ===== HERO SECTION ===== */
     .hero-section {
-      padding: 60px 48px 80px;
+      padding: 140px 48px 80px;
       max-width: 1000px;
       margin: 0 auto;
       text-align: center;
@@ -863,7 +802,7 @@
     .footer-logo-img {
       width: 40px;
       height: 40px;
-      border-radius: 12px;
+      border-radius: 50%;
       object-fit: cover;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
@@ -990,12 +929,8 @@
         padding: 12px 24px;
       }
 
-      .breadcrumb {
-        padding: 110px 24px 0;
-      }
-
       .hero-section {
-        padding: 40px 24px 60px;
+        padding: 120px 24px 60px;
       }
 
       .hero-icon {
@@ -1105,22 +1040,13 @@
   <!-- Header -->
   <header id="header">
     <div class="logo">
-      <img src="../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="logo-img" style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover;">
+      <img src="../../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="logo-img">
       <div class="logo-text">Public<span>Book</span></div>
     </div>
     <nav>
-      <a href="../pages/index.html" class="btn-nav"><i class="fas fa-arrow-left"></i> Kembali</a>
+      <a href="../index.html" class="btn-nav"><i class="fas fa-arrow-left"></i> Kembali</a>
     </nav>
   </header>
-
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="breadcrumb">
-    <ol class="breadcrumb-list">
-      <li><a href="../pages/index.html">Beranda</a><i class="fas fa-chevron-right"></i></li>
-      <li><a href="../pages/index.html">Legal</a><i class="fas fa-chevron-right"></i></li>
-      <li class="active">Disclaimer</li>
-    </ol>
-  </nav>
 
   <!-- Hero Section -->
   <section class="hero-section">
@@ -1263,7 +1189,7 @@
     <div class="cta-card">
       <h3>Sudah Memahami Ketentuan Kami?</h3>
       <p>Kembali ke halaman utama untuk mulai menggunakan layanan PublicBook.</p>
-      <a href="../pages/index.html" class="btn-primary">
+      <a href="../index.html" class="btn-primary">
         <i class="fas fa-arrow-left"></i> Kembali ke Beranda
       </a>
     </div>
@@ -1273,7 +1199,7 @@
   <footer>
     <div class="footer-content">
       <div class="footer-brand">
-        <img src="../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="footer-logo-img" style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover;">
+        <img src="../../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="footer-logo-img">
         <div class="footer-brand-text">PublicBook</div>
       </div>
       <div class="footer-tagline">

@@ -19,6 +19,7 @@ publicbook/
 │       ├── auth.py
 │       ├── booking.py
 │       ├── services.py
+│       ├── static.py
 │       └── admin.py
 │
 ├── frontend/
