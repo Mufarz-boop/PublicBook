@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - PublicBook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --orange-50: #fff7ed;
+      --orange-100: #ffedd5;
+      --orange-200: #fed7aa;
+      --orange-300: #fdba74;
+      --orange-400: #fb923c;
+      --orange-500: #f97316;
+      --orange-600: #ea580c;
+      --orange-700: #c2410c;
+      --orange-800: #9a3412;
+      --amber-300: #fcd34d;
+      --amber-400: #fbbf24;
+      --amber-500: #f59e0b;
+      --cream: #fff8f0;
+      --cream-dark: #fef3e2;
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('../../assets/images/bg/Background PublicBook.jpg') center/cover no-repeat fixed;
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    /* Overlay gelap */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.45) 0%, rgba(120,53,15,0.35) 50%, rgba(0,0,0,0.5) 100%);
+      z-index: 0;
+    }
+
+    /* ============================================
+       CARD HORIZONTAL - TRANSPARENT + BLUR
+       ============================================ */
+    .register-card {
+      display: flex;
+      width: 100%;
+      max-width: 872px;
+      height: 512px;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 
+        0 32px 80px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      animation: cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ============================================
+       SISI KIRI - FOTO RUANG KERJA
+       ============================================ */
+    .card-left {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: none;
+      border-right: 2px solid var(--gray-200);
+    }
+
+    .card-left img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .register-card:hover .card-left img {
+      transform: scale(1.05);
+    }
+
+    /* ============================================
+       SISI KANAN - FORM REGISTER (NO SCROLL)
+       ============================================ */
+    .card-right {
+      flex: 1;
+      padding: 28px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ----------------------------------------
+       HEADER: LOGO + BRAND NAME (LEFT ALIGNED)
+       ---------------------------------------- */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      margin-bottom: 8px;
+      margin-left: 8px;
+      flex-shrink: 0;
+      animation: fadeUp 0.6s 0.2s both;
+    }
+
+    .logo-wrapper {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+
+    .logo-wrapper:hover {
+      transform: scale(1.08) rotate(-2deg);
+    }
+
+    .logo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-name .text-public {
+      color: #f8fafc;
+    }
+
+    .brand-name .text-book {
+      background: linear-gradient(135deg, #fb923c, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ----------------------------------------
+       SUBTITLE (CENTER)
+       ---------------------------------------- */
+    .register-subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: var(--gray-500);
+      font-weight: 400;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+      animation: fadeUp 0.6s 0.3s both;
+    }
+
+    /* ----------------------------------------
+       FORM
+       ---------------------------------------- */
+    .register-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeUp 0.6s 0.4s both;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      font-size: 14px;
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 11px 16px 11px 42px;
+      background: var(--gray-50);
+      border: 2px solid var(--gray-100);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--gray-800);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
+    }
+
+    .input-group input::placeholder {
+      color: var(--gray-300);
+      font-weight: 400;
+      font-size: 12.5px;
+    }
+
+    .input-group input:hover {
+      border-color: var(--gray-200);
+      background: var(--white);
+    }
+
+    .input-group input:focus {
+      background: var(--white);
+      border-color: var(--orange-300);
+      box-shadow: 
+        0 0 0 4px rgba(249, 115, 22, 0.06),
+        0 4px 20px rgba(249, 115, 22, 0.08);
+    }
+
+    .input-group input:focus + i,
+    .input-group input:not(:placeholder-shown) + i {
+      color: var(--orange-500);
+    }
+
+    /* ----------------------------------------
+       TOMBOL DAFTAR
+       ---------------------------------------- */
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      box-shadow: 
+        0 6px 24px rgba(234, 88, 12, 0.35),
+        0 2px 4px rgba(234, 88, 12, 0.2);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.6s 0.5s both;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.25),
+        transparent
+      );
+      transition: left 0.7s ease;
+    }
+
+    .btn-submit:hover::before {
+      left: 100%;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 10px 32px rgba(234, 88, 12, 0.45),
+        0 4px 8px rgba(234, 88, 12, 0.25);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.3);
+    }
+
+    /* ----------------------------------------
+       LOGIN LINK
+       ---------------------------------------- */
+    .login-row {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--gray-500);
+      font-weight: 500;
+      flex-shrink: 0;
+      animation: fadeUp 0.6s 0.6s both;
+    }
+
+    .login-row a {
+      color: var(--orange-500);
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .login-row a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--orange-500), var(--amber-500));
+      transition: width 0.3s ease;
+    }
+
+    .login-row a:hover {
+      color: var(--orange-700);
+    }
+
+    .login-row a:hover::after {
+      width: 100%;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (min-width: 768px) {
+      .card-left {
+        display: block;
+      }
+    }
+
+    @media (max-width: 767px) {
+      body {
+        padding: 16px;
+        align-items: flex-start;
+        padding-top: 30px;
+        padding-bottom: 30px;
+      }
+
+      .register-card {
+        border-radius: 24px;
+        height: auto;
+        max-width: 412px;
+        min-height: 520px;
+      }
+
+      .card-right {
+        padding: 28px 28px;
+        overflow: hidden;
+      }
+
+      .brand-header {
+        justify-content: center;
+        margin-left: 0;
+        margin-bottom: 10px;
+      }
+
+      .logo-wrapper {
+        width: 64px;
+        height: 64px;
+      }
+
+      .brand-name {
+        font-size: 28px;
+      }
+
+      .register-subtitle {
+        margin-bottom: 16px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .card-right {
+        padding: 24px 22px;
+      }
+
+      .brand-name {
+        font-size: 24px;
+      }
+
+      .input-group input {
+        padding: 10px 14px 10px 38px;
+      }
+
+      .logo-wrapper {
+        width: 56px;
+        height: 56px;
+      }
+    }
+  </style>
+<base target="_blank">
+</head>
+<body>
+
+  <!-- Card Horizontal -->
+  <div class="register-card">
+
+    <!-- Sisi Kiri: Foto Ruang Kerja -->
+    <div class="card-left">
+      <img src="../../assets/images/bg/login side.jpg" alt="Ruang Kerja Modern">
+    </div>
+
+    <!-- Sisi Kanan: Form Register -->
+    <div class="card-right">
+
+      <!-- Header: Logo + Brand Name (Left Aligned) -->
+      <div class="brand-header">
+        <div class="logo-wrapper">
+          <img src="../../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo">
+        </div>
+        <span class="brand-name">
+          <span class="text-public">Public</span><span class="text-book">Book</span>
+        </span>
+      </div>
+
+      <!-- Subtitle (Center) -->
+      <div class="register-subtitle">
+        Silahkan isi untuk mendaftar
+      </div>
+
+      <!-- Form -->
+      <form class="register-form" id="registerForm" onsubmit="handleRegister(event)">
+
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input 
+            type="text" 
+            id="nama" 
+            placeholder="Nama Lengkap" 
+            required
+            autocomplete="name"
+          >
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="nama@gmail.com" 
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-phone"></i>
+          <input 
+            type="tel" 
+            id="telepon" 
+            placeholder="Nomor telepon" 
+            required
+            autocomplete="tel"
+          >
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="Password anda" 
+            required
+            autocomplete="new-password"
+          >
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            placeholder="Ulangi password anda" 
+            required
+            autocomplete="new-password"
+          >
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">
+          Daftar
+        </button>
+
+      </form>
+
+      <!-- Login Link -->
+      <div class="login-row">
+        Sudah punya akun? <a href="{{ url_for('auth_routes.login')}}">Login</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /**
+     * Handle register form submission
+     */
+    function handleRegister(event) {
+      event.preventDefault();
+
+      const nama = document.getElementById('nama').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const telepon = document.getElementById('telepon').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const btn = document.getElementById('btnSubmit');
+      const originalText = btn.innerText;
+
+      // Validasi sederhana
+      if (!nama || !email || !telepon || !password || !confirmPassword) {
+        shakeButton(btn);
+        return;
+      }
+
+      // Cek password match
+      if (password !== confirmPassword) {
+        shakeButton(btn);
+        alert('Password tidak cocok!');
+        return;
+      }
+
+      // Loading state
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i>Memuat...';
+      btn.disabled = true;
+      btn.style.opacity = '0.85';
+
+      // Simulate API call (ganti dengan fetch ke backend)
+      setTimeout(() => {
+        // Reset button
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+
+        // Redirect ke login (nanti ganti dengan response API)
+        window.location.href = '/login';
+
+      }, 1800);
+    }
+
+    /**
+     * Shake animation untuk error
+     */
+    function shakeButton(btn) {
+      btn.style.animation = 'shake 0.5s ease';
+      setTimeout(() => {
+        btn.style.animation = '';
+      }, 500);
+    }
+
+    // Tambah keyframe shake secara dinamis
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-4px); }
+        80% { transform: translateX(4px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+
+</body>
+</html>
