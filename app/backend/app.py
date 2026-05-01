@@ -1,11 +1,15 @@
 # backend/app.py
 
 from flask import Flask
+from config import config_by_publicbook
+import os
 
+env = os.getenv('ENV', 'development')
 app = Flask(__name__,
     template_folder='../frontend/pages',  # ← folder templates
     static_folder='../frontend/assets'    # ← folder static
 )
+app.config.from_object(config_by_publicbook[env])
 
 # Register blueprint
 from routes.static import bp as static_bp
