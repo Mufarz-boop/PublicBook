@@ -1026,7 +1026,6 @@
       }
     }
   </style>
-<base target="_blank">
 </head>
 <body>
 
@@ -1044,7 +1043,7 @@
       <div class="logo-text">Public<span>Book</span></div>
     </div>
     <nav>
-      <a href="../index.html" class="btn-nav"><i class="fas fa-arrow-left"></i> Kembali</a>
+      <a href="{{ url_for('static_routes.index') }}" class="btn-nav"><i class="fas fa-arrow-left"></i> Kembali</a>
     </nav>
   </header>
 
@@ -1166,13 +1165,6 @@
           </div>
         </div>
         <div class="contact-item">
-          <div class="icon-wrap"><i class="fas fa-phone"></i></div>
-          <div class="contact-info">
-            <span class="contact-label">Telepon</span>
-            <span class="contact-value">+62 812-3456-7890</span>
-          </div>
-        </div>
-        <div class="contact-item">
           <div class="icon-wrap"><i class="fas fa-map-marker-alt"></i></div>
           <div class="contact-info">
             <span class="contact-label">Alamat</span>
@@ -1189,7 +1181,7 @@
     <div class="cta-card">
       <h3>Sudah Memahami Ketentuan Kami?</h3>
       <p>Kembali ke halaman utama untuk mulai menggunakan layanan PublicBook.</p>
-      <a href="../index.html" class="btn-primary">
+      <a href="{{ url_for('static_routes.index') }}" class="btn-primary">
         <i class="fas fa-arrow-left"></i> Kembali ke Beranda
       </a>
     </div>

@@ -1048,8 +1048,6 @@
       }
     }
   </style>
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 
@@ -1069,15 +1067,15 @@
           <i class="fas fa-bars"></i>
         </button>
         <div class="header-menu-dropdown" id="headerMenuDropdown">
-          <a href="../pages/legal/disclaimer.html"><i class="fas fa-shield-alt"></i> Disclaimer</a>
-          <a href="../pages/legal/privacy.html"><i class="fas fa-lock"></i> Kebijakan Privasi</a>
-          <a href="../pages/legal/terms.html"><i class="fas fa-file-contract"></i> Syarat & Ketentuan</a>
-          <a href="../pages/legal/about.html"><i class="fas fa-info-circle"></i> Tentang Kami</a>
-          <a href="../pages/legal/hubungi.html"><i class="fas fa-envelope"></i> Hubungi Kami</a>
+          <a href="{{ url_for('static_routes.terms') }}"><i class="fas fa-shield-alt"></i> Disclaimer</a>
+          <a href="{{ url_for('static_routes.privacy') }}"><i class="fas fa-lock"></i> Kebijakan Privasi</a>
+          <a href="{{ url_for('static_routes.terms') }}"><i class="fas fa-file-contract"></i> Syarat & Ketentuan</a>
+          <a href="{{ url_for('static_routes.about') }}"><i class="fas fa-info-circle"></i> Tentang Kami</a>
+          <a href="{{ url_for('static_routes.hubungi') }}"><i class="fas fa-envelope"></i> Hubungi Kami</a>
         </div>
       </div>
-      <a href="../auth/login.html" class="btn-nav">Masuk</a>
-      <a href="../auth/register.html" class="btn-nav">Daftar</a>
+      <a href="{{ url_for('auth_routes.login') }}" class="btn-nav">Masuk</a>
+      <a href="{{ url_for('auth_routes.register') }}" class="btn-nav">Daftar</a>
     </nav>
   </header>
 
@@ -1099,7 +1097,7 @@
     <p>Sistem booking dan antrean modern dengan QR Code untuk pengalaman yang lebih efisien, cepat, dan praktis.</p>
     
     <div class="hero-actions">
-      <button class="btn btn-primary" onclick="goToRegister()">
+      <button class="btn btn-primary" onclick="window.location.href='{{ url_for('auth_routes.register') }}'">
         <i class="fas fa-rocket"></i> Mulai Sekarang
       </button>
     </div>

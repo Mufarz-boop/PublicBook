@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syarat & Ketentuan - PublicBook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-deep: #070b14;
+      --bg-surface: #0f1525;
+      --bg-elevated: #161d2e;
+      --bg-card: #1a2235;
+      --border-subtle: rgba(255,255,255,0.04);
+      --border-medium: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.12);
+      --text-primary: #f0f4f8;
+      --text-secondary: #8b9bb4;
+      --text-muted: #4a5568;
+      --accent-orange: #f97316;
+      --accent-orange-light: #fb923c;
+      --accent-orange-dark: #c2410c;
+      --accent-amber: #f59e0b;
+      --accent-amber-light: #fbbf24;
+      --glow-orange: rgba(249, 115, 22, 0.25);
+      --glow-orange-strong: rgba(249, 115, 22, 0.5);
+      --glow-amber: rgba(245, 158, 11, 0.2);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 8px 32px rgba(0,0,0,0.4);
+      --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+      --shadow-glow: 0 0 40px var(--glow-orange);
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== CINEMATIC BACKGROUND ===== */
+    .bg-cinematic {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: var(--bg-deep);
+      overflow: hidden;
+    }
+
+    .bg-cinematic::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -20%;
+      width: 140%;
+      height: 140%;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 40%, rgba(249, 115, 22, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 60% at 50% 80%, rgba(249, 115, 22, 0.04) 0%, transparent 50%);
+      animation: bgDrift 25s ease-in-out infinite alternate;
+    }
+
+    .bg-cinematic::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    @keyframes bgDrift {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-3%, 2%) scale(1.02); }
+      66% { transform: translate(2%, -1%) scale(0.98); }
+      100% { transform: translate(-1%, 3%) scale(1.01); }
+    }
+
+    /* Grid Pattern */
+    .grid-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Floating Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-orange) 0%, transparent 70%);
+      top: 10%;
+      right: -100px;
+      animation: orbFloat1 20s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--accent-amber) 0%, transparent 70%);
+      bottom: 20%;
+      left: -80px;
+      animation: orbFloat2 18s ease-in-out infinite;
+    }
+
+    .orb-3 {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--accent-orange-light) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      animation: orbFloat3 22s ease-in-out infinite;
+    }
+
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-30px, 40px); }
+    }
+
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(40px, -30px); }
+    }
+
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(-50%, -50%); }
+      50% { transform: translate(-45%, -55%); }
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all var(--transition-base);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(7, 11, 20, 0.7);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border-bottom: 1px solid var(--border-subtle);
+      z-index: -1;
+      transition: all var(--transition-base);
+    }
+
+    header.scrolled {
+      padding: 14px 48px;
+    }
+
+    header.scrolled::before {
+      background: rgba(7, 11, 20, 0.9);
+      border-bottom-color: var(--border-medium);
+      box-shadow: var(--shadow-md);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      cursor: default;
+    }
+
+    .logo-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform var(--transition-base);
+    }
+
+    .logo:hover .logo-img {
+      transform: scale(1.05) rotate(-2deg);
+    }
+
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .logo-text span {
+      background: linear-gradient(135deg, var(--accent-orange-light), var(--accent-amber-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-dark));
+      color: white;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--glow-orange);
+      transition: all var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-nav::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-nav:hover::before {
+      left: 100%;
+    }
+
+    .btn-nav:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--glow-orange-strong);
+    }
+
+    .btn-nav:active {
+      transform: translateY(0);
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+      padding: 140px 48px 80px;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 24px;
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.15);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-orange-light);
+      margin-bottom: 32px;
+      animation: fadeInDown 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .hero-badge i {
+      font-size: 14px;
+    }
+
+    .hero-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(245, 158, 11, 0.06));
+      border: 1px solid rgba(249, 115, 22, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 32px;
+      font-size: 40px;
+      color: var(--accent-orange-light);
+      box-shadow: 0 8px 40px rgba(249, 115, 22, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+      animation: fadeInUp 0.8s ease 0.2s forwards;
+      opacity: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-icon::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%); }
+      100% { transform: translateX(100%) translateY(100%); }
+    }
+
+    .hero-section h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      animation: fadeInUp 0.8s ease 0.3s forwards;
+      opacity: 0;
+    }
+
+    .hero-section h1 .highlight {
+      background: linear-gradient(135deg, var(--accent-orange-light), var(--accent-amber-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-section .subtitle {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 auto 28px;
+      line-height: 1.7;
+      animation: fadeInUp 0.8s ease 0.4s forwards;
+      opacity: 0;
+    }
+
+    .hero-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-medium);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--text-muted);
+      animation: fadeInUp 0.8s ease 0.5s forwards;
+      opacity: 0;
+    }
+
+    .hero-meta i {
+      color: var(--accent-orange);
+    }
+
+    /* Divider */
+    .section-divider {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .section-divider .line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-medium), transparent);
+      position: relative;
+    }
+
+    .section-divider .line::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: var(--accent-orange);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--glow-orange);
+    }
+
+    /* ===== CONTENT SECTIONS ===== */
+    .content-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 80px 48px 100px;
+    }
+
+    .legal-section {
+      margin-bottom: 64px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .legal-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .section-num {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px var(--glow-orange);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-num::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    }
+
+    .section-title-group {
+      flex: 1;
+    }
+
+    .section-title-group h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title-group .section-line {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-orange), var(--accent-amber));
+      border-radius: 2px;
+      transition: width var(--transition-slow);
+    }
+
+    .legal-section:hover .section-line {
+      width: 100px;
+    }
+
+    .legal-section p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.8;
+      padding-left: 68px;
+    }
+
+    .legal-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+      padding-left: 68px;
+    }
+
+    .legal-section ul li {
+      position: relative;
+      padding-left: 32px;
+      margin-bottom: 14px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      transition: all var(--transition-fast);
+    }
+
+    .legal-section ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-amber));
+      box-shadow: 0 0 12px var(--glow-orange);
+      transition: all var(--transition-base);
+    }
+
+    .legal-section ul li:hover {
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    .legal-section ul li:hover::before {
+      box-shadow: 0 0 20px var(--glow-orange-strong);
+      transform: scale(1.2);
+    }
+
+    /* Highlight Box */
+    .highlight-box {
+      padding: 28px 32px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.06), rgba(245, 158, 11, 0.03));
+      border: 1px solid rgba(249, 115, 22, 0.12);
+      border-radius: var(--radius-md);
+      margin: 24px 0 24px 68px;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-base);
+    }
+
+    .highlight-box::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--accent-orange), var(--accent-amber));
+    }
+
+    .highlight-box:hover {
+      border-color: rgba(249, 115, 22, 0.25);
+      box-shadow: 0 8px 32px rgba(249, 115, 22, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .highlight-box p {
+      margin: 0;
+      padding: 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .highlight-box i {
+      color: var(--accent-orange-light);
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
+    /* Contact Grid */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 24px 0 24px 68px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-base);
+    }
+
+    .contact-item:hover {
+      border-color: var(--border-medium);
+      background: var(--bg-card);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .contact-item .icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(245, 158, 11, 0.05));
+      border: 1px solid rgba(249, 115, 22, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-orange-light);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .contact-item .contact-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-item .contact-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .contact-item .contact-value {
+      font-size: 15px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      max-width: 1000px;
+      margin: 0 auto 100px;
+      padding: 0 48px;
+    }
+
+    .cta-card {
+      padding: 56px 48px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.08), rgba(245, 158, 11, 0.04));
+      border: 1px solid rgba(249, 115, 22, 0.15);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-slow);
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.06) 0%, transparent 50%);
+      animation: ctaPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes ctaPulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .cta-card:hover {
+      border-color: rgba(249, 115, 22, 0.3);
+      box-shadow: 0 20px 60px rgba(249, 115, 22, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .cta-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .cta-card p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 36px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-dark));
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 24px var(--glow-orange);
+      transition: all var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px var(--glow-orange-strong);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 64px 48px 40px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      position: relative;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+      opacity: 0.3;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .footer-logo-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .footer-brand-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .footer-tagline {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 15px;
+      font-style: italic;
+    }
+
+    .footer-tagline span {
+      background: linear-gradient(135deg, var(--accent-orange-light), var(--accent-amber-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-social a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-amber));
+      opacity: 0;
+      transition: opacity var(--transition-base);
+    }
+
+    .footer-social a:hover {
+      border-color: var(--accent-orange);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px var(--glow-orange);
+    }
+
+    .footer-social a:hover::before {
+      opacity: 1;
+    }
+
+    .footer-social a i {
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-elevated);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-orange);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      header {
+        padding: 16px 24px;
+      }
+
+      header.scrolled {
+        padding: 12px 24px;
+      }
+
+      .hero-section {
+        padding: 120px 24px 60px;
+      }
+
+      .hero-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+      }
+
+      .content-wrapper {
+        padding: 60px 24px 80px;
+      }
+
+      .legal-section p,
+      .legal-section ul {
+        padding-left: 0;
+      }
+
+      .section-header {
+        gap: 16px;
+      }
+
+      .section-num {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .section-title-group h2 {
+        font-size: 22px;
+      }
+
+      .highlight-box,
+      .contact-grid {
+        margin-left: 0;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-section {
+        padding: 0 24px;
+        margin-bottom: 60px;
+      }
+
+      .cta-card {
+        padding: 40px 24px;
+      }
+
+      .cta-card h3 {
+        font-size: 24px;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 24px;
+      }
+
+      .footer-brand {
+        justify-content: center;
+      }
+
+      .footer-social {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-text {
+        font-size: 20px;
+      }
+
+      .btn-nav {
+        padding: 10px 20px;
+        font-size: 13px;
+      }
+
+      .hero-section h1 {
+        font-size: 32px;
+      }
+
+      .section-title-group h2 {
+        font-size: 20px;
+      }
+
+      .legal-section p {
+        font-size: 15px;
+      }
+
+      .legal-section ul li {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cinematic Background -->
+  <div class="bg-cinematic"></div>
+  <div class="grid-pattern"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Header -->
+  <header id="header">
+    <div class="logo">
+      <img src="../../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="logo-img">
+      <div class="logo-text">Public<span>Book</span></div>
+    </div>
+    <nav>
+      <a href="{{ url_for('static_routes.index') }}" class="btn-nav"><i class="fas fa-arrow-left"></i> Kembali</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-badge">
+      <i class="fas fa-file-contract"></i>
+      Dokumen Legal
+    </div>
+    <div class="hero-icon">
+      <i class="fas fa-file-signature"></i>
+    </div>
+    <h1>Syarat & Ketentuan <span class="highlight">PublicBook</span></h1>
+    <p class="subtitle">Peraturan penggunaan layanan platform PublicBook yang wajib dipatuhi oleh seluruh pengguna untuk menjaga kenyamanan dan keamanan bersama.</p>
+    <div class="hero-meta">
+      <i class="fas fa-calendar-alt"></i>
+      Terakhir diperbarui: 1 Mei 2026
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider">
+    <div class="line"></div>
+  </div>
+
+  <!-- Content -->
+  <main class="content-wrapper">
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title-group">
+          <h2>Ketentuan Umum</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>Selamat datang di PublicBook. Syarat dan Ketentuan ini merupakan perjanjian hukum antara Anda ("Pengguna") dan PublicBook ("Kami", "Platform") yang mengatur penggunaan layanan booking dan antrean digital yang kami sediakan.</p>
+      <p>Dengan mengakses, mendaftar, atau menggunakan layanan PublicBook, Anda menyatakan telah membaca, memahami, dan menyetujui seluruh ketentuan yang tercantum dalam dokumen ini. Jika Anda tidak menyetujui sebagian atau seluruh ketentuan, Anda tidak diperkenankan menggunakan layanan kami.</p>
+      <div class="highlight-box">
+        <p><i class="fas fa-exclamation-circle"></i> <strong>Penting:</strong> PublicBook berhak mengubah, menambah, atau mengurangi ketentuan ini kapan saja. Perubahan akan efektif segera setelah dipublikasikan. Penggunaan berkelanjutan dianggap sebagai persetujuan terhadap perubahan tersebut.</p>
+      </div>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title-group">
+          <h2>Pendaftaran Akun</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>Unt menggunakan layanan PublicBook, Anda wajib membuat akun dengan menyediakan informasi yang akurat, lengkap, dan terkini. Dengan mendaftar, Anda menyatakan bahwa:</p>
+      <ul>
+        <li>Anda berusia minimal 17 tahun atau telah mendapatkan persetujuan dari orang tua/wali yang sah.</li>
+        <li>Informasi yang Anda berikan (nama, NIK, email, nomor telepon) adalah benar dan dapat diverifikasi.</li>
+        <li>Anda bertanggung jawab penuh atas keamanan akun, termasuk password dan kode OTP yang dikirimkan.</li>
+        <li>Satu individu hanya diperbolehkan memiliki satu akun PublicBook aktif.</li>
+        <li>Anda tidak akan membagikan kredensial akun kepada pihak lain atau menggunakan akun orang lain.</li>
+      </ul>
+      <p>PublicBook berhak menangguhkan atau menonaktifkan akun yang terindikasi melanggar ketentuan di atas atau digunakan untuk aktivitas mencurigakan tanpa pemberitahuan terlebih dahulu.</p>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title-group">
+          <h2>Penggunaan Layanan</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>Pengguna wajib menggunakan PublicBook dengan itikad baik dan sesuai dengan tujuan yang telah ditetapkan. Berikut adalah ketentuan penggunaan layanan:</p>
+      <ul>
+        <li><strong>Booking:</strong> Setiap pengguna dapat melakukan booking sesuai slot yang tersedia. Pembatalan harus dilakukan minimal 24 jam sebelum jadwal untuk menghindari penalti.</li>
+        <li><strong>QR Code:</strong> QR Code yang dihasilkan bersifat pribadi dan tidak boleh dipindahtangankan. Petugas berhak menolak layanan jika QR Code tidak sesuai dengan identitas pengguna.</li>
+        <li><strong>Antrean:</strong> Pengguna wajib hadir sesuai estimasi waktu yang ditampilkan. Keterlambatan lebih dari 15 menit dapat mengakibatkan booking hangus.</li>
+        <li><strong>Notifikasi:</strong> Pengguna wajib memastikan kontak (email/WhatsApp) aktif untuk menerima pengingat dan pembaruan terkait layanan.</li>
+      </ul>
+      <div class="highlight-box">
+        <p><i class="fas fa-ban"></i> <strong>Dilarang:</strong> Menggunakan bot, script, atau metode otomatis lainnya untuk memanipulasi sistem booking, mengakses data pengguna lain, atau mengganggu stabilitas platform.</p>
+      </div>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div class="section-title-group">
+          <h2>Tanggung Jawab Pengguna</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>Anda bertanggung jawab penuh atas segala aktivitas yang dilakukan melalui akun Anda. PublicBook tidak bertanggung jawab atas kerugian yang timbul akibat kelalaian pengguna dalam menjaga keamanan akun.</p>
+      <ul>
+        <li>Menjaga kerahasiaan password dan tidak menggunakan password yang mudah ditebak.</li>
+        <li>Segera melaporkan jika menemukan aktivitas mencurigakan pada akun Anda.</li>
+        <li>Memastikan data pribadi yang terdaftar selalu terkini dan dapat dihubungi.</li>
+        <li>Tidak menggunakan PublicBook untuk tujuan ilegal, penipuan, atau merugikan pihak lain.</li>
+        <li>Tidak mengunggah konten yang mengandung unsur SARA, pornografi, kekerasan, atau pelanggaran hukum.</li>
+      </ul>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div class="section-title-group">
+          <h2>Batasan Tanggung Jawab PublicBook</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>PublicBook berperan sebagai platform perantara (intermediary) yang menghubungkan pengguna dengan instansi penyedia layanan publik. Kami tidak bertanggung jawab atas:</p>
+      <ul>
+        <li>Kualitas layanan yang diberikan oleh instansi mitra di luar kendali teknis platform.</li>
+        <li>Keterlambatan atau pembatalan layanan yang disebabkan oleh force majeure (bencana alam, pemadaman listrik massal, gangguan jaringan nasional).</li>
+        <li>Kerugian finansial yang timbul dari transaksi langsung antara pengguna dan instansi (jika ada).</li>
+        <li>Kehilangan data akibat kelalaian pengguna (password dibagikan, perangkat tidak aman).</li>
+        <li>Ketidakakuratan informasi yang disediakan oleh pihak ketiga atau instansi mitra.</li>
+      </ul>
+      <p>PublicBook berkomitmen untuk memberikan upaya terbaik dalam menjaga ketersediaan dan keamanan platform, namun tidak menjamin layanan bebas dari gangguan teknis sepenuhnya.</p>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div class="section-title-group">
+          <h2>Penangguhan dan Penghentian</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>PublicBook berhak menangguhkan atau menghentikan akses pengguna ke platform dengan atau tanpa pemberitahuan terlebih dahulu dalam kondisi berikut:</p>
+      <ul>
+        <li>Pelanggaran terhadap Syarat & Ketentuan ini atau kebijakan lain yang berlaku.</li>
+        <li>Penggunaan akun untuk aktivitas ilegal, penipuan, atau merusak reputasi platform.</li>
+        <li>Upaya peretasan, penyalahgunaan API, atau serangan siber terhadap sistem.</li>
+        <li>Pemalsuan identitas atau penggunaan data orang lain tanpa izin.</li>
+        <li>Permintaan resmi dari aparat berwenang sesuai dengan peraturan perundangan yang berlaku.</li>
+      </ul>
+      <div class="highlight-box">
+        <p><i class="fas fa-gavel"></i> <strong>Hak PublicBook:</strong> Dalam kasus pelanggaran serius, kami berhak melaporkan aktivitas mencurigakan kepada pihak berwenang dan memblokir perangkat atau IP address terkait secara permanen.</p>
+      </div>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div class="section-title-group">
+          <h2>Kekayaan Intelektual</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>Seluruh konten yang terdapat dalam PublicBook, termasuk namun tidak terbatas pada logo, desain, kode sumber, teks, grafik, ikon, dan fitur platform, merupakan hak kekayaan intelektual yang dilindungi oleh undang-undang.</p>
+      <ul>
+        <li>Pengguna tidak diperkenankan menyalin, memodifikasi, mendistribusikan, atau menggunakan konten PublicBook untuk kepentingan komersial tanpa izin tertulis dari kami.</li>
+        <li>Nama "PublicBook", logo, dan tagline "Booking Cepat, Tanpa Ribet" adalah merek dagang terdaftar.</li>
+        <li>Pelanggaran hak kekayaan intelektual dapat dikenakan sanksi hukum sesuai dengan UU Nomor 28 Tahun 2014 tentang Hak Cipta.</li>
+      </ul>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <div class="section-title-group">
+          <h2>Hukum yang Berlaku</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>Syarat & Ketentuan ini tunduk dan ditafsirkan sesuai dengan hukum Republik Indonesia. Segala sengketa yang timbul dari penggunaan PublicBook akan diselesaikan terlebih dahulu melalui musyawarah untuk mufakat.</p>
+      <p>Jika musyawarah tidak mencapai kesepakatan, maka sengketa akan diselesaikan melalui pengadilan yang berwenang di wilayah Jakarta, Indonesia, dengan mengesampingkan ketentuan mengenai kompetensi absolut pengadilan lainnya.</p>
+    </section>
+
+    <section class="legal-section" data-animate>
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <div class="section-title-group">
+          <h2>Hubungi Kami</h2>
+          <div class="section-line"></div>
+        </div>
+      </div>
+      <p>Jika Anda memiliki pertanyaan, keberatan, atau memerlukan klarifikasi mengenai Syarat & Ketentuan ini, silakan menghubungi tim PublicBook melalui saluran resmi kami.</p>
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="icon-wrap"><i class="fas fa-envelope"></i></div>
+          <div class="contact-info">
+            <span class="contact-label">Email Legal</span>
+            <span class="contact-value">legal@publicbook.id</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="icon-wrap"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="contact-info">
+            <span class="contact-label">Alamat</span>
+            <span class="contact-value">Jl. Teknologi No. 123, Jakarta</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <h3>Sudah Memahami Ketentuan Kami?</h3>
+      <p>Kembali ke halaman utama untuk mulai menggunakan layanan PublicBook.</p>
+      <a href="{{ url_for('static_routes.index') }}" class="btn-primary">
+        <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <img src="../../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo" class="footer-logo-img">
+        <div class="footer-brand-text">PublicBook</div>
+      </div>
+      <div class="footer-tagline">
+        <span>Booking Cepat, Tanpa Ribet</span>
+      </div>
+      <div class="footer-social">
+        <a href="https://github.com/Mufarz-boop" title="Github" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="https://www.tiktok.com/@faruqi.family" title="Tiktok" target="_blank"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 PublicBook. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll header effect
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -80px 0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('[data-animate]').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Stagger delay for list items
+    document.querySelectorAll('.legal-section ul').forEach(ul => {
+      ul.querySelectorAll('li').forEach((li, index) => {
+        li.style.transitionDelay = `${index * 0.08}s`;
+      });
+    });
+  </script>
+
+</body>
+</html>
