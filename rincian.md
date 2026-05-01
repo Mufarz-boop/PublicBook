@@ -1,5 +1,6 @@
 publicbook/
 │
+├── publicbook/               ← venv
 ├── backend/
 │   ├── app.py
 │   ├── config.py
@@ -49,6 +50,8 @@ publicbook/
 │   │   └── legal/
 │   │       ├── disclaimer.html
 │   │       ├── privacy.html
+│   │       ├── hubungi.html
+│   │       ├── about.html
 │   │       └── terms.html
 │   │
 │   └── assets/
@@ -70,18 +73,15 @@ publicbook/
 │       │
 │       └── images/
 │           ├── bg/
-│           │   ├── login-bg.jpg    ← Background login page
-│           │   └── hero-bg.jpg     ← Background landing
+│           │   ├── Background PublicBook,jpg
+│           │   └── login side.jpg
 │           │
 │           ├── icons/
-│           │   ├── logo.png
-│           │   ├── user-icon.svg
-│           │   ├── admin-icon.svg
-│           │   └── queue-icon.svg
+│           │   └── Icon PublicBook.jpg
 │           │
 │           └── avatars/
-│               └── default-avatar.png
 │
 ├── .env
+├── .gitignore
 ├── README.md
 └── rincian.md
