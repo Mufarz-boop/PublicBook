@@ -4,6 +4,7 @@ publicbook/
 ├── backend/
 │   ├── app.py
 │   ├── config.py
+│   ├── __init__.py
 │   ├── requirements.txt
 │   │
 │   ├── database/
@@ -12,12 +13,14 @@ publicbook/
 │   ├── models/
 │   │   ├── user.py
 │   │   ├── booking.py
+│   │   ├── __init__.py
 │   │   ├── service.py
 │   │   └── queue.py
 │   │
 │   └── routes/
 │       ├── auth.py
 │       ├── booking.py
+│       ├── __init__.py
 │       ├── services.py
 │       ├── static.py
 │       └── admin.py
