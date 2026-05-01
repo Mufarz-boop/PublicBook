@@ -98,26 +98,7 @@
       position: relative;
       overflow: hidden;
       display: none;
-    }
-
-    /* Pembatas sisi kiri - garis vertikal jelas */
-    .card-left::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 1px;
-      height: 100%;
-      background: linear-gradient(to bottom, transparent, var(--gray-200) 20%, var(--gray-200) 80%, transparent);
-      z-index: 3;
-    }
-
-    .card-left::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to right, transparent 50%, rgba(255,248,240,0.95) 100%);
-      z-index: 2;
+      border-right: 2px solid var(--gray-200);
     }
 
     .card-left img {
@@ -145,71 +126,35 @@
     }
 
     /* ----------------------------------------
-       LOGO GAMBAR - PUBLICBOOK
+       LOGO BULAT - PURE IMAGE, NO SHADOW
        ---------------------------------------- */
     .brand-header {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       flex-shrink: 0;
       animation: fadeUp 0.6s 0.2s both;
     }
 
     .logo-wrapper {
-      position: relative;
-      width: 72px;
-      height: 72px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, var(--orange-500), var(--amber-500));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 
-        0 8px 32px rgba(249, 115, 22, 0.35),
-        0 0 0 4px rgba(249, 115, 22, 0.1),
-        inset 0 1px 0 rgba(255,255,255,0.3);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
       overflow: hidden;
-    }
-
-    .logo-wrapper::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-      border-radius: 20px;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .logo-wrapper:hover {
       transform: scale(1.08) rotate(-2deg);
-      box-shadow: 
-        0 12px 40px rgba(249, 115, 22, 0.45),
-        0 0 0 6px rgba(249, 115, 22, 0.15);
     }
 
     .logo-wrapper img {
-      width: 42px;
-      height: 42px;
-      object-fit: contain;
-      filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-      position: relative;
-      z-index: 1;
-      transition: transform 0.4s ease;
-    }
-
-    .logo-wrapper:hover img {
-      transform: scale(1.1);
-    }
-
-    .brand-name {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--gray-800);
-      letter-spacing: -0.5px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     /* ----------------------------------------
@@ -497,18 +442,12 @@
       }
 
       .brand-header {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
       }
 
       .logo-wrapper {
-        width: 64px;
-        height: 64px;
-        border-radius: 18px;
-      }
-
-      .logo-wrapper img {
-        width: 36px;
-        height: 36px;
+        width: 80px;
+        height: 80px;
       }
     }
 
@@ -526,14 +465,8 @@
       }
 
       .logo-wrapper {
-        width: 56px;
-        height: 56px;
-        border-radius: 16px;
-      }
-
-      .logo-wrapper img {
-        width: 32px;
-        height: 32px;
+        width: 72px;
+        height: 72px;
       }
     }
   </style>
@@ -552,12 +485,11 @@
     <!-- Sisi Kanan: Form Login -->
     <div class="card-right">
 
-      <!-- Header: Logo Gambar -->
+      <!-- Header: Logo Bulat Pure Image -->
       <div class="brand-header">
         <div class="logo-wrapper">
           <img src="../../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo">
         </div>
-        <span class="brand-name">PublicBook</span>
       </div>
 
       <!-- Heading -->
