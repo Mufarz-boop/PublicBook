@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      /* Orange Palette */
       --orange-50: #fff7ed;
       --orange-100: #ffedd5;
       --orange-200: #fed7aa;
@@ -23,8 +22,8 @@
       --amber-300: #fcd34d;
       --amber-400: #fbbf24;
       --amber-500: #f59e0b;
-
-      /* Neutral */
+      --cream: #fff8f0;
+      --cream-dark: #fef3e2;
       --white: #ffffff;
       --gray-50: #f9fafb;
       --gray-100: #f3f4f6;
@@ -36,55 +35,16 @@
       --gray-700: #374151;
       --gray-800: #1f2937;
       --gray-900: #111827;
-
-      /* Spacing Scale */
-      --space-1: 4px;
-      --space-2: 8px;
-      --space-3: 12px;
-      --space-4: 16px;
-      --space-5: 20px;
-      --space-6: 24px;
-      --space-7: 28px;
-      --space-8: 32px;
-      --space-10: 40px;
-      --space-12: 48px;
-
-      /* Radius Scale */
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-xl: 20px;
-      --radius-2xl: 24px;
-      --radius-full: 9999px;
-
-      /* Shadows */
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
-      --shadow-orange: 0 6px 24px rgba(234, 88, 12, 0.35);
-      --shadow-orange-hover: 0 10px 32px rgba(234, 88, 12, 0.45);
-      --shadow-focus: 0 0 0 4px rgba(249, 115, 22, 0.08);
-
-      /* Transitions */
-      --transition-fast: 0.15s ease;
-      --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-
-    html { 
-      -webkit-font-smoothing: antialiased; 
-      -moz-osx-font-smoothing: grayscale; 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
@@ -93,95 +53,73 @@
       background: url('../../assets/images/bg/Background PublicBook.jpg') center/cover no-repeat fixed;
       position: relative;
       overflow: hidden;
-      padding: var(--space-5);
+      padding: 20px;
     }
 
-    /* Background Overlay */
+    /* Overlay gelap */
     body::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        135deg, 
-        rgba(0,0,0,0.45) 0%, 
-        rgba(120,53,15,0.35) 50%, 
-        rgba(0,0,0,0.5) 100%
-      );
+      background: linear-gradient(135deg, rgba(0,0,0,0.45) 0%, rgba(120,53,15,0.35) 50%, rgba(0,0,0,0.5) 100%);
       z-index: 0;
     }
 
     /* ============================================
-       LOGIN CARD
+       CARD HORIZONTAL - TRANSPARENT + BLUR
        ============================================ */
     .login-card {
       display: flex;
       width: 100%;
       max-width: 872px;
       height: 512px;
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: var(--radius-2xl);
-      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       box-shadow: 
-        var(--shadow-xl),
-        inset 0 1px 0 rgba(255,255,255,0.4);
+        0 32px 80px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.3);
       overflow: hidden;
       position: relative;
       z-index: 1;
-      animation: cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes cardEnter {
-      from { 
-        opacity: 0; 
-        transform: translateY(24px) scale(0.97); 
-      }
-      to { 
-        opacity: 1; 
-        transform: translateY(0) scale(1); 
-      }
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     /* ============================================
-       LEFT SIDE - IMAGE
+       SISI KIRI - FOTO RUANG KERJA
        ============================================ */
     .card-left {
       flex: 1;
       position: relative;
       overflow: hidden;
       display: none;
-    }
-
-    .card-left::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to right,
-        transparent 70%,
-        rgba(255,255,255,0.15) 100%
-      );
-      pointer-events: none;
+      border-right: 2px solid var(--gray-200);
     }
 
     .card-left img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .login-card:hover .card-left img {
-      transform: scale(1.04);
+      transform: scale(1.05);
     }
 
     /* ============================================
-       RIGHT SIDE - FORM
+       SISI KANAN - FORM LOGIN (NO SCROLL)
        ============================================ */
     .card-right {
       flex: 1;
-      padding: var(--space-8) var(--space-10);
+      padding: 36px 44px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -190,28 +128,28 @@
     }
 
     /* ----------------------------------------
-       BRAND HEADER
+       LOGO BULAT - PURE IMAGE, NO SHADOW
        ---------------------------------------- */
     .brand-header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: var(--space-7);
-      animation: fadeUp 0.5s 0.15s both;
+      justify-content: center;
+      margin-bottom: 28px;
+      flex-shrink: 0;
+      animation: fadeUp 0.6s 0.2s both;
     }
 
     .logo-wrapper {
-      width: 88px;
-      height: 88px;
-      border-radius: var(--radius-full);
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
       overflow: hidden;
-      transition: transform var(--transition-slow);
-      border: 3px solid rgba(255,255,255,0.6);
-      box-shadow: var(--shadow-md);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .logo-wrapper:hover {
-      transform: scale(1.06) rotate(-2deg);
+      transform: scale(1.08) rotate(-2deg);
     }
 
     .logo-wrapper img {
@@ -226,28 +164,23 @@
        ---------------------------------------- */
     .login-heading {
       text-align: center;
-      margin-bottom: var(--space-6);
-      animation: fadeUp 0.5s 0.25s both;
+      margin-bottom: 24px;
+      flex-shrink: 0;
+      animation: fadeUp 0.6s 0.3s both;
     }
 
     @keyframes fadeUp {
-      from { 
-        opacity: 0; 
-        transform: translateY(12px); 
-      }
-      to { 
-        opacity: 1; 
-        transform: translateY(0); 
-      }
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .login-heading h1 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: var(--gray-900);
-      margin-bottom: var(--space-1);
-      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      letter-spacing: -0.6px;
       line-height: 1.2;
     }
 
@@ -255,7 +188,7 @@
       font-size: 13px;
       color: var(--gray-400);
       font-weight: 400;
-      letter-spacing: 0.15px;
+      letter-spacing: 0.2px;
     }
 
     /* ----------------------------------------
@@ -264,8 +197,8 @@
     .login-form {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
-      animation: fadeUp 0.5s 0.35s both;
+      gap: 14px;
+      animation: fadeUp 0.6s 0.4s both;
     }
 
     .input-group {
@@ -274,34 +207,32 @@
 
     .input-group i {
       position: absolute;
-      left: var(--space-4);
+      left: 18px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--gray-400);
       font-size: 14px;
-      transition: color var(--transition-base);
+      transition: all 0.3s ease;
       z-index: 2;
-      width: 16px;
-      text-align: center;
     }
 
     .input-group input {
       width: 100%;
-      padding: 13px var(--space-4) 13px 46px;
+      padding: 13px 18px 13px 46px;
       background: var(--gray-50);
       border: 2px solid var(--gray-100);
-      border-radius: var(--radius-md);
+      border-radius: 14px;
       font-family: 'Inter', sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--gray-800);
-      transition: all var(--transition-base);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       outline: none;
     }
 
     .input-group input::placeholder {
       color: var(--gray-300);
       font-weight: 400;
-      font-size: 13px;
+      font-size: 12.5px;
     }
 
     .input-group input:hover {
@@ -312,22 +243,24 @@
     .input-group input:focus {
       background: var(--white);
       border-color: var(--orange-300);
-      box-shadow: var(--shadow-focus);
+      box-shadow: 
+        0 0 0 4px rgba(249, 115, 22, 0.06),
+        0 4px 20px rgba(249, 115, 22, 0.08);
     }
 
-    .input-group input:focus ~ i,
-    .input-group input:not(:placeholder-shown) ~ i {
+    .input-group input:focus + i,
+    .input-group input:not(:placeholder-shown) + i {
       color: var(--orange-500);
     }
 
     /* ----------------------------------------
-       FORGOT PASSWORD
+       LUPA PASSWORD
        ---------------------------------------- */
     .forgot-row {
       display: flex;
       justify-content: flex-end;
-      margin-top: calc(var(--space-1) * -1);
-      margin-bottom: var(--space-1);
+      margin-top: -2px;
+      margin-bottom: 2px;
     }
 
     .forgot-link {
@@ -335,21 +268,20 @@
       color: var(--gray-400);
       text-decoration: none;
       font-weight: 500;
-      transition: all var(--transition-base);
+      transition: all 0.3s;
       letter-spacing: 0.2px;
       position: relative;
-      padding-bottom: 1px;
     }
 
     .forgot-link::after {
       content: '';
       position: absolute;
-      bottom: 0;
+      bottom: -2px;
       left: 0;
       width: 0;
       height: 1.5px;
       background: var(--orange-500);
-      transition: width var(--transition-base);
+      transition: width 0.3s ease;
     }
 
     .forgot-link:hover {
@@ -361,23 +293,25 @@
     }
 
     /* ----------------------------------------
-       SUBMIT BUTTON
+       TOMBOL MASUK
        ---------------------------------------- */
     .btn-submit {
       width: 100%;
-      padding: 14px var(--space-4);
-      margin-top: var(--space-1);
-      background: linear-gradient(135deg, var(--orange-600), var(--orange-500));
+      padding: 14px;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #ea580c, #f97316);
       color: var(--white);
       border: none;
-      border-radius: var(--radius-md);
+      border-radius: 14px;
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       font-weight: 700;
       letter-spacing: 0.3px;
       cursor: pointer;
-      box-shadow: var(--shadow-orange);
-      transition: all var(--transition-base);
+      box-shadow: 
+        0 6px 24px rgba(234, 88, 12, 0.35),
+        0 2px 4px rgba(234, 88, 12, 0.2);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
     }
@@ -392,7 +326,7 @@
       background: linear-gradient(
         90deg,
         transparent,
-        rgba(255,255,255,0.2),
+        rgba(255,255,255,0.25),
         transparent
       );
       transition: left 0.7s ease;
@@ -404,18 +338,14 @@
 
     .btn-submit:hover {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-orange-hover);
+      box-shadow: 
+        0 10px 32px rgba(234, 88, 12, 0.45),
+        0 4px 8px rgba(234, 88, 12, 0.25);
     }
 
     .btn-submit:active {
       transform: translateY(0);
       box-shadow: 0 4px 16px rgba(234, 88, 12, 0.3);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.75;
-      cursor: not-allowed;
-      transform: none;
     }
 
     /* ----------------------------------------
@@ -424,97 +354,60 @@
     .divider {
       display: flex;
       align-items: center;
-      gap: var(--space-4);
-      margin: var(--space-5) 0;
-      animation: fadeUp 0.5s 0.45s both;
+      gap: 16px;
+      margin: 18px 0;
+      animation: fadeUp 0.6s 0.5s both;
     }
 
     .divider-line {
       flex: 1;
       height: 1px;
-      background: linear-gradient(
-        to right, 
-        transparent, 
-        var(--gray-200), 
-        transparent
-      );
+      background: linear-gradient(to right, transparent, var(--gray-200), transparent);
     }
 
     .divider-text {
       font-size: 11px;
       color: var(--gray-400);
       font-weight: 500;
-      white-space: nowrap;
     }
 
     /* ----------------------------------------
-       REGISTER SECTION - UNIFIED THEME
+       REGISTER LINK
        ---------------------------------------- */
-    .register-section {
+    .register-row {
       text-align: center;
-      animation: fadeUp 0.5s 0.55s both;
-    }
-
-    .register-main {
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--gray-500);
       font-weight: 500;
-      line-height: 1.6;
+      flex-shrink: 0;
+      animation: fadeUp 0.6s 0.6s both;
     }
 
-    .register-main a {
+    .register-row a {
       color: var(--orange-500);
       text-decoration: none;
       font-weight: 700;
-      transition: all var(--transition-base);
+      transition: all 0.3s;
       position: relative;
-      padding-bottom: 1px;
     }
 
-    .register-main a::after {
+    .register-row a::after {
       content: '';
       position: absolute;
-      bottom: 0;
+      bottom: -2px;
       left: 0;
       width: 0;
       height: 2px;
       background: linear-gradient(90deg, var(--orange-500), var(--amber-500));
-      transition: width var(--transition-base);
+      transition: width 0.3s ease;
     }
 
-    .register-main a:hover {
+    .register-row a:hover {
       color: var(--orange-700);
     }
 
-    .register-main a:hover::after {
+    .register-row a:hover::after {
       width: 100%;
-    }
-
-    .register-sub {
-      margin-top: var(--space-3);
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-size: 12px;
-      color: var(--gray-400);
-      text-decoration: none;
-      font-weight: 500;
-      padding: var(--space-2) var(--space-4);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--gray-200);
-      background: rgba(255,255,255,0.5);
-      transition: all var(--transition-base);
-    }
-
-    .register-sub:hover {
-      color: var(--gray-600);
-      border-color: var(--gray-300);
-      background: rgba(255,255,255,0.8);
-    }
-
-    .register-sub i {
-      font-size: 12px;
-      opacity: 0.7;
     }
 
     /* ============================================
@@ -528,21 +421,22 @@
 
     @media (max-width: 767px) {
       body {
-        padding: var(--space-4);
+        padding: 16px;
         align-items: flex-start;
-        padding-top: var(--space-8);
-        padding-bottom: var(--space-8);
+        padding-top: 30px;
+        padding-bottom: 30px;
       }
 
       .login-card {
-        border-radius: var(--radius-xl);
+        border-radius: 24px;
         height: auto;
         max-width: 412px;
-        min-height: 480px;
+        min-height: 472px;
       }
 
       .card-right {
-        padding: var(--space-8) var(--space-6);
+        padding: 32px 28px;
+        overflow: hidden;
       }
 
       .login-heading h1 {
@@ -550,18 +444,18 @@
       }
 
       .brand-header {
-        margin-bottom: var(--space-6);
+        margin-bottom: 24px;
       }
 
       .logo-wrapper {
-        width: 76px;
-        height: 76px;
+        width: 80px;
+        height: 80px;
       }
     }
 
     @media (max-width: 380px) {
       .card-right {
-        padding: var(--space-6) var(--space-5);
+        padding: 28px 22px;
       }
 
       .login-heading h1 {
@@ -569,30 +463,30 @@
       }
 
       .input-group input {
-        padding: 12px var(--space-3) 12px 42px;
+        padding: 12px 14px 12px 42px;
       }
 
       .logo-wrapper {
-        width: 68px;
-        height: 68px;
+        width: 72px;
+        height: 72px;
       }
     }
   </style>
-<base target="_blank">
 </head>
 <body>
 
+  <!-- Card Horizontal -->
   <div class="login-card">
 
-    <!-- Left Side: Image -->
+    <!-- Sisi Kiri: Foto Ruang Kerja -->
     <div class="card-left">
       <img src="../../assets/images/bg/login side.jpg" alt="Ruang Kerja Modern">
     </div>
 
-    <!-- Right Side: Form -->
+    <!-- Sisi Kanan: Form Login -->
     <div class="card-right">
 
-      <!-- Brand Header -->
+      <!-- Header: Logo Bulat Pure Image -->
       <div class="brand-header">
         <div class="logo-wrapper">
           <img src="../../assets/images/icons/Icon PublicBook.jpg" alt="PublicBook Logo">
@@ -631,7 +525,7 @@
         </div>
 
         <div class="forgot-row">
-          <a href="#" class="forgot-link">Lupa Password?</a>
+          <a href="{{ url_for('auth_routes.forgot_password')}}" class="forgot-link">Lupa Password?</a>
         </div>
 
         <button type="submit" class="btn-submit" id="btnSubmit">
@@ -647,17 +541,10 @@
         <div class="divider-line"></div>
       </div>
 
-      <!-- Register Links -->
-      <div class="register-section">
-        <p class="register-main">
-          Belum punya akun? <a href="{{ url_for('auth_routes.register') }}">Daftar sekarang</a>
-        </p>
-        <a href="{{ url_for('static_routes.index') }}" class="register-sub">
-          <i class="fas fa-arrow-left"></i>
-          Kembali ke Landing Page
-        </a>
+      <!-- Register -->
+      <div class="register-row">
+        Belum punya akun? <a href="{{ url_for('auth_routes.register')}}">Daftar sekarang</a>
       </div>
-
     </div>
   </div>
 
@@ -673,31 +560,52 @@
       const btn = document.getElementById('btnSubmit');
       const originalText = btn.innerText;
 
+      // Validasi sederhana
       if (!email || !password) {
-        shakeElement(btn);
+        shakeButton(btn);
         return;
       }
 
       // Loading state
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i>Memuat...';
       btn.disabled = true;
+      btn.style.opacity = '0.85';
 
+      // Simulate API call (ganti dengan fetch ke backend)
       setTimeout(() => {
+        // Reset button
         btn.innerHTML = originalText;
         btn.disabled = false;
+        btn.style.opacity = '1';
+
+        // Redirect ke dashboard (nanti ganti dengan response API)
         window.location.href = '/dashboard';
+
       }, 1800);
     }
 
     /**
-     * Shake animation for error feedback
+     * Shake animation untuk error
      */
-    function shakeElement(element) {
-      element.style.animation = 'shake 0.5s ease';
+    function shakeButton(btn) {
+      btn.style.animation = 'shake 0.5s ease';
       setTimeout(() => {
-        element.style.animation = '';
+        btn.style.animation = '';
       }, 500);
     }
+
+    // Tambah keyframe shake secara dinamis
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-4px); }
+        80% { transform: translateX(4px); }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 
 </body>

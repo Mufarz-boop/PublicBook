@@ -1378,8 +1378,6 @@
       }
     }
   </style>
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 
@@ -1397,7 +1395,7 @@
       <div class="logo-text">Public<span>Book</span></div>
     </div>
     <nav>
-      <a href="{{ url_for('static_routes.index') }}" class="btn-nav"><i class="fas fa-arrow-left"></i> Kembali</a>
+      <button onclick="window.history.back()" class="btn-nav"><i class="fas fa-arrow-left"></i> Kembali</button>
     </nav>
   </header>
 
