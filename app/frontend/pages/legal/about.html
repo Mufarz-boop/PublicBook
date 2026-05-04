@@ -603,20 +603,19 @@
     /* Team Grid */
     .team-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
       margin: 24px 0 24px 68px;
     }
 
     .team-card {
-      padding: 28px 24px;
+      position: relative;
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      text-align: center;
-      transition: all var(--transition-base);
-      position: relative;
+      border-radius: var(--radius-lg);
       overflow: hidden;
+      transition: all var(--transition-base);
+      cursor: default;
     }
 
     .team-card::before {
@@ -625,56 +624,206 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent-orange), var(--accent-amber));
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-orange), var(--accent-amber), var(--accent-orange));
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
       opacity: 0;
       transition: opacity var(--transition-base);
     }
 
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     .team-card:hover {
-      border-color: var(--border-medium);
+      border-color: rgba(249, 115, 22, 0.25);
       background: var(--bg-card);
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-md);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 30px rgba(249, 115, 22, 0.08);
     }
 
     .team-card:hover::before {
       opacity: 1;
     }
 
+    .team-card-header {
+      position: relative;
+      padding: 40px 20px 20px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .team-card-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 120px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.08), rgba(245, 158, 11, 0.04));
+      mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    }
+
+    .team-avatar-wrap {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 16px;
+    }
+
     .team-avatar {
-      width: 72px;
-      height: 72px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(245, 158, 11, 0.08));
-      border: 2px solid rgba(249, 115, 22, 0.2);
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.18), rgba(245, 158, 11, 0.08));
+      border: 3px solid rgba(249, 115, 22, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 28px;
+      font-size: 36px;
       color: var(--accent-orange-light);
+      position: relative;
+      z-index: 1;
+      transition: all var(--transition-base);
+      box-shadow: 0 4px 20px rgba(249, 115, 22, 0.15);
+    }
+
+    .team-card:hover .team-avatar {
+      border-color: var(--accent-orange);
+      box-shadow: 0 8px 32px rgba(249, 115, 22, 0.3);
+      transform: scale(1.08);
+    }
+
+    .team-status {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      background: #22c55e;
+      border: 3px solid var(--bg-elevated);
+      border-radius: 50%;
+      z-index: 2;
+      transition: all var(--transition-base);
+    }
+
+    .team-card:hover .team-status {
+      border-color: var(--bg-card);
+      box-shadow: 0 0 8px #22c55e;
     }
 
     .team-name {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 17px;
+      font-size: 19px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
     }
 
     .team-role {
-      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(245, 158, 11, 0.06));
+      border: 1px solid rgba(249, 115, 22, 0.15);
+      border-radius: 100px;
+      font-size: 12px;
       color: var(--accent-orange-light);
-      font-weight: 500;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       margin-bottom: 12px;
     }
 
+    .team-card-body {
+      padding: 0 24px 24px;
+      text-align: center;
+    }
+
     .team-desc {
-      font-size: 13px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .team-skills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .team-skill-tag {
+      padding: 4px 12px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      font-size: 11px;
       color: var(--text-muted);
-      line-height: 1.6;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+
+    .team-skill-tag:hover {
+      border-color: rgba(249, 115, 22, 0.2);
+      color: var(--accent-orange-light);
+      background: rgba(249, 115, 22, 0.05);
+    }
+
+    .team-social {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .team-social a {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-social a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-amber));
+      opacity: 0;
+      transition: opacity var(--transition-base);
+    }
+
+    .team-social a:hover {
+      border-color: var(--accent-orange);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.25);
+    }
+
+    .team-social a:hover::before {
+      opacity: 1;
+    }
+
+    .team-social a i {
+      position: relative;
+      z-index: 1;
     }
 
     /* Stats Grid */
@@ -1144,6 +1293,7 @@
 
       .team-grid {
         grid-template-columns: repeat(2, 1fr);
+        margin-left: 0;
       }
 
       .stats-grid {
@@ -1210,6 +1360,7 @@
 
       .team-grid {
         grid-template-columns: 1fr;
+        margin-left: 0;
       }
 
       .stats-grid {
@@ -1227,6 +1378,8 @@
       }
     }
   </style>
+<base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -1282,11 +1435,11 @@
         </div>
       </div>
       <p>PublicBook lahir dari keprihatinan akan sistem pelayanan publik di Indonesia yang masih menghadapi fragmentasi, waktu tunggu panjang, dan pengalaman pengguna yang kurang optimal. Kami percaya bahwa teknologi harus menjadi jembatan, bukan tembok.</p>
-      
+
       <div class="highlight-box">
-        <p><i class="fas fa-bullseye"></i> <strong>Visi:</strong> Menjadikan Indonesia sebagai negara dengan sistem pelayanan publik terbaik di Asia Tenggara pada 2030 melalui transformasi digital yang inklusif, transparan, dan berpusat pada masyarakat.</p>
+        <p><i class="fas fa-bullseye"></i> <strong>Visi:</strong> Kami memiliki visi untuk mengembangkan suatu sistem yang memungkinkan masyarakat mengakses layanan publik secara lebih mudah, cepat dan efisien, sekaligus menghadirkan berbagai inovasi yang meningkatkan kualitas serta kemudahan dalam penyelenggaraan layanan publik.</p>
       </div>
-      
+
       <p>Misi kami diwujudkan melalui empat nilai inti yang kami junjung tinggi:</p>
       <ul>
         <li><strong>Citizen-Centric:</strong> Setiap fitur dirancang dari perspektif warga, bukan dari meja petugas.</li>
@@ -1294,6 +1447,10 @@
         <li><strong>Reliable:</strong> Sistem yang stabil, aman, dan dapat diandalkan 24/7.</li>
         <li><strong>Efficient:</strong> Mengurangi waktu tunggu dari 60–90 menit menjadi kurang dari 15 menit.</li>
       </ul>
+
+      <div class="highlight-box">
+        <p><i class="fas fa-database"></i> <strong>Berdasarkan Data Nyata:</strong> Setiap fitur PublicBook dirancang dari analisis 23.596 aduan Ombudsman RI (2025), survei UN E-Government Survey 2024, dan studi lapangan di kantor Dukcapil & instansi publik lainnya.</p>
+      </div>
     </section>
 
     <section class="legal-section" data-animate>
@@ -1304,32 +1461,106 @@
           <div class="section-line"></div>
         </div>
       </div>
-      <p>PublicBook dikembangkan oleh tim mahasiswa yang passionate dalam teknologi dan dampak sosial. Berikut adalah orang-orang di balik layar:</p>
-      
+      <p>PublicBook dikembangkan oleh tim siswa SMK jurusan Rekayasa Perangkat Lunak sebagai bagian dari proyek akademik untuk menerapkan pengetahuan teknologi dalam solusi pelayanan publik. Beriku adalah orang-orang dari balik layar:</p>
+
       <div class="team-grid">
         <div class="team-card">
-          <div class="team-avatar"><i class="fas fa-crown"></i></div>
-          <div class="team-name">Shafira Zahirah</div>
-          <div class="team-role">Team Lead & UI/UX</div>
-          <div class="team-desc">Koordinasi tim, desain interface, dan user experience</div>
+          <div class="team-card-header">
+            <div class="team-avatar-wrap">
+              <div class="team-avatar"><i class="fas fa-crown"></i></div>
+              <div class="team-status"></div>
+            </div>
+            <div class="team-name">Shafira Zahirah</div>
+            <div class="team-role"><i class="fas fa-star"></i> Team Lead & UI/UX</div>
+          </div>
+          <div class="team-card-body">
+            <div class="team-desc">Memimpin koordinasi tim secara end-to-end, merancang interface yang intuitif, dan memastikan pengalaman pengguna terbaik di setiap sentuhan layar.</div>
+            <div class="team-skills">
+              <span class="team-skill-tag">Leadership</span>
+              <span class="team-skill-tag">UI Design</span>
+              <span class="team-skill-tag">UX Research</span>
+              <span class="team-skill-tag">Figma</span>
+            </div>
+            <div class="team-social">
+              <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+              <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
         </div>
         <div class="team-card">
-          <div class="team-avatar"><i class="fas fa-code"></i></div>
-          <div class="team-name">Afdal Adha F.</div>
-          <div class="team-role">Frontend & Backend</div>
-          <div class="team-desc">Web development, API integration, database design</div>
+          <div class="team-card-header">
+            <div class="team-avatar-wrap">
+              <div class="team-avatar"><i class="fas fa-code"></i></div>
+              <div class="team-status"></div>
+            </div>
+            <div class="team-name">Afdal Adha Firnansyah</div>
+            <div class="team-role"><i class="fas fa-laptop-code"></i>Frontend & Backend</div>
+          </div>
+          <div class="team-card-body">
+            <div class="team-desc">Mengembangkan antarmuka responsif, mengintegrasikan API, dan mendesain struktur database yang efisien untuk performa maksimal.</div>
+            <div class="team-skills">
+              <span class="team-skill-tag">Python</span>
+              <span class="team-skill-tag">JS</span>
+              <span class="team-skill-tag">HTML</span>
+              <span class="team-skill-tag">CSS</span>
+              <span class="team-skill-tag">MySQL</span>
+            </div>
+            <div class="team-social">
+              <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+              <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
         </div>
         <div class="team-card">
-          <div class="team-avatar"><i class="fas fa-server"></i></div>
-          <div class="team-name">Arafa Syahputra</div>
-          <div class="team-role">Frontend & Backend</div>
-          <div class="team-desc">Server-side logic, database management, system architecture</div>
+          <div class="team-card-header">
+            <div class="team-avatar-wrap">
+              <div class="team-avatar"><i class="fas fa-cubes"></i></div>
+              <div class="team-status"></div>
+            </div>
+            <div class="team-name">Arafa Syahputra</div>
+            <div class="team-role"><i class="fas fa-diagram-project"></i> Frontend & Backend</div>
+          </div>
+          <div class="team-card-body">
+            <div class="team-desc">Menangani logika server-side, manajemen database, dan arsitektur sistem yang scalable untuk menjamin stabilitas platform.</div>
+            <div class="team-skills">
+              <span class="team-skill-tag">Python</span>
+              <span class="team-skill-tag">MySQL</span>
+              <span class="team-skill-tag">REST API</span>
+              <span class="team-skill-tag">Security</span>
+              <span class="team-skill-tag">WebSocket</span>
+            </div>
+            <div class="team-social">
+              <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+              <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
         </div>
         <div class="team-card">
-          <div class="team-avatar"><i class="fas fa-vial"></i></div>
-          <div class="team-name">Nasyilla Syifa</div>
-          <div class="team-role">Tester</div>
-          <div class="team-desc">Quality assurance, bug testing, user acceptance testing</div>
+          <div class="team-card-header">
+            <div class="team-avatar-wrap">
+              <div class="team-avatar"><i class="fas fa-vial"></i></div>
+              <div class="team-status"></div>
+            </div>
+            <div class="team-name">Nasyilla Syifa</div>
+            <div class="team-role"><i class="fas fa-shield-alt"></i> Quality Assurance</div>
+          </div>
+          <div class="team-card-body">
+            <div class="team-desc">Memastikan kualitas sistem melalui pengujian menyeluruh, identifikasi bug, dan validasi pengalaman pengguna sebelum rilis.</div>
+            <div class="team-skills">
+              <span class="team-skill-tag">Testing</span>
+              <span class="team-skill-tag">QA</span>
+              <span class="team-skill-tag">UAT</span>
+              <span class="team-skill-tag">Bug Tracking</span>
+            </div>
+            <div class="team-social">
+              <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+              <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1338,46 +1569,46 @@
       <div class="section-header">
         <div class="section-num">3</div>
         <div class="section-title-group">
-          <h2>Perjalanan Kami</h2>
+          <h2>Permasalahan yang Kami Jawab</h2>
           <div class="section-line"></div>
         </div>
       </div>
-      <p>PublicBook dimulai sebagai proyek tugas kelompok yang berkembang menjadi solusi nyata untuk masalah nyata. Berikut timeline perjalanan kami:</p>
-      
+      <p>PublicBook lahir bukan dari asumsi, melainkan dari data lapangan. Berikut realita pelayanan publik di Indonesia yang menjadi fondasi kami:</p>
+
       <div class="timeline">
         <div class="timeline-item">
-          <div class="timeline-dot"><i class="fas fa-lightbulb"></i></div>
+          <div class="timeline-dot"><i class="fas fa-exclamation-triangle"></i></div>
           <div class="timeline-content">
-            <h4>Agustus 2025 — Ide & Riset</h4>
-            <p>Identifikasi masalah antrean layanan publik melalui studi lapangan di kantor Dukcapil dan wawancara dengan masyarakat.</p>
+            <h4>23.596 Aduan Masuk ke Ombudsman RI (2025)</h4>
+            <p>40,68% aduan karena "tidak memberikan pelayanan", 21,25% karena penundaan berlarut. Rata-rata waktu tunggu di kantor fisik masih 60–90 menit. Ombudsman RI berhasil menyelamatkan potensi kerugian masyarakat sebesar Rp130,26 miliar.</p>
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot"><i class="fas fa-pencil-ruler"></i></div>
+          <div class="timeline-dot"><i class="fas fa-building"></i></div>
           <div class="timeline-content">
-            <h4>September 2025 — Perencanaan & Desain</h4>
-            <p>Penyusunan PRD, wireframing, dan pembuatan prototype UI/UX menggunakan Figma. Tim terbentuk dengan pembagian peran yang jelas.</p>
+            <h4>Pemda & Kementerian Paling Banyak Dilaporkan</h4>
+            <p>4.766 laporan ke pemerintah daerah, 1.235 ke instansi pusat. Sektor agraria (1.495), kepegawaian (1.452), hak sipil & politik (717), dan kepolisian (713) mendominasi aduan.</p>
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot"><i class="fas fa-laptop-code"></i></div>
+          <div class="timeline-dot"><i class="fas fa-mobile-alt"></i></div>
           <div class="timeline-content">
-            <h4>Oktober 2025 — Pengembangan MVP</h4>
-            <p>Implementasi sistem booking, antrean real-time, QR Code generator, dan dashboard admin menggunakan Python, MySQL, dan vanilla web stack.</p>
+            <h4>27.000 Aplikasi Terpisah (Siloed Systems)</h4>
+            <p>Meski EGDI Indonesia naik ke peringkat 64 dunia (2024) dengan skor 0,7991, fragmentasi sistem masih menghambat warga. Registrasi ulang berkali-kali jadi norma. Pemerintah merespons dengan platform INA Digital.</p>
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot"><i class="fas fa-bug"></i></div>
+          <div class="timeline-dot"><i class="fas fa-universal-access"></i></div>
           <div class="timeline-content">
-            <h4>Maret 2026 — Testing & Iterasi</h4>
-            <p>User acceptance testing, perbaikan bug, pengoptimalan performa, dan penyempurnaan berdasarkan feedback pengguna uji coba.</p>
+            <h4>Kesenjangan Digital & Inklusivitas</h4>
+            <p>Mayoritas warga di pedesaan, lansia, dan difabel kesulitan akses digital. Digitalisasi tanpa literasi berisiko mengecualikan kelompok rentan. Infrastruktur lemah di daerah terpencil jadi penghambat utama.</p>
           </div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-dot"><i class="fas fa-rocket"></i></div>
+          <div class="timeline-dot"><i class="fas fa-hand-holding-usd"></i></div>
           <div class="timeline-content">
-            <h4>Mei 2026 — Launch & Demo</h4>
-            <p>PublicBook resmi diluncurkan untuk demo akademik dengan target pilot 3 instansi dan 100+ booking berhasil dalam 2 minggu.</p>
+            <h4>Pungli & Birokrasi Berbelit</h4>
+            <p>Ombudsman RI menyelamatkan potensi kerugian Rp130,26 miliar (2025). Pungutan liar, prosedur tidak jelas, dan sikap petugas yang kurang ramah masih jadi momok warga. 18,79% aduan terkait penyimpangan prosedur.</p>
           </div>
         </div>
       </div>
@@ -1387,33 +1618,41 @@
       <div class="section-header">
         <div class="section-num">4</div>
         <div class="section-title-group">
-          <h2>Angka & Pencapaian</h2>
+          <h2>Data & Fakta Layanan Publik Indonesia</h2>
           <div class="section-line"></div>
         </div>
       </div>
-      <p>Meski masih dalam tahap awal, kami bangga dengan pencapaian yang telah diraih bersama. Angka-angka ini adalah bukti komitmen kami:</p>
-      
+      <p>Angka-angka ini bukan sekadar statistik — ini adalah wajah nyata dari sistem yang sedang kami perbaiki bersama:</p>
+
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-number">4</div>
-          <div class="stat-label">Anggota Tim</div>
+          <div class="stat-number">23.596</div>
+          <div class="stat-label">Aduan ke Ombudsman RI (2025)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">8</div>
-          <div class="stat-label">Bulan Pengembangan</div>
+          <div class="stat-number">40,68%</div>
+          <div class="stat-label">Aduan: Tidak Diberi Pelayanan</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">15+</div>
-          <div class="stat-label">Fitur Dibangun</div>
+          <div class="stat-number">21,25%</div>
+          <div class="stat-label">Aduan: Penundaan Berlarut</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">3</div>
-          <div class="stat-label">Instansi Pilot</div>
+          <div class="stat-number">27.000+</div>
+          <div class="stat-label">Aplikasi Layanan Terpisah</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">64</div>
+          <div class="stat-label">Peringkat EGDI Dunia (2024)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Rp130,26 M</div>
+          <div class="stat-label">Potensi Kerugian Diselamatkan (2025)</div>
         </div>
       </div>
-      
+
       <div class="highlight-box">
-        <p><i class="fas fa-trophy"></i> <strong>Target MVP:</strong> 100+ booking berhasil dalam 2 minggu pilot, NPS ≥ 50, dan pengurangan waktu tunggu ≥ 75% di lokasi pilot.</p>
+        <p><i class="fas fa-lightbulb"></i> <strong>Misi PublicBook:</strong> Mengurangi waktu tunggu dari 60–90 menit menjadi &lt;15 menit, menyatukan fragmentasi 27.000+ aplikasi melalui satu portal booking, dan memastikan tidak ada warga tertinggal akibat kesenjangan digital.</p>
       </div>
     </section>
 
@@ -1449,7 +1688,7 @@
           <div class="icon-wrap"><i class="fas fa-envelope"></i></div>
           <div class="contact-info">
             <span class="contact-label">Email</span>
-            <span class="contact-value">hello@publicbook.id</span>
+            <span class="contact-value">publicbookdeveloper@gmail.com</span>
           </div>
         </div>
         <div class="contact-item">
@@ -1463,7 +1702,7 @@
           <div class="icon-wrap"><i class="fas fa-map-marker-alt"></i></div>
           <div class="contact-info">
             <span class="contact-label">Lokasi</span>
-            <span class="contact-value">Jakarta, Indonesia</span>
+            <span class="contact-value">Jln. Ir. H Juanda, Gampong Bundar, Kecamatan Karang Baru, Kabupaten Aceh Tamiang, Provinsi Aceh</span>
           </div>
         </div>
       </div>
