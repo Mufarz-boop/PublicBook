@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pengguna - PublicBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 50%, #FFA500 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100vh;
+            background: #fff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo {
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .logo-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #FF6B00, #FF8C00);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
+            color: #FF6B00;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #FF8C42, #FFB347);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .nav-item i {
+            width: 22px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 220px;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* ========== TOP HEADER ========== */
+        .top-header {
+            background: #fff;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title i {
+            color: #FF6B00;
+        }
+
+        /* ========== CONTENT AREA ========== */
+        .content-area {
+            padding: 25px 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* ========== PROFILE GRID ========== */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        /* ========== PROFILE INFO CARD ========== */
+        .profile-info-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .profile-avatar-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-item {
+            background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.15);
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #888;
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-active {
+            color: #10B981;
+        }
+
+        /* ========== QUEUE CARD ========== */
+        .queue-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            animation: fadeInUp 0.5s ease 0.1s both;
+        }
+
+        .queue-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .queue-number-label {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .queue-number {
+            font-size: 72px;
+            font-weight: 700;
+            color: #333;
+            line-height: 1;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .queue-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .queue-info-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .queue-info-item strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 992px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .top-header {
+                padding: 15px;
+            }
+
+            .content-area {
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .queue-number {
+                font-size: 56px;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <span class="logo-text">PublicBook</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard_pengguna.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Booking Saya</span>
+            </a>
+            <a href="layanan_pengguna.html" class="nav-item">
+                <i class="fas fa-list"></i>
+                <span>Layanan</span>
+            </a>
+            <a href="profil_pengguna.html" class="nav-item active">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                <span>Logout</span>
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOP HEADER -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-title">
+                    <i class="fas fa-user" style="font-size: 18px;"></i>
+                    <span>Profil</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT AREA -->
+        <div class="content-area">
+            <h1 class="page-title">Profil Pengguna</h1>
+
+            <!-- PROFILE GRID -->
+            <div class="profile-grid">
+                <!-- LEFT: PROFILE INFO -->
+                <div class="profile-info-card">
+                    <div class="profile-avatar-wrap">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face" alt="Ms. Hutao" class="profile-avatar">
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-item">
+                            <div class="info-label">Nama Lengkap</div>
+                            <div class="info-value">Hutao</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">hutao@gmail.com</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Nomor Telepon</div>
+                            <div class="info-value">+62 856-2782-4273</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">NIK</div>
+                            <div class="info-value">627275627275</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status Akun</div>
+                            <div class="info-value status-active">Active</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: QUEUE INFO -->
+                <div class="queue-card">
+                    <div class="queue-title">Pembuatan Kartu Keluarga</div>
+                    <div class="queue-number-label">Nomor Antrean</div>
+                    <div class="queue-number">124</div>
+                    <div class="queue-info">
+                        <div class="queue-info-item">
+                            Antrean saat ini: <strong>121</strong>
+                        </div>
+                        <div class="queue-info-item">
+                            Estimasi: <strong>20 Menit</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // Nav item click handler
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

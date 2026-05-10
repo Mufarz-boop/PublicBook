@@ -241,6 +241,7 @@
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
         }
 
         .user-profile:hover {
@@ -560,30 +561,30 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="../../admin/dashboard.html" class="nav-item active">
+            <a href="dashboard_admin.html" class="nav-item active">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="../../admin/pengguna.html" class="nav-item">
+            <a href="users_page.html" class="nav-item">
                 <i class="fas fa-user"></i>
                 <span>Users</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="services_page.html" class="nav-item">
                 <i class="fas fa-user-plus"></i>
                 <span>Services</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="booking_list_page.html" class="nav-item">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Booking List</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="security_page.html" class="nav-item">
                 <i class="fas fa-lock"></i>
                 <span>Security</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <button class="logout-btn">
+            <button class="logout-btn" onclick="alert('Logout berhasil!')">
                 <span>Logout</span>
                 <i class="fas fa-sign-out-alt"></i>
             </button>
@@ -608,10 +609,10 @@
                     <i class="fas fa-bell"></i>
                     <span class="notif-badge"></span>
                 </button>
-                <div class="user-profile">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="Ms. Hutan" class="user-avatar">
-                    <span class="user-name">Ms. Hutan</span>
-                </div>
+                <a href="profil_page.html" class="user-profile">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt="Ms. Hutao" class="user-avatar">
+                    <span class="user-name">Ms. Hutao</span>
+                </a>
             </div>
         </header>
 
@@ -783,7 +784,6 @@
         // Nav item click handler
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
-                e.preventDefault();
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 this.classList.add('active');
             });
