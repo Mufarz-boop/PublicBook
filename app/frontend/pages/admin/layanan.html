@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services Page - PublicBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 50%, #FFA500 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #fff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header-bg {
+            width: 100%;
+            height: 140px;
+            background: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&h=200&fit=crop') center/cover;
+            position: relative;
+        }
+
+        .sidebar-header-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+        }
+
+        .sidebar-header-content {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .sidebar-header-content .day {
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-header-content .date {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header-content .time {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 15px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
+            color: #FF6B00;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #FF8C42, #FFB347);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .nav-item i {
+            width: 22px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-footer {
+            padding: 15px 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 240px;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* ========== TOP HEADER ========== */
+        .top-header {
+            background: #fff;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title i {
+            color: #FF6B00;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notif-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #666;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .notif-btn:hover {
+            background: #f5f5f5;
+            color: #FF6B00;
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background: #E74C3C;
+            border-radius: 50%;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #FF8C42, #FFB347);
+            padding: 6px 16px 6px 6px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+        }
+
+        .user-name {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ========== CONTENT AREA ========== */
+        .content-area {
+            padding: 25px 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 25px;
+        }
+
+        /* ========== TABLE SECTION ========== */
+        .table-section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .table-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #FF6B00;
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .action-icons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            background: #fff;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .icon-btn:hover {
+            background: #f5f5f5;
+            border-color: #FF6B00;
+            color: #FF6B00;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead th {
+            background: #6c757d;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #eee;
+            white-space: nowrap;
+        }
+
+        .data-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .data-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .data-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: #FFF8F0;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            font-size: 13px;
+            color: #444;
+            border-bottom: 1px solid #f0f0f0;
+            white-space: nowrap;
+        }
+
+        .status-bar {
+            display: inline-block;
+            width: 80px;
+            height: 22px;
+            border-radius: 4px;
+            background: #2563EB;
+        }
+
+        .status-stopped {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-edit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: #FEE2E2;
+            color: #DC2626;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .action-edit:hover {
+            background: #FECACA;
+            transform: scale(1.1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+
+        .toggle-switch.active {
+            background: #2563EB;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        .action-delete {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: #FEE2E2;
+            color: #DC2626;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .action-delete:hover {
+            background: #FECACA;
+            transform: scale(1.1);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .top-header {
+                padding: 12px 15px;
+            }
+
+            .content-area {
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table thead th,
+            .data-table tbody td {
+                padding: 10px 12px;
+            }
+
+            .action-group {
+                gap: 4px;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table-section {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-header-bg"></div>
+            <div class="sidebar-header-content">
+                <div class="day" id="sidebarDay">Thursday</div>
+                <div class="date" id="sidebarDate">08 May 2025</div>
+                <div class="time" id="sidebarTime">08:51</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard_admin.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="users_page.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Users</span>
+            </a>
+            <a href="services_page.html" class="nav-item active">
+                <i class="fas fa-user-plus"></i>
+                <span>Services</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Booking List</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-lock"></i>
+                <span>Security</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                <span>Logout</span>
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOP HEADER -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-title">
+                    <i class="fas fa-bars" style="font-size: 18px;"></i>
+                    <span>Services</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="notif-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge"></span>
+                </button>
+                <div class="user-profile">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="Ms. Hutan" class="user-avatar">
+                    <span class="user-name">Ms. Hutan</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT AREA -->
+        <div class="content-area">
+            <h1 class="page-title">Services</h1>
+            <p class="page-subtitle">Kelola semua layanan publik yang dapat dipesan</p>
+
+            <!-- TABLE SECTION -->
+            <div class="table-section">
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search">
+                    </div>
+                    <div class="action-icons">
+                        <button class="icon-btn" title="Edit">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button class="icon-btn" title="Toggle">
+                            <i class="fas fa-toggle-on"></i>
+                        </button>
+                        <button class="icon-btn" title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>Nama Layanan</th>
+                                <th>Instansi</th>
+                                <th>Kuota/Hari</th>
+                                <th>Jam Operasional</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>Pembuatan KTP-el</strong></td>
+                                <td>Dinas Kependudukan, 150</td>
+                                <td>150</td>
+                                <td>08:00-14:00</td>
+                                <td><span class="status-bar"></span></td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
+                                        <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>Pendaftaran Nikah</strong></td>
+                                <td>Kantor Urusan Agama, 30</td>
+                                <td>30</td>
+                                <td>08:00-12:00</td>
+                                <td><span class="status-bar"></span></td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
+                                        <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>Pembuatan KTP-el</strong></td>
+                                <td>Dinas Kependudukan, 150</td>
+                                <td>150</td>
+                                <td>08:00-14:00</td>
+                                <td><span class="status-stopped">Sedang Dihentikan</span></td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
+                                        <button class="toggle-switch" onclick="toggleSwitch(this)"></button>
+                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><strong>Pengurus SIM</strong></td>
+                                <td>Polresta, 80</td>
+                                <td>80</td>
+                                <td>08:00-16:00</td>
+                                <td><span class="status-bar"></span></td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
+                                        <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
+                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><strong>Pendaftaran Vaksin</strong></td>
+                                <td>Dinas Kesehatan, 100</td>
+                                <td>100</td>
+                                <td>08:00-13:00</td>
+                                <td><span class="status-stopped">Sedang Dihentikan</span></td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
+                                        <button class="toggle-switch" onclick="toggleSwitch(this)"></button>
+                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Real-time clock
+        function updateClock() {
+            const now = new Date();
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            const dayName = days[now.getDay()];
+            const dateStr = String(now.getDate()).padStart(2, '0') + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            document.getElementById('sidebarDay').textContent = dayName;
+            document.getElementById('sidebarDate').textContent = dateStr;
+            document.getElementById('sidebarTime').textContent = timeStr;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // Toggle switch handler
+        function toggleSwitch(btn) {
+            btn.classList.toggle('active');
+            const row = btn.closest('tr');
+            const statusCell = row.querySelector('td:nth-child(6)');
+
+            if (btn.classList.contains('active')) {
+                statusCell.innerHTML = '<span class="status-bar"></span>';
+            } else {
+                statusCell.innerHTML = '<span class="status-stopped">Sedang Dihentikan</span>';
+            }
+        }
+
+        // Nav item click handler
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
