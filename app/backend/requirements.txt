@@ -19,7 +19,7 @@ gunicorn==23.0.0
 # === DATABASE ===
 # MySQL Driver (pakai salah satu)
 PyMySQL==1.1.1
-mysql-connector-python==9.1.0  # Alternatif
+# mysql-connector-python==9.1.0  # Alternatif
 
 # === AUTHENTICATION & SECURITY ===
 bcrypt==4.2.0
@@ -30,7 +30,7 @@ python-dotenv==1.0.1
 flask-socketio==5.4.1
 python-socketio==5.11.4
 eventlet==0.37.0
-gevent==24.11.1  # Alternatif untuk WebSocket
+# gevent==24.11.1  # Alternatif untuk WebSocket
 
 # === API & SERIALIZATION ===
 marshmallow==3.23.1
@@ -63,4 +63,4 @@ black==24.10.0
 flake8==7.1.1
 
 # === LOGGING & MONITORING ===
-sentry-sdk==2.19.2  # Production error tracking (opsional)
+# sentry-sdk==2.19.2  # Production error tracking (opsional)
