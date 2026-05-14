@@ -1,6 +1,7 @@
 publicbook/
 │
 ├── publicbook/               ← venv
+├── app/
 ├── backend/
 │   ├── app.py
 │   ├── config.py
@@ -84,8 +85,8 @@ publicbook/
 │           │   └── Icon PublicBook.jpg
 │           │
 │           └── avatars/
-│
 ├── .env
+├── .test_connection.py
 ├── .gitignore
 ├── README.md
 └── rincian.md
