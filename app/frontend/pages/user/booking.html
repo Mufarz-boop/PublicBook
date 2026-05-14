@@ -1,450 +1,136 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Pengguna - PublicBook</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+{% extends 'user/base.html' %}
+
+{% block title %}
+Booking Pengguna - PublicBook
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .content-area {
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 80px);
+    }
+
+    .booking-card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 50px 60px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+        animation: fadeInUp 0.6s ease forwards;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .booking-card::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(
+            135deg,
+            rgba(255,107,0,0.05),
+            rgba(255,140,0,0.02)
+        );
+        border-radius: 50%;
+    }
+
+    .booking-card::after {
+        content: '';
+        position: absolute;
+        bottom: -80px;
+        left: -80px;
+        width: 160px;
+        height: 160px;
+        background: linear-gradient(
+            135deg,
+            rgba(255,140,0,0.05),
+            rgba(255,107,0,0.02)
+        );
+        border-radius: 50%;
+    }
+
+    .qr-code-wrap {
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .qr-code {
+        width: 280px;
+        height: 280px;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+
+    .wait-time {
+        font-size: 16px;
+        font-weight: 500;
+        color: #555;
+        position: relative;
+        z-index: 1;
+    }
+
+    .wait-time strong {
+        color: #FF6B00;
+        font-weight: 600;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 50%, #FFA500 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        /* ========== SIDEBAR ========== */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 220px;
-            height: 100vh;
-            background: #fff;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-logo {
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .logo-icon {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, #FF6B00, #FF8C00);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 24px;
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
-        }
-
-        .logo-text {
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 20px 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: #555;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
-            color: #FF6B00;
-            transform: translateX(5px);
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, #FF8C42, #FFB347);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
-        }
-
-        .nav-item i {
-            width: 22px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .sidebar-footer {
-            padding: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .logout-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #E74C3C, #C0392B);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
-        }
-
-        /* ========== MAIN CONTENT ========== */
-        .main-content {
-            margin-left: 220px;
-            min-height: 100vh;
-            padding: 0;
-        }
-
-        /* ========== TOP HEADER ========== */
-        .top-header {
-            background: #fff;
-            padding: 15px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 22px;
-            color: #333;
-            cursor: pointer;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-title i {
-            color: #FF6B00;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-align: right;
-        }
-
-        .user-details h4 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 2px;
-        }
-
-        .user-details p {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        /* ========== CONTENT AREA ========== */
+    @media (max-width: 768px) {
         .content-area {
-            padding: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 80px);
+            padding: 20px;
         }
 
-        /* ========== BOOKING CARD ========== */
         .booking-card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 50px 60px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-            animation: fadeInUp 0.6s ease forwards;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .booking-card::before {
-            content: '';
-            position: absolute;
-            top: -100px;
-            right: -100px;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, rgba(255,107,0,0.05), rgba(255,140,0,0.02));
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .booking-card::after {
-            content: '';
-            position: absolute;
-            bottom: -80px;
-            left: -80px;
-            width: 160px;
-            height: 160px;
-            background: linear-gradient(135deg, rgba(255,140,0,0.05), rgba(255,107,0,0.02));
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .qr-code-wrap {
-            margin-bottom: 25px;
-            position: relative;
-            z-index: 1;
+            padding: 30px 25px;
         }
 
         .qr-code {
-            width: 280px;
-            height: 280px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            width: 220px;
+            height: 220px;
         }
+    }
+</style>
 
-        .wait-time {
-            font-size: 16px;
-            font-weight: 500;
-            color: #555;
-            position: relative;
-            z-index: 1;
-        }
+<div class="content-area">
 
-        .wait-time strong {
-            color: #FF6B00;
-            font-weight: 600;
-        }
+    <div class="booking-card">
 
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .top-header {
-                padding: 12px 15px;
-            }
-
-            .user-details {
-                display: none;
-            }
-
-            .content-area {
-                padding: 20px;
-            }
-
-            .booking-card {
-                padding: 30px 25px;
-            }
-
-            .qr-code {
-                width: 220px;
-                height: 220px;
-            }
-        }
-
-        /* Overlay for mobile */
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .overlay.show {
-            display: block;
-        }
-
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <div class="logo-icon">
-                <i class="fas fa-book-open"></i>
-            </div>
-            <span class="logo-text">PublicBook</span>
+        <div class="qr-code-wrap">
+            <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=PB-240410-001-BOOKING-PUBLICBOOK&color=333333&bgcolor=ffffff"
+                alt="QR Code Booking"
+                class="qr-code"
+            >
         </div>
 
-        <nav class="sidebar-nav">
-            <a href="../user/dashboard.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="../user/booking.html" class="nav-item active">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booking Saya</span>
-            </a>
-            <a href="../user/layanan.html" class="nav-item">
-                <i class="fas fa-list"></i>
-                <span>Layanan</span>
-            </a>
-            <a href="../user/profil.html" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Profil</span>
-            </a>
-        </nav>
+        <p class="wait-time">
+            Estimasi wait time :
+            <strong>20 minute</strong>
+        </p>
 
-        <div class="sidebar-footer">
-            <button class="logout-btn">
-                <span>Logout</span>
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
-        </div>
-    </aside>
+    </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- TOP HEADER -->
-        <header class="top-header">
-            <div class="header-left">
-                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="header-title">
-                    <i class="fas fa-calendar-check" style="font-size: 18px;"></i>
-                    <span>Booking Saya</span>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="user-info">
-                    <div class="user-details">
-                        <h4>Ms. Hutao</h4>
-                        <p>hutao@gmail.com</p>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt="Ms. Hutao" class="user-avatar">
-                </div>
-            </div>
-        </header>
+</div>
 
-        <!-- CONTENT AREA -->
-        <div class="content-area">
-            <!-- BOOKING CARD -->
-            <div class="booking-card">
-                <div class="qr-code-wrap">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=PB-240410-001-BOOKING-PUBLICBOOK&color=333333&bgcolor=ffffff" alt="QR Code Booking" class="qr-code">
-                </div>
-                <p class="wait-time">Estimasi wait time : <strong>20 minute</strong></p>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-
-        // Nav item click handler
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-    </script>
-</body>
-</html>
+{% endblock %}

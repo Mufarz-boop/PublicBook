@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layanan Pengguna - PublicBook</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{% extends 'user/base.html' %}
+
+{% block title %}
+Layanan Pengguna - PublicBook
+{% endblock %}
+
+{% block content %}
     <style>
         * {
             margin: 0;
@@ -366,116 +365,74 @@
             animation: fadeInUp 0.5s ease 0.1s both;
         }
     </style>
-</head>
-<body>
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <div class="logo-icon">
-                <i class="fas fa-book-open"></i>
-            </div>
-            <span class="logo-text">PublicBook</span>
-        </div>
+<div class="content-area">
 
-        <nav class="sidebar-nav">
-            <a href="../user/dashboard.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="../user/booking.html" class="nav-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>Booking Saya</span>
-            </a>
-            <a href="../user/layanan.html" class="nav-item active">
-                <i class="fas fa-list"></i>
-                <span>Layanan</span>
-            </a>
-            <a href="../user/profil.html" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Profil</span>
-            </a>
-        </nav>
+    <h1 class="page-title">
+    Layanan Pengguna
+    </h1>
 
-        <div class="sidebar-footer">
-            <button class="logout-btn">
-                <span>Logout</span>
-                <i class="fas fa-sign-out-alt"></i>
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+
+        <input
+            type="text"
+            placeholder="Cari Layanan..."
+        >
+    </div>
+
+    <div class="services-card">
+        <div class="service-item">
+            <span class="service-name">
+                Pembuatan Kartu Keluarga
+            </span>
+
+            <button class="btn-booking">
+                Booking
             </button>
         </div>
-    </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- TOP HEADER -->
-        <header class="top-header">
-            <div class="header-left">
-                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="header-title">
-                    <i class="fas fa-list" style="font-size: 18px;"></i>
-                    <span>Layanan</span>
-                </div>
-            </div>
-        </header>
+        <div class="service-item">
+            <span class="service-name">
+                Pembuatan Akta Kelahiran
+            </span> 
 
-        <!-- CONTENT AREA -->
-        <div class="content-area">
-            <h1 class="page-title">Layanan Pengguna</h1>
-
-            <!-- SEARCH BAR -->
-            <div class="search-section">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Cari layanan tersedia...">
-                </div>
-            </div>
-
-            <!-- SERVICES LIST -->
-            <div class="services-card">
-                <div class="service-item">
-                    <span class="service-name">Pembuatan Kartu Keluarga</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pembuatan Akta Kematian</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pembuatan Akta Kelahiran</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pengurusan Mutasi Penduduk</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pengurusan Surat Keterangan Usaha</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-            </div>
+            <button class="btn-booking">
+                Booking
+            </button>
         </div>
-    </main>
 
-    <script>
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
+        <div class="service-item">
+            <span class="service-name">
+                Pembuatan Akta Kematian
+            </span>
 
-        // Nav item click handler
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-    </script>
-</body>
-</html>
+            <button class="btn-booking">
+                Booking
+            </button>
+        </div>
+
+        <div class="service-item">
+            <span class="service-name">
+                Pengurusan Mutasi Penduduk
+            </span>
+
+            <button class="btn-booking">
+                Booking
+            </button>
+        </div>
+
+        <div class="service-item">
+            <span class="service-name">
+                Pengurusan Surat Keterangan Usaha
+            </span>
+
+            <button class="btn-booking">
+                Booking
+            </button>
+        </div>
+    </div>
+
+</div>  
+
+{% endblock %}
