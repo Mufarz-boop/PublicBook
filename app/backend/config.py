@@ -1,13 +1,47 @@
 # backend/config.py
-# Konfigurasi aplikasi PublicBook — sesuai .env (MySQL / phpMyAdmin)
+# Konfigurasi aplikasi PublicBook — sesuai .env (MySQL / phpMyAdmin / Laragon)
 
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# Load .env dari root project
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+# Cari .env di beberapa lokasi yang mungkin
+# Prioritas:
+#   1. Folder parent dari app/ (root project)
+#   2. Folder saat ini (app/backend/)
+#   3. Folder app/
+
+def find_env_file():
+    """Cari .env di beberapa lokasi"""
+    current_file = os.path.abspath(__file__)
+
+    # Lokasi yang mungkin
+    possible_paths = [
+        # 1. Root folder (parent dari app/)
+        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(current_file))), '.env'),
+        # 2. Folder app/ (sibling dari backend/)
+        os.path.join(os.path.dirname(os.path.dirname(current_file)), '.env'),
+        # 3. Folder backend/
+        os.path.join(os.path.dirname(current_file), '.env'),
+    ]
+
+    for path in possible_paths:
+        if os.path.exists(path):
+            print(f"✅ .env ditemukan di: {path}")
+            return path
+
+    # Kalau tidak ditemukan, return yang pertama sebagai default
+    print(f"⚠️  .env tidak ditemukan di lokasi manapun!")
+    print(f"   Dicari di:")
+    for p in possible_paths:
+        print(f"      - {p}")
+    return possible_paths[0]
+
+env_path = find_env_file()
+if os.path.exists(env_path):
+    load_dotenv(env_path)
+else:
+    print("⚠️  Menggunakan default config (tanpa .env)")
 
 
 class Config:
@@ -18,21 +52,20 @@ class Config:
     DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
     PORT = int(os.getenv('PORT', 5000))
 
-    # Database (MySQL dari .env — phpMyAdmin / XAMPP)
+    # Database (MySQL/MariaDB dari .env — Laragon)
     DB_HOST = os.getenv('DB_HOST', 'localhost')
     DB_PORT = int(os.getenv('DB_PORT', 3306))
-    DB_NAME = os.getenv('DB_NAME', 'db_publicbook')  # ← disesuaikan dengan SQL dump
+    DB_NAME = os.getenv('DB_NAME', 'db_publicbook')
     DB_USER = os.getenv('DB_USER', 'root')
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 
     # Full URI untuk SQLAlchemy (gunakan PyMySQL driver)
-    # expandvars() untuk support ${VAR} syntax di .env
-    SQLALCHEMY_DATABASE_URI = os.path.expandvars(
-        os.getenv(
-            'DATABASE_URI',
-            f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-        )
-    )
+    raw_uri = os.getenv('DATABASE_URI')
+    if raw_uri:
+        SQLALCHEMY_DATABASE_URI = os.path.expandvars(raw_uri)
+    else:
+        SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Security
@@ -44,7 +77,7 @@ class Config:
 
     # Upload
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'frontend', 'assets', 'uploads')
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend', 'assets', 'uploads')
 
     # Redis (Queue / Realtime)
     REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')

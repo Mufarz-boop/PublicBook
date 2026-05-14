@@ -1,97 +1,55 @@
 # backend/database/database.py
-# Setup koneksi database MySQL via SQLAlchemy
-# CATATAN: Table sudah dibuat via SQL dump phpMyAdmin — jangan recreate
+"""Database connection module untuk PublicBook
+Menggunakan SQLAlchemy engine dengan raw SQL execution
+Compatible dengan Laragon MySQL/MariaDB
+"""
 
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text, inspect
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker, scoped_session
+from flask import current_app
+import os
 
-# Instance global SQLAlchemy
-db = SQLAlchemy()
-
+# Engine akan diinisialisasi saat app startup
+engine = None
+Session = None
 
 def init_db(app):
-    """
-    Inisialisasi database dengan Flask app.
-    Table sudah ada di MySQL — hanya test koneksi & verify struktur.
+    """Inisialisasi database engine dengan app config"""
+    global engine, Session
 
-    Args:
-        app: Flask application instance
+    database_uri = app.config.get('SQLALCHEMY_DATABASE_URI')
+    if not database_uri:
+        raise ValueError("SQLALCHEMY_DATABASE_URI tidak ditemukan di config")
 
-    Returns:
-        db: SQLAlchemy instance yang sudah di-bind ke app
-    """
-    db.init_app(app)
+    # Create engine dengan PyMySQL
+    engine = create_engine(
+        database_uri,
+        pool_pre_ping=True,  # Cek koneksi sebelum dipakai
+        pool_recycle=3600,   # Recycle koneksi setelah 1 jam
+        echo=app.config.get('SQLALCHEMY_ECHO', False)
+    )
 
-    with app.app_context():
-        try:
-            # Test koneksi dengan query sederhana
-            db.session.execute(text('SELECT 1'))
-            print("✅ Database connected successfully!")
+    # Test koneksi
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT 1"))
+        assert result.scalar() == 1
+        print("✅ Database connected:", database_uri)
 
-            # Cek table yang tersedia di database
-            inspector = inspect(db.engine)
-            tables = inspector.get_table_names()
-            print(f"📋 Tables found: {', '.join(tables) if tables else 'None'}")
+    # Buat session factory
+    session_factory = sessionmaker(bind=engine)
+    Session = scoped_session(session_factory)
 
-            # Verifikasi table wajib ada
-            required_tables = {
-                'users', 'admins', 'layanan', 'bookings',
-                'riwayat_status', 'security_logs', 'statistik_harian'
-            }
-            missing = required_tables - set(tables)
-            if missing:
-                print(f"⚠️  Missing tables: {', '.join(missing)}")
-                print("   Run SQL dump di phpMyAdmin untuk membuat table.")
-            else:
-                print("✅ All required tables present!")
-
-        except Exception as e:
-            print(f"❌ Database connection failed: {e}")
-            raise
-
-    return db
-
+    return engine
 
 def get_db():
+    """Dapatkan database session
+    Usage: session = get_db()
     """
-    Helper untuk mendapatkan session database.
-    Gunakan ini di routes untuk query.
-
-    Returns:
-        SQLAlchemy session
-
-    Example:
-        from database.database import get_db
-        db = get_db()
-        users = db.session.query(User).all()
-    """
-    return db.session
-
+    if Session is None:
+        raise RuntimeError("Database belum diinisialisasi. Panggil init_db(app) dulu.")
+    return Session()
 
 def close_db(e=None):
-    """
-    Tutup database session setelah request selesai.
-    Dipasang sebagai teardown handler di app factory.
-    """
-    db.session.remove()
-
-
-def reset_db():
-    """
-    ⚠️ HATI-HATI: Drop semua table dan recreate.
-    Gunakan hanya untuk development/testing.
-    """
-    with db.engine.connect() as conn:
-        conn.execute(text("SET FOREIGN_KEY_CHECKS = 0"))
-        conn.commit()
-
-        # Drop semua table
-        db.drop_all()
-
-        conn.execute(text("SET FOREIGN_KEY_CHECKS = 1"))
-        conn.commit()
-
-    # Recreate (hanya kalau pakai model SQLAlchemy dengan create_all)
-    # db.create_all()
-    print("🔄 Database reset complete")
-    print("   ⚠️  Table kosong — import ulang SQL dump di phpMyAdmin")
+    """Tutup database session setelah request"""
+    if Session is not None:
+        Session.remove()
