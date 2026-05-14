@@ -1,6 +1,7 @@
 # backend/routes/auth_api.py
 from flask import Blueprint, request, jsonify, session
-from werkzeug.security import generate_password_hash, check_password_hash
+import bcrypt
+from werkzeug.security import check_password_hash  # ← legacy support
 from database.database import get_db
 from sqlalchemy import text
 import jwt
@@ -26,6 +27,27 @@ def generate_token(user_id, role, is_admin=False):
     payload = {'user_id': user_id, 'role': role, 'is_admin': is_admin, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60), 'iat': datetime.datetime.utcnow()}
     return jwt.encode(payload, current_app.config['JWT_SECRET_KEY'], algorithm='HS256')
 
+# ========== BCRYPT HELPERS ==========
+def hash_password(plain_password: str) -> str:
+    """Hash password dengan bcrypt"""
+    password_bytes = plain_password.encode('utf-8')
+    salt = bcrypt.gensalt(rounds=12)
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verifikasi password — support bcrypt & scrypt/werkzeug legacy"""
+    if not hashed_password:
+        return False
+    # bcrypt format
+    if hashed_password.startswith('$2'):
+        password_bytes = plain_password.encode('utf-8')
+        hashed_bytes = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_bytes)
+    # scrypt / pbkdf2 legacy (Werkzeug)
+    return check_password_hash(hashed_password, plain_password)
+# ====================================
+
 @bp.route('/register', methods=['POST'])
 def api_register():
     payload = request.get_json(silent=True) or {}
@@ -50,7 +72,7 @@ def api_register():
     pw_col = 'password' if 'password' in colset else ('password_hash' if 'password_hash' in colset else None)
     if not pw_col:
         return jsonify({'ok': False, 'message': 'Kolom password tidak ditemukan'}), 500
-    actual[pw_col] = generate_password_hash(password)
+    actual[pw_col] = hash_password(password)
     if 'status' in colset: actual['status'] = 'active'
     keys = ', '.join(actual.keys())
     placeholders = ', '.join([f':{k}' for k in actual.keys()])
@@ -73,7 +95,7 @@ def api_login():
     admin = _get_admin_by_email(db_session, email)
     if admin:
         admin_pw = admin.get('password') or admin.get('password_hash', '')
-        if check_password_hash(admin_pw, password):
+        if verify_password(password, admin_pw):
             token = generate_token(admin['id'], admin.get('role', 'admin_instansi'), is_admin=True)
             session['user_id'] = admin['id']
             session['role'] = admin.get('role', 'admin_instansi')
@@ -81,13 +103,14 @@ def api_login():
             session['token'] = token
             return jsonify({'ok': True, 'message': 'Login berhasil', 'role': admin.get('role', 'admin_instansi'), 'token': token}), 200
     user, colset, pw_col = _get_user_by_email(db_session, email)
-    if user and pw_col and check_password_hash(user[pw_col], password):
-        token = generate_token(user['id'], 'user', is_admin=False)
-        session['user_id'] = user['id']
-        session['role'] = 'user'
-        session['is_admin'] = False
-        session['token'] = token
-        return jsonify({'ok': True, 'message': 'Login berhasil', 'role': 'user', 'token': token}), 200
+    if user and pw_col:
+        if verify_password(password, user[pw_col]):
+            token = generate_token(user['id'], 'user', is_admin=False)
+            session['user_id'] = user['id']
+            session['role'] = 'user'
+            session['is_admin'] = False
+            session['token'] = token
+            return jsonify({'ok': True, 'message': 'Login berhasil', 'role': 'user', 'token': token}), 200
     return jsonify({'ok': False, 'message': 'Email atau password salah'}), 401
 
 @bp.route('/logout', methods=['POST'])
@@ -123,13 +146,13 @@ def api_reset_password():
     db_session = get_db()
     user, colset, pw_col = _get_user_by_email(db_session, email)
     if user and pw_col:
-        db_session.execute(text(f"UPDATE users SET {pw_col} = :pw WHERE email = :email"), {'pw': generate_password_hash(new_password), 'email': email})
+        db_session.execute(text(f"UPDATE users SET {pw_col} = :pw WHERE email = :email"), {'pw': hash_password(new_password), 'email': email})
         db_session.commit()
         return jsonify({'ok': True, 'message': 'Password berhasil direset'}), 200
     admin = _get_admin_by_email(db_session, email)
     if admin:
         pw_col = 'password' if 'password' in admin else 'password_hash'
-        db_session.execute(text(f"UPDATE admins SET {pw_col} = :pw WHERE email = :email"), {'pw': generate_password_hash(new_password), 'email': email})
+        db_session.execute(text(f"UPDATE admins SET {pw_col} = :pw WHERE email = :email"), {'pw': hash_password(new_password), 'email': email})
         db_session.commit()
         return jsonify({'ok': True, 'message': 'Password berhasil direset'}), 200
     return jsonify({'ok': False, 'message': 'Email tidak ditemukan'}), 404

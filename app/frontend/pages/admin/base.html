@@ -11,6 +11,7 @@
   <!-- CSS Admin shared -->
   <link rel="stylesheet" href="/assets/css/admin.css">
 
+<base target="_blank">
 </head>
 <body>
   <!-- Overlay for mobile -->
@@ -28,33 +29,33 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a href="/admin/dashboard" class="nav-item {% block nav_dashboard_active %}{% endblock %}">
+      <a href="{{ url_for('admin_routes.dashboard') }}" class="nav-item {% block nav_dashboard_active %}{% endblock %}">
         <i class="fas fa-home"></i>
         <span>Dashboard</span>
       </a>
-      <a href="/admin/pengguna" class="nav-item {% block nav_pengguna_active %}{% endblock %}">
+      <a href="{{ url_for('admin_routes.pengguna') }}" class="nav-item {% block nav_pengguna_active %}{% endblock %}">
         <i class="fas fa-user"></i>
         <span>Users</span>
       </a>
-      <a href="/admin/layanan" class="nav-item {% block nav_layanan_active %}{% endblock %}">
+      <a href="{{ url_for('admin_routes.layanan') }}" class="nav-item {% block nav_layanan_active %}{% endblock %}">
         <i class="fas fa-user-plus"></i>
         <span>Services</span>
       </a>
-      <a href="/admin/booking-list" class="nav-item {% block nav_booking_active %}{% endblock %}">
+      <a href="{{ url_for('admin_routes.booking_list') }}" class="nav-item {% block nav_booking_active %}{% endblock %}">
         <i class="fas fa-calendar-alt"></i>
         <span>Booking List</span>
       </a>
-      <a href="/admin/security" class="nav-item {% block nav_security_active %}{% endblock %}">
+      <a href="{{ url_for('admin_routes.security') }}" class="nav-item {% block nav_security_active %}{% endblock %}">
         <i class="fas fa-lock"></i>
         <span>Security</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
-      <button class="logout-btn" onclick="alert('Logout berhasil!')">
+      <a href="{{ url_for('auth_routes.logout') }}" class="logout-btn">
         <span>Logout</span>
         <i class="fas fa-sign-out-alt"></i>
-      </button>
+      </a>
     </div>
   </aside>
 
@@ -77,7 +78,7 @@
           <i class="fas fa-bell"></i>
           <span class="notif-badge"></span>
         </button>
-        <a href="/admin/profil" class="user-profile">
+        <a href="{{ url_for('admin_routes.profil') }}" class="user-profile">
           <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt="Admin" class="user-avatar">
           <span class="user-name">Ms. Hutao</span>
         </a>
@@ -146,4 +147,3 @@
   </script>
 </body>
 </html>
-

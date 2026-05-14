@@ -1,5 +1,4 @@
-# backend/routes/auth.py
-from flask import Blueprint, render_template, redirect, url_for, session
+from flask import Blueprint, render_template, redirect, url_for, session, flash
 
 bp = Blueprint('auth_routes', __name__)
 
@@ -20,3 +19,10 @@ def register_page():
 @bp.route('/forgot-password')
 def forgot_password():
     return render_template('auth/forgot_password.html')
+
+@bp.route('/logout')
+def logout():
+    """Logout user/admin — clear session dan redirect ke landing page"""
+    session.clear()
+    flash('Anda telah logout', 'info')
+    return redirect('/')
