@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin Page - PublicBook</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
     <style>
         * {
             margin: 0;
@@ -543,250 +542,110 @@
             animation: fadeInUp 0.6s ease 0.5s both;
         }
     </style>
-</head>
-<body>
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-header-bg"></div>
-            <div class="sidebar-header-content">
-                <div class="day" id="sidebarDay">Thursday</div>
-                <div class="date" id="sidebarDate">08 May 2025</div>
-                <div class="time" id="sidebarTime">08:51</div>
+<div class="content-area">
+    <div class="statr-grid">
+        <div class="stat-card">Total Booking<br>Hari Ini</div>
+        <div class="stat-value-row">
+            <span class="stat-value">245</span>
+            <div class="stat-icon orange">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
             </div>
         </div>
-
-        <nav class="sidebar-nav">
-            <a href="../admin/dashboard.html" class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="../admin/pengguna.html" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Users</span>
-            </a>
-            <a href="../admin/layanan.html" class="nav-item">
-                <i class="fas fa-user-plus"></i>
-                <span>Services</span>
-            </a>
-            <a href="../admin/booking-list.html" class="nav-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Booking List</span>
-            </a>
-            <a href="../admin/security.html" class="nav-item">
-                <i class="fas fa-lock"></i>
-                <span>Security</span>
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <button class="logout-btn" onclick="alert('Logout berhasil!')">
-                <span>Logout</span>
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
+        <div class="stat-card">
+            <div class="stat-label">Total Booking<br>Bulan Ini</div>
+            <div class="stat-value-row">
+                <span class="stat-value">1,248</span>
+                <div class="stat-icon green">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
         </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- TOP HEADER -->
-        <header class="top-header">
-            <div class="header-left">
-                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
+        <div class="stat-card">
+            <div class="stat-label">Total Pengguna<br>Terdaftar</div>
+            <div class="stat-value-row">
+                <span class="stat-value">3,892</span>
+                <div class="stat-icon blue">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Layanan<br>Aktif</div>
+            <div class="stat-value-row">
+                <span class="stat-value">28</span>
+                <div class="stat-icon purple">
+                    <i class="fas fa-trophy"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="table-section">
+        <div class="table-header">
+            <h3 class="table-title">Booking Terbaru</h3>
+            <div class="table-actions">
+                <button class="btn-filter">
+                    <i class="fas fa-filter"></i> Filter
                 </button>
-                <div class="header-title">
-                    <i class="fas fa-bars" style="font-size: 18px;"></i>
-                    <span>Dashboard</span>
-                </div>
-            </div>
-            <div class="header-right">
-                <button class="notif-btn">
-                    <i class="fas fa-bell"></i>
-                    <span class="notif-badge"></span>
+                <button class="btn-filter">
+                    <i class="fas fa-download"></i> Export
                 </button>
-                <a href="../admin/profil.html" class="user-profile">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt="Ms. Hutao" class="user-avatar">
-                    <span class="user-name">Ms. Hutao</span>
-                </a>
-            </div>
-        </header>
-
-        <!-- CONTENT AREA -->
-        <div class="content-area">
-            <!-- STATS CARDS -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Booking<br>Hari Ini</div>
-                    <div class="stat-value-row">
-                        <span class="stat-value">245</span>
-                        <div class="stat-icon orange">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label">Total Booking<br>Bulan Ini</div>
-                    <div class="stat-value-row">
-                        <span class="stat-value">1,248</span>
-                        <div class="stat-icon green">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label">Total Pengguna<br>Terdaftar</div>
-                    <div class="stat-value-row">
-                        <span class="stat-value">3,892</span>
-                        <div class="stat-icon blue">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label">Total Layanan<br>Aktif</div>
-                    <div class="stat-value-row">
-                        <span class="stat-value">28</span>
-                        <div class="stat-icon purple">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TABLE SECTION -->
-            <div class="table-section">
-                <div class="table-header">
-                    <h3 class="table-title">Booking Terbaru</h3>
-                    <div class="table-actions">
-                        <button class="btn-filter"><i class="fas fa-filter"></i> Filter</button>
-                        <button class="btn-filter"><i class="fas fa-download"></i> Export</button>
-                    </div>
-                </div>
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>User</th>
-                                <th>Layanan</th>
-                                <th>Instansi</th>
-                                <th>Waktu Booking</th>
-                                <th>Status Booking</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><strong>H. Karyadi</strong></td>
-                                <td>Pembuatan Kartu Keluarga (KK)</td>
-                                <td>Dukcapil</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><strong>Irwan Sukiman</strong></td>
-                                <td>Pembuatan Kartu Keluarga (KK)</td>
-                                <td>Dukcapil</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><strong>Udin Kuswanto</strong></td>
-                                <td>Pengurusan KTP Elektronik</td>
-                                <td>Dukcapil</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><strong>Hafidz Al-Farisi</strong></td>
-                                <td>Pengurusan BPJS Kesehatan Baru</td>
-                                <td>BPJS / Dinas Kesehatan</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td><strong>Ahmad Fauzi</strong></td>
-                                <td>Pengurusan BPJS Kesehatan Baru</td>
-                                <td>BPJS / Dinas Kesehatan</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td><strong>Andi Syahputra</strong></td>
-                                <td>Pembuatan Kartu Keluarga (KK)</td>
-                                <td>Dukcapil</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td><strong>Rizal Hidayat</strong></td>
-                                <td>Pembuatan Surat Keterangan Domisili</td>
-                                <td>Kantor Desa</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td><strong>Yudi Ahmad</strong></td>
-                                <td>Pengurusan KTP Elektronik</td>
-                                <td>Dukcapil</td>
-                                <td>Saturday, 12 April 2026</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
-    </main>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>User</th>
+                        <th>Layanan</th>
+                        <th>Instansi</th>
+                        <th>Waktu Booking</th>
+                        <th>Status Booking</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><strong>H. Karyadi</strong></td>
+                        <td>Pembuatan Kartu Keluarga (KK)</td>
+                        <td>Dukcapil</td>
+                        <td>Saturday, 12 April 2026</td>
+                        <td>
+                            <span class="status-badge status-pending">
+                                Pending
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><strong>Irwan Sukiman</strong></td>
+                        <td>Pembuatan Kartu Keluarga (KK)</td>
+                        <td>Dukcapil</td>
+                        <td>Saturday, 12 April 2026</td>
+                        <td>
+                            <span class="status-badge status-pending">
+                                Pending
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><strong>Udin Kuswanto</strong></td>
+                        <td>Pengurusan KTP Elektronik</td>
+                        <td>Dukcapil</td>
+                        <td>Saturday, 12 April 2026</td>
+                        <td>
+                            <span class="status-badge status-pending">
+                                Pending
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-    <script>
-        // Real-time clock
-        function updateClock() {
-            const now = new Date();
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-            const dayName = days[now.getDay()];
-            const dateStr = String(now.getDate()).padStart(2, '0') + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
-            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-
-            document.getElementById('sidebarDay').textContent = dayName;
-            document.getElementById('sidebarDate').textContent = dateStr;
-            document.getElementById('sidebarTime').textContent = timeStr;
-        }
-
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-
-        // Nav item click handler
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-    </script>
-</body>
-</html>
+{% endblock %}

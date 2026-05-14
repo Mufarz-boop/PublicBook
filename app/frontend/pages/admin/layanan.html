@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services Page - PublicBook</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Layanan{% endblock %}
+
+{% block content %}
     <style>
         * {
             margin: 0;
@@ -585,246 +583,117 @@
             animation: fadeInUp 0.5s ease forwards;
         }
     </style>
-</head>
-<body>
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-header-bg"></div>
-            <div class="sidebar-header-content">
-                <div class="day" id="sidebarDay">Thursday</div>
-                <div class="date" id="sidebarDate">08 May 2025</div>
-                <div class="time" id="sidebarTime">08:51</div>
+    <div class="content-area">
+    <h1 class="page-title">Services</h1>
+    <p class="page-subtitle">
+        Kelola semua layanan publik yang dapat dipesan
+    </p>
+
+    <div class="table-section">
+        <div class="table-controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+
+                <input type="text" placeholder="Search">
             </div>
-        </div>
 
-        <nav class="sidebar-nav">
-            <a href="../admin/dashboard.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="../admin/pengguna.html" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Users</span>
-            </a>
-            <a href="../admin/layanan.html" class="nav-item active">
-                <i class="fas fa-user-plus"></i>
-                <span>Services</span>
-            </a>
-            <a href="../admin/booking-list.html" class="nav-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Booking List</span>
-            </a>
-            <a href="../admin/security.html" class="nav-item">
-                <i class="fas fa-lock"></i>
-                <span>Security</span>
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <button class="logout-btn">
-                <span>Logout</span>
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- TOP HEADER -->
-        <header class="top-header">
-            <div class="header-left">
-                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
+            <div class="action-icons">
+                <button class="icon-btn">
+                    <i class="fas fa-pencil-alt"></i>
                 </button>
-                <div class="header-title">
-                    <i class="fas fa-bars" style="font-size: 18px;"></i>
-                    <span>Services</span>
-                </div>
-            </div>
-            <div class="header-right">
-                <button class="notif-btn">
-                    <i class="fas fa-bell"></i>
-                    <span class="notif-badge"></span>
+
+                <button class="icon-btn">
+                    <i class="fas fa-toggle-on"></i>
                 </button>
-                <a href="../admin/profil.html" class="user-profile">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="Ms. Hutan" class="user-avatar">
-                    <span class="user-name">Ms. Hutan</span>
-                </a>
-            </div>
-        </header>
 
-        <!-- CONTENT AREA -->
-        <div class="content-area">
-            <h1 class="page-title">Services</h1>
-            <p class="page-subtitle">Kelola semua layanan publik yang dapat dipesan</p>
-
-            <!-- TABLE SECTION -->
-            <div class="table-section">
-                <div class="table-controls">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search">
-                    </div>
-                    <div class="action-icons">
-                        <button class="icon-btn" title="Edit">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button class="icon-btn" title="Toggle">
-                            <i class="fas fa-toggle-on"></i>
-                        </button>
-                        <button class="icon-btn" title="Delete">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>NO</th>
-                                <th>Nama Layanan</th>
-                                <th>Instansi</th>
-                                <th>Kuota/Hari</th>
-                                <th>Jam Operasional</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><strong>Pembuatan KTP-el</strong></td>
-                                <td>Dinas Kependudukan, 150</td>
-                                <td>150</td>
-                                <td>08:00-14:00</td>
-                                <td><span class="status-bar"></span></td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
-                                        <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
-                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><strong>Pendaftaran Nikah</strong></td>
-                                <td>Kantor Urusan Agama, 30</td>
-                                <td>30</td>
-                                <td>08:00-12:00</td>
-                                <td><span class="status-bar"></span></td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
-                                        <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
-                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><strong>Pembuatan KTP-el</strong></td>
-                                <td>Dinas Kependudukan, 150</td>
-                                <td>150</td>
-                                <td>08:00-14:00</td>
-                                <td><span class="status-stopped">Sedang Dihentikan</span></td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
-                                        <button class="toggle-switch" onclick="toggleSwitch(this)"></button>
-                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><strong>Pengurus SIM</strong></td>
-                                <td>Polresta, 80</td>
-                                <td>80</td>
-                                <td>08:00-16:00</td>
-                                <td><span class="status-bar"></span></td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
-                                        <button class="toggle-switch active" onclick="toggleSwitch(this)"></button>
-                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td><strong>Pendaftaran Vaksin</strong></td>
-                                <td>Dinas Kesehatan, 100</td>
-                                <td>100</td>
-                                <td>08:00-13:00</td>
-                                <td><span class="status-stopped">Sedang Dihentikan</span></td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
-                                        <button class="toggle-switch" onclick="toggleSwitch(this)"></button>
-                                        <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <button class="icon-btn">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
             </div>
         </div>
-    </main>
 
-    <script>
-        // Real-time clock
-        function updateClock() {
-            const now = new Date();
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>NO</th>
+                        <th>Nama Layanan</th>
+                        <th>Instansi</th>
+                        <th>Kuota/Hari</th>
+                        <th>Jam Operasional</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
 
-            const dayName = days[now.getDay()];
-            const dateStr = String(now.getDate()).padStart(2, '0') + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
-            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+                <tbody>
 
-            document.getElementById('sidebarDay').textContent = dayName;
-            document.getElementById('sidebarDate').textContent = dateStr;
-            document.getElementById('sidebarTime').textContent = timeStr;
+                    <tr>
+                        <td>1</td>
+                        <td><strong>Pembuatan KTP-el</strong></td>
+                        <td>Dinas Kependudukan, 150</td>
+                        <td>150</td>
+                        <td>08:00-14:00</td>
+                        <td><span class="status-bar"></span></td>
+
+                        <td>
+                            <div class="action-group">
+                                <button class="action-edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+
+                                <button class="toggle-switch active"
+                                    onclick="toggleSwitch(this)">
+                                </button>
+
+                                <button class="action-delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>2</td>
+                        <td><strong>Pendaftaran Nikah</strong></td>
+                        <td>Kantor Urusan Agama, 30</td>
+                        <td>30</td>
+                        <td>08:00-12:00</td>
+                        <td><span class="status-bar"></span></td>
+                        <td>
+                            <div class="action-group">
+                                <button class="action-edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="toggle-switch active"
+                                    onclick="toggleSwitch(this)">
+                                </button>
+                                <button class="action-delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleSwitch(btn) {
+        btn.classList.toggle('active');
+
+        const row = btn.closest('tr');
+        const statusCell = row.querySelector('td:nth-child(6)');
+
+        if (btn.classList.contains('active')) {
+            statusCell.innerHTML = '<span class="status-bar"></span>';
+        } else {
+            statusCell.innerHTML =
+                '<span class="status-stopped">Sedang Dihentikan</span>';
         }
+    }
+</script>
 
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-
-        // Toggle switch handler
-        function toggleSwitch(btn) {
-            btn.classList.toggle('active');
-            const row = btn.closest('tr');
-            const statusCell = row.querySelector('td:nth-child(6)');
-
-            if (btn.classList.contains('active')) {
-                statusCell.innerHTML = '<span class="status-bar"></span>';
-            } else {
-                statusCell.innerHTML = '<span class="status-stopped">Sedang Dihentikan</span>';
-            }
-        }
-
-        // Nav item click handler
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-    </script>
-</body>
-</html>
+{% endblock %}
