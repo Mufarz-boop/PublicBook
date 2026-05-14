@@ -553,17 +553,29 @@
       btn.disabled = true;
       btn.style.opacity = '0.85';
 
-      // Simulate API call (ganti dengan fetch ke backend)
-      setTimeout(() => {
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nama, email, telepon, password })
+      })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) {
+          throw new Error(data.message || 'Registrasi gagal');
+        }
+        return data;
+      })
+      .then(() => {
+        window.location.href = '/login';
+      })
+      .catch((err) => {
+        alert(err.message || 'Registrasi gagal');
         // Reset button
         btn.innerHTML = originalText;
         btn.disabled = false;
         btn.style.opacity = '1';
+      });
 
-        // Redirect ke login (nanti ganti dengan response API)
-        window.location.href = '/login';
-
-      }, 1800);
     }
 
     /**

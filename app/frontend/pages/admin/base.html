@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}PublicBook Admin{% endblock %}</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS Admin shared -->
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+</head>
+<body>
+  <!-- Overlay for mobile -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-header-bg"></div>
+      <div class="sidebar-header-content">
+        <div class="day" id="sidebarDay">Thursday</div>
+        <div class="date" id="sidebarDate">08 May 2025</div>
+        <div class="time" id="sidebarTime">08:51</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard" class="nav-item {% block nav_dashboard_active %}{% endblock %}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/admin/pengguna" class="nav-item {% block nav_pengguna_active %}{% endblock %}">
+        <i class="fas fa-user"></i>
+        <span>Users</span>
+      </a>
+      <a href="/admin/layanan" class="nav-item {% block nav_layanan_active %}{% endblock %}">
+        <i class="fas fa-user-plus"></i>
+        <span>Services</span>
+      </a>
+      <a href="/admin/booking-list" class="nav-item {% block nav_booking_active %}{% endblock %}">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Booking List</span>
+      </a>
+      <a href="/admin/security" class="nav-item {% block nav_security_active %}{% endblock %}">
+        <i class="fas fa-lock"></i>
+        <span>Security</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="alert('Logout berhasil!')">
+        <span>Logout</span>
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- TOP HEADER -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="header-title">
+          <i class="fas fa-bars" style="font-size: 18px;"></i>
+          <span>{% block header_title %}Dashboard{% endblock %}</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button class="notif-btn">
+          <i class="fas fa-bell"></i>
+          <span class="notif-badge"></span>
+        </button>
+        <a href="/admin/profil" class="user-profile">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt="Admin" class="user-avatar">
+          <span class="user-name">Ms. Hutao</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Page specific content -->
+    <div class="content-area">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <script>
+    // Real-time clock
+    function updateClock() {
+      const now = new Date();
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+      const dayName = days[now.getDay()];
+      const dateStr = String(now.getDate()).padStart(2, '0') + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+      const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+      const elDay = document.getElementById('sidebarDay');
+      const elDate = document.getElementById('sidebarDate');
+      const elTime = document.getElementById('sidebarTime');
+
+      if (elDay) elDay.textContent = dayName;
+      if (elDate) elDate.textContent = dateStr;
+      if (elTime) elTime.textContent = timeStr;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      if (sidebar) sidebar.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('show');
+    }
+
+    // Set active class based on current URL (fallback if block_* is not used)
+    (function () {
+      const path = window.location.pathname || '';
+      const map = {
+        '/admin/dashboard': 'nav_dashboard_active',
+        '/admin/pengguna': 'nav_pengguna_active',
+        '/admin/layanan': 'nav_layanan_active',
+        '/admin/booking-list': 'nav_booking_active',
+        '/admin/security': 'nav_security_active'
+      };
+      const key = map[path];
+      if (!key) return;
+
+      document.querySelectorAll('.nav-item').forEach(a => {
+        a.classList.remove('active');
+      });
+
+      // naive but effective: activate based on href
+      document.querySelectorAll('.nav-item').forEach(a => {
+        if (a.getAttribute('href') === path) a.classList.add('active');
+      });
+    })();
+  </script>
+</body>
+</html>
+

@@ -1,3 +1,7 @@
+# database
+app/backend/database/database.py
+app/backend/database/db_publicbook (2).sql
+
 # Virtual Environment
 publicbook/
 venv/

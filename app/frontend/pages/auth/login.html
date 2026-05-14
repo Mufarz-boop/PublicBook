@@ -571,17 +571,37 @@
       btn.disabled = true;
       btn.style.opacity = '0.85';
 
-      // Simulate API call (ganti dengan fetch ke backend)
-      setTimeout(() => {
+      // Call API backend
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) {
+          throw new Error(data.message || 'Login gagal');
+        }
+        return data;
+      })
+      .then((data) => {
+        const role = data && data.role ? data.role : null;
+        // admins.role: 'super_admin' | 'admin_instansi'
+        if (role && (role === 'super_admin' || role === 'admin_instansi')) {
+          window.location.href = '/admin/dashboard';
+          return;
+        }
+        window.location.href = '/user/dashboard';
+      })
+
+      .catch((err) => {
+        alert(err.message || 'Login gagal');
         // Reset button
         btn.innerHTML = originalText;
         btn.disabled = false;
         btn.style.opacity = '1';
+      });
 
-        // Redirect ke dashboard (nanti ganti dengan response API)
-        window.location.href = '/dashboard';
-
-      }, 1800);
     }
 
     /**
