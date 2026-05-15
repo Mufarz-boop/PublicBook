@@ -52,7 +52,7 @@ body {
 .sidebar-header-bg {
   width: 100%;
   height: 140px;
-  background: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&h=200&fit=crop') center/cover;
+  background: url('../images/bg/background1.jpeg') center/cover;
   position: relative;
 }
 
@@ -595,4 +595,3 @@ body {
     padding: 10px 12px;
   }
 }
-

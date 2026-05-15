@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PublicBook{% endblock %}</title>
+    <link rel="icon" type="image/jpeg" href="../assets/images/icons/Afdal Adha Firnansyah.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -290,7 +291,6 @@
 
         {% block extra_css %}{% endblock %}
     </style>
-<base target="_blank">
 </head>
 <body>
     <!-- Overlay for mobile -->
@@ -306,19 +306,19 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="{{ url_for('user_routes.dashboard') }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
+            <a href="{{ url_for('user_routes.dashboard') }}" class="nav-item {% block nav_dashboard_active %}{% endblock %}">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="{{ url_for('user_routes.booking') }}" class="nav-item {% if active_page == 'booking' %}active{% endif %}">
+            <a href="{{ url_for('user_routes.booking') }}" class="nav-item {% block nav_booking_active %}{% endblock %}">
                 <i class="fas fa-calendar-check"></i>
                 <span>Booking Saya</span>
             </a>
-            <a href="{{ url_for('user_routes.layanan') }}" class="nav-item {% if active_page == 'layanan' %}active{% endif %}">
+            <a href="{{ url_for('user_routes.layanan') }}" class="nav-item {% block nav_layanan_active %}{% endblock %}">
                 <i class="fas fa-list"></i>
                 <span>Layanan</span>
             </a>
-            <a href="{{ url_for('user_routes.profil') }}" class="nav-item {% if active_page == 'profil' %}active{% endif %}">
+            <a href="{{ url_for('user_routes.profil') }}" class="nav-item {% block nav_profil_active %}{% endblock %}">
                 <i class="fas fa-user"></i>
                 <span>Profil</span>
             </a>
@@ -349,10 +349,26 @@
             <div class="header-right">
                 <div class="user-info">
                     <div class="user-details">
-                        <h4>{{ current_user.nama|default('User') }}</h4>
-                        <p>{{ current_user.email|default('user@email.com') }}</p>
+                        <!-- ═══════════════════════════════════════════════════════════════ -->
+                        <!-- PERUBAHAN: Ganti current_user → session.get() dengan fallback   -->
+                        <!-- SEBELUM: {{ current_user.nama|default('User') }}                -->
+                        <!-- SESUDAH: {{ session.get('user_nama', 'User') }}                 -->
+                        <!-- ═══════════════════════════════════════════════════════════════ -->
+                        <h4>{{ session.get('user_nama', 'User') }}</h4>
+                        <!-- ═══════════════════════════════════════════════════════════════ -->
+                        <!-- PERUBAHAN: Ganti current_user → session.get() dengan fallback   -->
+                        <!-- SEBELUM: {{ current_user.email|default('user@email.com') }}     -->
+                        <!-- SESUDAH: {{ session.get('user_email', 'user@email.com') }}      -->
+                        <!-- ═══════════════════════════════════════════════════════════════ -->
+                        <p>{{ session.get('user_email', 'user@email.com') }}</p>
                     </div>
-                    <img src="{{ current_user.avatar|default('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face') }}" alt="Avatar" class="user-avatar">
+                    <!-- ═══════════════════════════════════════════════════════════════════ -->
+                    <!-- PERUBAHAN: Ganti current_user → session.get() dengan fallback OR   -->
+                    <!-- SEBELUM: {{ current_user.avatar|default('...unsplash...') }}       -->
+                    <!-- SESUDAH: {{ session.get('user_avatar') or '...unsplash...' }}        -->
+                    <!-- Note: pakai `or` bukan `|default` karena None/empty string handling -->
+                    <!-- ═══════════════════════════════════════════════════════════════════ -->
+                    <img src="{{ session.get('user_avatar') or 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face' }}" alt="Avatar" class="user-avatar">
                 </div>
             </div>
             {% endblock %}
@@ -372,6 +388,28 @@
             sidebar.classList.toggle('open');
             overlay.classList.toggle('show');
         }
+
+        // Set active class based on current URL (fallback if block_* is not used)
+        (function () {
+            const path = window.location.pathname || '';
+            const map = {
+                '/user/dashboard': 'nav_dashboard_active',
+                '/user/booking': 'nav_booking_active',
+                '/user/layanan': 'nav_layanan_active',
+                '/user/profil': 'nav_profil_active'
+            };
+            const key = map[path];
+            if (!key) return;
+
+            document.querySelectorAll('.nav-item').forEach(a => {
+                a.classList.remove('active');
+            });
+
+            // naive but effective: activate based on href
+            document.querySelectorAll('.nav-item').forEach(a => {
+                if (a.getAttribute('href') === path) a.classList.add('active');
+            });
+        })();
 
         {% block extra_js %}{% endblock %}
     </script>

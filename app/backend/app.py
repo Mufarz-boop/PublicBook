@@ -1,13 +1,22 @@
 # backend/app.py
-from flask import Flask
+from flask import Flask, session
 from config import config_by_publicbook
-from database.database import init_db, close_db
+from database.database import init_db, close_db, get_db
+from sqlalchemy import text
 import os
 
 env = os.getenv('ENV', 'development')
 
-app = Flask(__name__, template_folder='../frontend/pages', static_folder='../frontend/assets')
+app = Flask(
+    __name__,
+    template_folder='../frontend/pages',
+    static_folder='../frontend/assets'
+)
 app.config.from_object(config_by_publicbook[env])
+
+# Auto-reload template (tidak perlu restart server tiap ubah HTML)
+app.jinja_env.auto_reload = True
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 try:
     init_db(app)
@@ -22,6 +31,62 @@ except Exception as e:
 @app.teardown_appcontext
 def teardown_db(exception):
     close_db()
+
+# ═══════════════════════════════════════════════════════════════════
+# Context processor untuk current_user
+# ═══════════════════════════════════════════════════════════════════
+@app.context_processor
+def inject_current_user():
+    user_id = session.get('user_id')
+    if user_id:
+        db = get_db()
+        # ═══════════════════════════════════════════════════════════
+        # PERUBAHAN: Query SELECT * lalu ambil field yang ada
+        # SEBELUM: SELECT id, nama, nama_lengkap, email, avatar, is_admin
+        #          → error karena kolom 'nama' tidak ada di tabel
+        # SESUDAH: SELECT * → ambil semua kolom, lalu cek field yang ada
+        # ═══════════════════════════════════════════════════════════
+        row = db.execute(
+            text("SELECT * FROM users WHERE id = :id"),
+            {'id': user_id}
+        ).mappings().first()
+        
+        # Kalau tidak di users, cek tabel admins
+        if not row:
+            row = db.execute(
+                text("SELECT * FROM admins WHERE id = :id"),
+                {'id': user_id}
+            ).mappings().first()
+        
+        if row:
+            user = dict(row)
+            class CurrentUser:
+                def __init__(self, data):
+                    self.id = data['id']
+                    # ═══════════════════════════════════════════════
+                    # PERUBAHAN: Support nama_lengkap (bukan nama)
+                    # SEBELUM: data.get('nama') or data.get('nama_lengkap', 'User')
+                    # SESUDAH: data.get('nama_lengkap') or data.get('nama', 'User')
+                    # ═══════════════════════════════════════════════
+                    self.nama = data.get('nama_lengkap') or data.get('nama', 'User')
+                    self.email = data.get('email', 'user@email.com')
+                    self.avatar = data.get('avatar')
+                    self.role = data.get('role', 'user')
+                    self.is_admin = bool(data.get('is_admin', False))
+                    self.is_authenticated = True
+            
+            return {'current_user': CurrentUser(user)}
+    
+    # Anonymous user (belum login)
+    class AnonymousUser:
+        is_authenticated = False
+        is_admin = False
+        nama = None
+        email = None
+        avatar = None
+        role = None
+    
+    return {'current_user': AnonymousUser()}
 
 from routes.static import bp as static_bp
 from routes.auth import bp as auth_bp

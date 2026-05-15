@@ -1,4 +1,4 @@
-# backend/database/database.py
+# app/backend/database/database.py
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
 

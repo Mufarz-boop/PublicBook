@@ -92,6 +92,10 @@ def api_login():
     if not email or not password:
         return jsonify({'ok': False, 'message': 'Email dan password wajib diisi'}), 400
     db_session = get_db()
+    
+    # ─────────────────────────────────────────────────────────────
+    # CEK ADMIN LOGIN
+    # ─────────────────────────────────────────────────────────────
     admin = _get_admin_by_email(db_session, email)
     if admin:
         admin_pw = admin.get('password') or admin.get('password_hash', '')
@@ -101,7 +105,17 @@ def api_login():
             session['role'] = admin.get('role', 'admin_instansi')
             session['is_admin'] = True
             session['token'] = token
+            # ═══════════════════════════════════════════════════════
+            # PERUBAHAN: Tambah user data ke session untuk template
+            # ═══════════════════════════════════════════════════════
+            session['user_nama'] = admin.get('nama', 'Admin')
+            session['user_email'] = admin.get('email', email)
+            session['user_avatar'] = admin.get('avatar')
             return jsonify({'ok': True, 'message': 'Login berhasil', 'role': admin.get('role', 'admin_instansi'), 'token': token}), 200
+    
+    # ─────────────────────────────────────────────────────────────
+    # CEK USER LOGIN
+    # ─────────────────────────────────────────────────────────────
     user, colset, pw_col = _get_user_by_email(db_session, email)
     if user and pw_col:
         if verify_password(password, user[pw_col]):
@@ -110,7 +124,16 @@ def api_login():
             session['role'] = 'user'
             session['is_admin'] = False
             session['token'] = token
+            # ═══════════════════════════════════════════════════════
+            # PERUBAHAN: Tambah user data ke session untuk template
+            # SEBELUM: tidak ada baris ini → template error undefined
+            # SESUDAH: session punya nama, email, avatar
+            # ═══════════════════════════════════════════════════════
+            session['user_nama'] = user.get('nama') or user.get('nama_lengkap', 'User')
+            session['user_email'] = user.get('email', email)
+            session['user_avatar'] = user.get('avatar')
             return jsonify({'ok': True, 'message': 'Login berhasil', 'role': 'user', 'token': token}), 200
+    
     return jsonify({'ok': False, 'message': 'Email atau password salah'}), 401
 
 @bp.route('/logout', methods=['POST'])

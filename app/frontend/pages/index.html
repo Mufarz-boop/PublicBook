@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PublicBook - Sistem Layanan Publik</title>
   <link rel="stylesheet" href="/app/frontend/assets/css/global.css">
+  <link rel="icon" type="image/jpeg" href="../assets/images/icons/Afdal Adha Firnansyah.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1069,7 +1070,7 @@
           <i class="fas fa-bars"></i>
         </button>
         <div class="header-menu-dropdown" id="headerMenuDropdown">
-          <a href="{{ url_for('static_routes.terms') }}"><i class="fas fa-shield-alt"></i> Disclaimer</a>
+          <a href="{{ url_for('static_routes.disclaimer') }}"><i class="fas fa-shield-alt"></i> Disclaimer</a>
           <a href="{{ url_for('static_routes.privacy') }}"><i class="fas fa-lock"></i> Kebijakan Privasi</a>
           <a href="{{ url_for('static_routes.terms') }}"><i class="fas fa-file-contract"></i> Syarat & Ketentuan</a>
           <a href="{{ url_for('static_routes.about') }}"><i class="fas fa-info-circle"></i> Tentang Kami</a>
@@ -1105,12 +1106,12 @@
 
     <div class="hero-stats">
       <div class="stat-item">
-        <div class="stat-number">v1.0</div>
+        <div class="stat-number">v1.5</div>
         <div class="stat-label">Versi Sekarang</div>
       </div>
       <div class="stat-item">
-        <div class="stat-number">5+</div>
-        <div class="stat-label">Fitur Dibangun</div>
+        <div class="stat-number">4</div>
+        <div class="stat-label">Developer</div>
       </div>
       <div class="stat-item">
         <div class="stat-number">In Progress</div>
@@ -1142,24 +1143,6 @@
         <div class="card-icon"><i class="fas fa-qrcode"></i></div>
         <h4>QR Code</h4>
         <p>Tiket digital untuk akses cepat dan praktis. Cukup scan dan langsung masuk tanpa repot.</p>
-        <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
-      </div>
-      <div class="card">
-        <div class="card-icon"><i class="fas fa-bolt"></i></div>
-        <h4>Realtime Queue</h4>
-        <p>Pantau antrean secara langsung tanpa harus menunggu. Dapatkan notifikasi saat giliran Anda.</p>
-        <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
-      </div>
-      <div class="card">
-        <div class="card-icon"><i class="fas fa-bell"></i></div>
-        <h4>Notifikasi Cerdas</h4>
-        <p>Dapatkan pengingat otomatis via WhatsApp & Email sebelum jadwal booking Anda tiba.</p>
-        <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
-      </div>
-      <div class="card">
-        <div class="card-icon"><i class="fas fa-chart-line"></i></div>
-        <h4>Statistik Real-time</h4>
-        <p>Lihat data booking, antrean, dan performa layanan secara langsung dalam dashboard interaktif.</p>
         <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
       </div>
       <div class="card">
@@ -1218,7 +1201,7 @@
         <div class="footer-brand-text">PublicBook</div>
       </div>
       <div class="footer-tagline">
-        <span>PublicBook: Biar Waktumu Nggak Habis di Kursi Tunggu.</span>
+        <span>Inovasi membedakan antara seorang pemimpin dan seorang pengikut</span>
       </div>
       <div class="footer-social">
         <a href="https://github.com/Mufarz-boop"><i class="fab fa-github"></i></a>
