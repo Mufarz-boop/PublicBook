@@ -68,6 +68,152 @@ def pengguna():
     admin = Admin.get_by_id(session.get('user_id'))
     return render_template('admin/pengguna.html', users=users, admin=admin)
 
+@bp.route('/pengguna/tambah', methods=['POST'])
+@admin_required
+def tambah_user():
+    """Proses tambah user baru oleh admin"""
+    nama_lengkap = request.form.get('nama_lengkap', '').strip()
+    email = request.form.get('email', '').strip()
+    nomor_telepon = request.form.get('nomor_telepon', '').strip()
+    password = request.form.get('password', '')
+    status = request.form.get('status', 'active')
+    
+    if not nama_lengkap or not email or not password:
+        flash('Nama lengkap, email, dan password wajib diisi', 'danger')
+        return redirect(url_for('admin_routes.pengguna'))
+    
+    if len(password) < 6:
+        flash('Password minimal 6 karakter', 'danger')
+        return redirect(url_for('admin_routes.pengguna'))
+    
+    db = get_db()
+    existing = db.execute(
+        text("SELECT id FROM users WHERE email = :email"),
+        {'email': email}
+    ).mappings().first()
+    
+    if existing:
+        flash('Email sudah terdaftar', 'danger')
+        return redirect(url_for('admin_routes.pengguna'))
+    
+    try:
+        db.execute(
+            text("""
+                INSERT INTO users (nama_lengkap, email, nomor_telepon, password, status, created_at)
+                VALUES (:nama, :email, :telp, :pw, :status, NOW())
+            """),
+            {
+                'nama': nama_lengkap,
+                'email': email,
+                'telp': nomor_telepon or None,
+                'pw': hash_password(password),
+                'status': status
+            }
+        )
+        db.commit()
+        flash('User berhasil ditambahkan', 'success')
+    except Exception as e:
+        db.rollback()
+        flash(f'Gagal menambahkan user: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_routes.pengguna'))
+
+@bp.route('/pengguna/edit', methods=['POST'])
+@admin_required
+def edit_user():
+    """Proses edit user"""
+    user_id = request.form.get('user_id')
+    nama_lengkap = request.form.get('nama_lengkap', '').strip()
+    email = request.form.get('email', '').strip()
+    nomor_telepon = request.form.get('nomor_telepon', '').strip()
+    password = request.form.get('password', '')
+    status = request.form.get('status', 'active')
+    
+    if not user_id or not nama_lengkap or not email:
+        flash('Data tidak lengkap', 'danger')
+        return redirect(url_for('admin_routes.pengguna'))
+    
+    db = get_db()
+    
+    # Cek email sudah dipakai user lain?
+    existing = db.execute(
+        text("SELECT id FROM users WHERE email = :email AND id != :id"),
+        {'email': email, 'id': user_id}
+    ).mappings().first()
+    
+    if existing:
+        flash('Email sudah digunakan user lain', 'danger')
+        return redirect(url_for('admin_routes.pengguna'))
+    
+    try:
+        if password:
+            if len(password) < 6:
+                flash('Password minimal 6 karakter', 'danger')
+                return redirect(url_for('admin_routes.pengguna'))
+            db.execute(
+                text("""
+                    UPDATE users 
+                    SET nama_lengkap = :nama, email = :email, nomor_telepon = :telp, 
+                        password = :pw, status = :status
+                    WHERE id = :id
+                """),
+                {
+                    'nama': nama_lengkap,
+                    'email': email,
+                    'telp': nomor_telepon or None,
+                    'pw': hash_password(password),
+                    'status': status,
+                    'id': user_id
+                }
+            )
+        else:
+            db.execute(
+                text("""
+                    UPDATE users 
+                    SET nama_lengkap = :nama, email = :email, nomor_telepon = :telp, 
+                        status = :status
+                    WHERE id = :id
+                """),
+                {
+                    'nama': nama_lengkap,
+                    'email': email,
+                    'telp': nomor_telepon or None,
+                    'status': status,
+                    'id': user_id
+                }
+            )
+        db.commit()
+        flash('User berhasil diperbarui', 'success')
+    except Exception as e:
+        db.rollback()
+        flash(f'Gagal memperbarui user: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_routes.pengguna'))
+
+@bp.route('/pengguna/hapus', methods=['POST'])
+@admin_required
+def hapus_user():
+    """Proses hapus user"""
+    user_id = request.form.get('user_id')
+    
+    if not user_id:
+        flash('ID user tidak valid', 'danger')
+        return redirect(url_for('admin_routes.pengguna'))
+    
+    db = get_db()
+    try:
+        db.execute(
+            text("DELETE FROM users WHERE id = :id"),
+            {'id': user_id}
+        )
+        db.commit()
+        flash('User berhasil dihapus', 'success')
+    except Exception as e:
+        db.rollback()
+        flash(f'Gagal menghapus user: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_routes.pengguna'))
+
 @bp.route('/security')
 @admin_required
 def security():
