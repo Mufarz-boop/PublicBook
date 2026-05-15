@@ -4,7 +4,7 @@ from models.user import User
 from models.booking import Booking
 from models.services import Service
 from models.admin import Admin
-from auth_api import verify_password, hash_password  # import dari auth_api.py
+from utils.password import verify_password, hash_password
 from database.database import get_db
 from sqlalchemy import text
 
@@ -28,14 +28,20 @@ def admin_required(f):
 @bp.route('/dashboard')
 @admin_required
 def dashboard():
+    # Statistik
     stats = {
         'booking_today': Booking.count_today(),
         'booking_month': Booking.count_this_month(),
         'total_users': User.count_all(),
         'active_services': Service.count_active()
     }
+    
+    # Booking terbaru (10 terakhir)
     recent_bookings = Booking.get_all(limit=10)
+    
+    # Data admin yang login
     admin = Admin.get_by_id(session.get('user_id'))
+    
     return render_template('admin/dashboard.html', 
                          stats=stats, 
                          bookings=recent_bookings,
@@ -66,10 +72,13 @@ def pengguna():
 @admin_required
 def security():
     admin = Admin.get_by_id(session.get('user_id'))
+    
+    # Stats untuk sidebar profile card
     stats = {
         'booking_total': Booking.count_all(),
         'service_total': Service.count_active()
     }
+    
     return render_template('admin/security.html', admin=admin, stats=stats)
 
 @bp.route('/security/ubah-password', methods=['POST'])

@@ -6,6 +6,7 @@ from database.database import get_db
 from sqlalchemy import text
 import jwt
 import datetime
+from utils.password import hash_password, verify_password # ← gunakan util untuk konsistensi
 from flask import current_app
 
 bp = Blueprint('auth_api', __name__, url_prefix='/api/auth')
