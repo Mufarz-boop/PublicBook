@@ -2,7 +2,7 @@ app/
     backend/
         database/
             database.py
-            db_publicbook (2).sql
+            db_publicbook.sql
         models/
             booking.py
             queue.py
@@ -27,7 +27,7 @@ app/
             css/
                 admin.css
                 auth.css
-                componets.css
+                components.css
                 global.css
                 user.css
             images/
