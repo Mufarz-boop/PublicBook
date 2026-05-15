@@ -12,27 +12,47 @@
 <div class="layanan-search-section">
     <div class="layanan-search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Cari layanan tersedia...">
+        <input type="text" id="searchLayanan" placeholder="Cari layanan tersedia..." onkeyup="filterLayanan()">
     </div>
 </div>
 
 <!-- SERVICES LIST -->
-<div class="layanan-services-card">
-    <div class="layanan-service-item">
-        <span class="layanan-service-name">Pembuatan Kartu Keluarga</span>
-        <button class="layanan-btn-booking">Booking</button>
-    </div>
-    <div class="layanan-service-item">
-        <span class="layanan-service-name">Pembuatan Akta Kematian</span>
-        <button class="layanan-btn-booking">Booking</button>
-    </div>
-    <div class="layanan-service-item">
-        <span class="layanan-service-name">Pembuatan Akta Kelahiran</span>
-        <button class="layanan-btn-booking">Booking</button>
-    </div>
-    <div class="layanan-service-item">
-        <span class="layanan-service-name">Pengurusan Mutasi Penduduk</span>
-        <button class="layanan-btn-booking">Booking</button>
-    </div>
+<div class="layanan-services-card" id="layananList">
+    {% if services %}
+        {% for service in services %}
+        <div class="layanan-service-item" data-name="{{ service.nama_layanan|lower }}">
+            <div class="layanan-service-info">
+                <span class="layanan-service-name">{{ service.nama_layanan }}</span>
+                <span class="layanan-service-instansi">{{ service.instansi }}</span>
+                {% if service.jam_operasional %}
+                <span class="layanan-service-jam"><i class="fas fa-clock"></i> {{ service.jam_operasional }}</span>
+                {% endif %}
+            </div>
+            <button class="layanan-btn-booking" onclick="bookingLayanan({{ service.id }})">Booking</button>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="layanan-empty">
+            <p>Tidak ada layanan tersedia saat ini.</p>
+        </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterLayanan() {
+    const input = document.getElementById('searchLayanan').value.toLowerCase();
+    const items = document.querySelectorAll('.layanan-service-item');
+    items.forEach(item => {
+        const name = item.getAttribute('data-name');
+        item.style.display = name.includes(input) ? 'flex' : 'none';
+    });
+}
+
+function bookingLayanan(serviceId) {
+    // Redirect ke halaman booking dengan ID layanan
+    window.location.href = '/user/booking/new?layanan_id=' + serviceId;
+}
+</script>
 {% endblock %}

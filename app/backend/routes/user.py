@@ -1,5 +1,8 @@
 # backend/routes/user.py
 from flask import Blueprint, render_template, session, redirect, url_for, flash
+from models.user import User
+from models.booking import Booking
+from models.services import Service
 
 bp = Blueprint('user_routes', __name__, url_prefix='/user')
 
@@ -18,19 +21,54 @@ def user_required(f):
 @bp.route('/dashboard')
 @user_required
 def dashboard():
-    return render_template('user/dashboard.html')
+    user_id = session.get('user_id')
+    user = User.get_by_id(user_id)
+    
+    # Ambil 5 booking terakhir
+    bookings = Booking.get_by_user_id(user_id, limit=5)
+    
+    # Statistik
+    stats = {
+        'total_booking': Booking.count_by_user(user_id),
+        'menunggu': Booking.count_by_user(user_id, status='menunggu'),
+        'dikonfirmasi': Booking.count_by_user(user_id, status='dikonfirmasi'),
+        'selesai': Booking.count_by_user(user_id, status='selesai')
+    }
+    
+    return render_template('user/dashboard.html', user=user, bookings=bookings, stats=stats)
 
 @bp.route('/booking')
 @user_required
 def booking():
-    return render_template('user/booking.html')
+    user_id = session.get('user_id')
+    user = User.get_by_id(user_id)
+    
+    # Ambil semua booking user
+    bookings = Booking.get_by_user_id(user_id)
+    
+    # Ambil booking aktif (untuk QR code)
+    active_booking = Booking.get_active_queue(user_id)
+    
+    return render_template('user/booking.html', user=user, bookings=bookings, active_booking=active_booking)
 
 @bp.route('/layanan')
 @user_required
 def layanan():
-    return render_template('user/layanan.html')
+    user_id = session.get('user_id')
+    user = User.get_by_id(user_id)
+    
+    # Ambil semua layanan aktif
+    services = Service.get_all_active()
+    
+    return render_template('user/layanan.html', user=user, services=services)
 
 @bp.route('/profil')
 @user_required
 def profil():
-    return render_template('user/profil.html')
+    user_id = session.get('user_id')
+    user = User.get_by_id(user_id)
+    
+    # Ambil antrean aktif
+    active_queue = Booking.get_active_queue(user_id)
+    
+    return render_template('user/profil.html', user=user, queue=active_queue)

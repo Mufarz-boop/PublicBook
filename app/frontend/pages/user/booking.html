@@ -7,12 +7,50 @@
 
 {% block content %}
 <div class="booking-content-area">
-    <!-- BOOKING CARD -->
+    {% if active_booking %}
+    <!-- QR CODE CARD (Booking Aktif) -->
     <div class="booking-card">
-        <div class="booking-qr-code-wrap">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=PB-240410-001-BOOKING-PUBLICBOOK&color=333333&bgcolor=ffffff" alt="QR Code Booking" class="booking-qr-code">
+        <div class="booking-qr-header">
+            <h3>{{ active_booking.nama_layanan }}</h3>
+            <span class="booking-status status-{{ active_booking.status }}">{{ active_booking.status|title }}</span>
         </div>
-        <p class="booking-wait-time">Estimasi wait time : <strong>20 minute</strong></p>
+        <div class="booking-qr-code-wrap">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data={{ active_booking.no_booking }}&color=333333&bgcolor=ffffff" 
+                 alt="QR Code Booking" 
+                 class="booking-qr-code">
+        </div>
+        <div class="booking-qr-info">
+            <p><strong>No. Booking:</strong> {{ active_booking.no_booking }}</p>
+            <p><strong>Nomor Antrean:</strong> {{ active_booking.nomor_antrian or '-' }}</p>
+            <p><strong>Tanggal:</strong> {{ active_booking.tanggal_booking }} {{ active_booking.jam_booking }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- DAFTAR SEMUA BOOKING -->
+    <div class="booking-list-section">
+        <h3 class="booking-section-title">Semua Booking</h3>
+        {% if bookings %}
+        <div class="booking-list">
+            {% for booking in bookings %}
+            <div class="booking-item">
+                <div class="booking-item-info">
+                    <h4>{{ booking.nama_layanan or 'Layanan #' + booking.layanan_id|string }}</h4>
+                    <p>No. Booking: {{ booking.no_booking }}</p>
+                    <p>{{ booking.tanggal_booking }} | {{ booking.jam_booking }}</p>
+                </div>
+                <div class="booking-item-status">
+                    <span class="status-badge status-{{ booking.status }}">{{ booking.status|title }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="booking-empty">
+            <p>Belum ada booking.</p>
+            <a href="{{ url_for('user_routes.layanan') }}" class="btn-primary">Booking Layanan</a>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -10,53 +10,66 @@
 <div class="dashboard-stats-grid">
     <div class="dashboard-stat-card">
         <div class="dashboard-stat-icon orange">
-            <i class="fas fa-envelope"></i>
+            <i class="fas fa-calendar-check"></i>
         </div>
-        <div class="dashboard-stat-label">Pesanan Fasilitas</div>
+        <div class="dashboard-stat-number">{{ stats.total_booking }}</div>
+        <div class="dashboard-stat-label">Total Booking</div>
     </div>
 
     <div class="dashboard-stat-card">
         <div class="dashboard-stat-icon blue">
-            <i class="fas fa-briefcase"></i>
+            <i class="fas fa-clock"></i>
         </div>
-        <div class="dashboard-stat-label">Jadwalkan Konsultasi</div>
+        <div class="dashboard-stat-number">{{ stats.menunggu }}</div>
+        <div class="dashboard-stat-label">Menunggu</div>
     </div>
 
     <div class="dashboard-stat-card">
         <div class="dashboard-stat-icon green">
-            <i class="fas fa-chart-bar"></i>
+            <i class="fas fa-check-circle"></i>
         </div>
-        <div class="dashboard-stat-label">Reservasi Acara</div>
+        <div class="dashboard-stat-number">{{ stats.selesai }}</div>
+        <div class="dashboard-stat-label">Selesai</div>
     </div>
 </div>
 
 <!-- TABLE SECTION -->
 <div class="dashboard-table-section">
+    <div class="dashboard-table-header">
+        <h3>Riwayat Booking Terakhir</h3>
+        <a href="{{ url_for('user_routes.booking') }}" class="dashboard-btn-lihat-semua">Lihat Semua</a>
+    </div>
     <div class="dashboard-table-wrapper">
         <table class="dashboard-data-table">
             <thead>
                 <tr>
                     <th>No</th>
+                    <th>No. Booking</th>
                     <th>Layanan</th>
+                    <th>Tanggal</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td><strong>Pembuatan Kartu Keluarga</strong></td>
-                    <td><span class="status-badge status-selesai">Selesai</span></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td><strong>Pembuatan Akta Kematian</strong></td>
-                    <td><span class="status-badge status-dikonfirmasi">Dikonfirmasi</span></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td><strong>Pembuatan Akta Kelahiran</strong></td>
-                    <td><span class="status-badge status-menunggu">Menunggu</span></td>
-                </tr>
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ booking.no_booking }}</strong></td>
+                        <td>{{ booking.nama_layanan or 'Layanan #' + booking.layanan_id|string }}</td>
+                        <td>{{ booking.tanggal_booking }}</td>
+                        <td>
+                            <span class="status-badge status-{{ booking.status }}">
+                                {{ booking.status|title }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="dashboard-empty">Belum ada booking. <a href="{{ url_for('user_routes.layanan') }}">Booking sekarang</a></td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>

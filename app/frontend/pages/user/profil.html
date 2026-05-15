@@ -13,46 +13,59 @@
     <!-- LEFT: PROFILE INFO -->
     <div class="profil-info-card">
         <div class="profil-avatar-wrap">
-            <img src="../../assets/images/icons/Afdal Adha Firnansyah.png" alt="Ms. Hutao" class="profil-avatar">
+            <img src="{{ user.foto_profil or 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face' }}" 
+                 alt="{{ user.nama_lengkap }}" 
+                 class="profil-avatar">
         </div>
 
         <div class="profil-info-list">
             <div class="profil-info-item">
                 <div class="profil-info-label">Nama Lengkap</div>
-                <div class="profil-info-value">Hutao</div>
+                <div class="profil-info-value">{{ user.nama_lengkap }}</div>
             </div>
             <div class="profil-info-item">
                 <div class="profil-info-label">Email</div>
-                <div class="profil-info-value">hutao@gmail.com</div>
+                <div class="profil-info-value">{{ user.email }}</div>
             </div>
             <div class="profil-info-item">
                 <div class="profil-info-label">Nomor Telepon</div>
-                <div class="profil-info-value">+62 856-2782-4273</div>
+                <div class="profil-info-value">{{ user.nomor_telepon or '-' }}</div>
             </div>
             <div class="profil-info-item">
-                <div class="profil-info-label">NIK</div>
-                <div class="profil-info-value">627275627275</div>
+                <div class="profil-info-label">Alamat</div>
+                <div class="profil-info-value">{{ user.alamat or '-' }}</div>
             </div>
             <div class="profil-info-item">
                 <div class="profil-info-label">Status Akun</div>
-                <div class="profil-info-value profil-status-active">Active</div>
+                <div class="profil-info-value profil-status-{{ user.status }}">{{ user.status|title }}</div>
             </div>
         </div>
     </div>
 
     <!-- RIGHT: QUEUE INFO -->
+    {% if queue %}
     <div class="profil-queue-card">
-        <div class="profil-queue-title">Pembuatan Kartu Keluarga</div>
+        <div class="profil-queue-title">{{ queue.nama_layanan }}</div>
         <div class="profil-queue-number-label">Nomor Antrean</div>
-        <div class="profil-queue-number">124</div>
+        <div class="profil-queue-number">{{ queue.nomor_antrian or '-' }}</div>
         <div class="profil-queue-info">
             <div class="profil-queue-info-item">
-                Antrean saat ini: <strong>121</strong>
+                No. Booking: <strong>{{ queue.no_booking }}</strong>
             </div>
             <div class="profil-queue-info-item">
-                Estimasi: <strong>20 Menit</strong>
+                Status: <strong>{{ queue.status|title }}</strong>
+            </div>
+            <div class="profil-queue-info-item">
+                Tanggal: <strong>{{ queue.tanggal_booking }}</strong>
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="profil-queue-card profil-queue-empty">
+        <div class="profil-queue-title">Tidak Ada Antrean Aktif</div>
+        <p>Anda tidak memiliki booking yang sedang diproses.</p>
+        <a href="{{ url_for('user_routes.layanan') }}" class="profil-btn-booking">Booking Layanan</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
