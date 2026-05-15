@@ -1,5 +1,6 @@
 # backend/routes/user.py
-from flask import Blueprint, render_template, session, redirect, url_for, flash
+from flask import Blueprint, render_template, session, redirect, url_for, flash, jsonify, request
+from datetime import datetime
 from models.user import User
 from models.booking import Booking
 from models.services import Service
@@ -51,6 +52,73 @@ def booking():
     
     return render_template('user/booking.html', user=user, bookings=bookings, active_booking=active_booking)
 
+@bp.route('/booking/new', methods=['GET'])
+@user_required
+def booking_new():
+    """Render booking form page"""
+    user_id = session.get('user_id')
+    user = User.get_by_id(user_id)
+    
+    layanan_id = request.args.get('layanan_id', type=int)
+    service = Service.get_by_id(layanan_id) if layanan_id else None
+    
+    if not service:
+        flash('Layanan tidak ditemukan', 'danger')
+        return redirect(url_for('user_routes.layanan'))
+    
+    # Get tomorrow's date for min date
+    tomorrow = datetime.now().strftime('%Y-%m-%d')
+    
+    return render_template('user/booking-form.html', 
+                         user=user, 
+                         service=service,
+                         min_date=tomorrow)
+
+@bp.route('/booking/create', methods=['POST'])
+@user_required
+def booking_create():
+    """API to create booking"""
+    user_id = session.get('user_id')
+    user = User.get_by_id(user_id)
+    
+    try:
+        layanan_id = request.form.get('layanan_id', type=int)
+        nama_pendaftar = request.form.get('nama_pendaftar', '').strip()
+        tanggal_booking = request.form.get('tanggal_booking')
+        jam_booking = request.form.get('jam_booking')
+        catatan = request.form.get('catatan', '').strip()
+        
+        # Validation
+        if not all([layanan_id, nama_pendaftar, tanggal_booking, jam_booking]):
+            return jsonify({'success': False, 'message': 'Semua field wajib diisi'}), 400
+        
+        # Validate service exists
+        service = Service.get_by_id(layanan_id)
+        if not service:
+            return jsonify({'success': False, 'message': 'Layanan tidak ditemukan'}), 404
+        
+        # Create booking
+        booking = Booking.create(
+            user_id=user_id,
+            layanan_id=layanan_id,
+            nama_pendaftar=nama_pendaftar,
+            tanggal_booking=tanggal_booking,
+            jam_booking=jam_booking,
+            catatan=catatan
+        )
+        
+        return jsonify({
+            'success': True,
+            'message': 'Booking berhasil dibuat!',
+            'data': {
+                'no_booking': booking.no_booking,
+                'redirect_url': url_for('user_routes.booking')
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Terjadi kesalahan: {str(e)}'}), 500
+
 @bp.route('/layanan')
 @user_required
 def layanan():
@@ -67,8 +135,13 @@ def layanan():
 def profil():
     user_id = session.get('user_id')
     user = User.get_by_id(user_id)
-    
-    # Ambil antrean aktif
     active_queue = Booking.get_active_queue(user_id)
     
-    return render_template('user/profil.html', user=user, queue=active_queue)
+    # Tambahin stats
+    stats = {
+        'total_booking': Booking.count_by_user(user_id),
+        'menunggu': Booking.count_by_user(user_id, status='menunggu'),
+        'selesai': Booking.count_by_user(user_id, status='selesai')
+    }
+    
+    return render_template('user/profil.html', user=user, queue=active_queue, stats=stats)

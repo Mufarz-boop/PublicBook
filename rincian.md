@@ -3,6 +3,7 @@ app/
         database/
             database.py
         models/
+            admin.py
             booking.py
             queue.py
             services.py
@@ -18,6 +19,9 @@ app/
             user.py
         test/
             python test.py
+        utils/
+            __init__.py
+            password.py
         app.py
         config.py
         requirements.txt

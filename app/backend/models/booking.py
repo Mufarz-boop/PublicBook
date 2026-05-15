@@ -1,6 +1,8 @@
 # backend/models/booking.py
 from database.database import get_db
 from sqlalchemy import text
+import random
+import string
 
 class Booking:
     def __init__(self, data):
@@ -118,3 +120,60 @@ class Booking:
             text("SELECT COUNT(*) as total FROM bookings WHERE MONTH(tanggal_booking) = MONTH(CURDATE()) AND YEAR(tanggal_booking) = YEAR(CURDATE())")
         ).mappings().first()
         return result['total'] if result else 0
+    
+    @staticmethod
+    def generate_booking_number():
+        """Generate unique booking number: PB-XXXXXX"""
+        db = get_db()
+        while True:
+            # Generate random 6 alphanumeric
+            code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            no_booking = f"PB-{code}"
+            
+            # Check if exists
+            result = db.execute(
+                text("SELECT id FROM bookings WHERE no_booking = :no"),
+                {'no': no_booking}
+            ).mappings().first()
+            
+            if not result:
+                return no_booking
+
+    @staticmethod
+    def create(user_id, layanan_id, nama_pendaftar, tanggal_booking, jam_booking, catatan=None):
+        db = get_db()
+        no_booking = Booking.generate_booking_number()
+        
+        # Get admin_id from layanan
+        service = db.execute(
+            text("SELECT admin_id FROM layanan WHERE id = :id"),
+            {'id': layanan_id}
+        ).mappings().first()
+        admin_id = service['admin_id'] if service else None
+        
+        sql = """
+            INSERT INTO bookings 
+            (user_id, layanan_id, admin_id, no_booking, nama_pendaftar, 
+             tanggal_booking, jam_booking, status, catatan, created_at, updated_at)
+            VALUES 
+            (:user_id, :layanan_id, :admin_id, :no_booking, :nama_pendaftar,
+             :tanggal_booking, :jam_booking, 'menunggu', :catatan, NOW(), NOW())
+        """
+        
+        result = db.execute(text(sql), {
+            'user_id': user_id,
+            'layanan_id': layanan_id,
+            'admin_id': admin_id,
+            'no_booking': no_booking,
+            'nama_pendaftar': nama_pendaftar,
+            'tanggal_booking': tanggal_booking,
+            'jam_booking': jam_booking,
+            'catatan': catatan or ''
+        })
+        
+        db.commit()
+        
+        # Get the created booking ID
+        booking_id = result.lastrowid
+        
+        return Booking.get_by_id(booking_id)

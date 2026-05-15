@@ -5,6 +5,39 @@
 {% set header_title = 'Layanan' %}
 {% set header_icon = 'fa-list' %}
 
+{% block extra_css %}
+<style>
+.layanan-service-item.js-hidden {
+    display: none !important;
+}
+.layanan-no-results {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: #fff;
+    border-radius: 16px;
+    margin-top: 20px;
+}
+.layanan-search-count {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+    display: none;
+}
+
+/* Tambahin di style yang udah ada atau di CSS file */
+.layanan-btn-booking {
+    display: inline-block;
+    text-decoration: none;
+    /* ... keep existing button styles ... */
+}
+
+
+</style>
+{% endblock %}
+
 {% block content %}
 <h1 class="user-page-title">Layanan Pengguna</h1>
 
@@ -12,7 +45,7 @@
 <div class="layanan-search-section">
     <div class="layanan-search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchLayanan" placeholder="Cari layanan tersedia..." onkeyup="filterLayanan()" autocomplete="off">
+        <input type="text" id="searchLayanan" placeholder="Cari layanan tersedia..." autocomplete="off">
     </div>
     <div class="layanan-search-count" id="searchCount"></div>
 </div>
@@ -21,7 +54,10 @@
 <div class="layanan-services-card" id="layananList">
     {% if services %}
         {% for service in services %}
-        <div class="layanan-service-item" data-search="{{ (service.nama_layanan ~ ' ' ~ service.instansi ~ ' ' ~ (service.jam_operasional or ''))|lower }}">
+        <div class="layanan-service-item" 
+             data-nama="{{ service.nama_layanan|lower }}" 
+             data-instansi="{{ service.instansi|lower }}"
+             data-jam="{{ (service.jam_operasional or '')|lower }}">
             <div class="layanan-service-info">
                 <span class="layanan-service-name">{{ service.nama_layanan }}</span>
                 <span class="layanan-service-instansi">{{ service.instansi }}</span>
@@ -29,7 +65,7 @@
                 <span class="layanan-service-jam"><i class="fas fa-clock"></i> {{ service.jam_operasional }}</span>
                 {% endif %}
             </div>
-            <button class="layanan-btn-booking" onclick="bookingLayanan({{ service.id }})">Booking</button>
+            <a href="{{ url_for('user_routes.booking_new', layanan_id=service.id) }}" class="layanan-btn-booking">Booking</a>
         </div>
         {% endfor %}
     {% else %}
@@ -39,7 +75,7 @@
     {% endif %}
 </div>
 
-<div class="layanan-no-results" id="noResults" style="display: none;">
+<div class="layanan-no-results" id="noResults">
     <i class="fas fa-search" style="font-size: 48px; color: #ddd; margin-bottom: 16px;"></i>
     <p style="color: #888; font-size: 14px;">Tidak ada layanan yang cocok dengan pencarian Anda.</p>
     <button onclick="clearSearch()" style="margin-top: 12px; padding: 10px 20px; background: linear-gradient(135deg, #FF6B00, #FF8C00); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600;">Tampilkan Semua</button>
@@ -48,50 +84,77 @@
 
 {% block extra_js %}
 <script>
+// Attach event listener directly to input
+document.getElementById('searchLayanan').addEventListener('input', filterLayanan);
+
 function filterLayanan() {
-    const input = document.getElementById('searchLayanan').value.toLowerCase().trim();
-    const items = document.querySelectorAll('.layanan-service-item');
+    const inputEl = document.getElementById('searchLayanan');
+    const input = inputEl.value.toLowerCase().trim();
+    const items = document.querySelectorAll('#layananList .layanan-service-item');
     const noResults = document.getElementById('noResults');
     const searchCount = document.getElementById('searchCount');
     let visibleCount = 0;
     
-    items.forEach(item => {
-        const searchData = item.getAttribute('data-search') || '';
-        const isMatch = searchData.includes(input);
-        item.style.display = isMatch ? 'flex' : 'none';
-        if (isMatch) visibleCount++;
+    console.log('Filter running, input:', input); // DEBUG
+    console.log('Items found:', items.length); // DEBUG
+    
+    items.forEach(function(item) {
+        const nama = item.getAttribute('data-nama') || '';
+        const instansi = item.getAttribute('data-instansi') || '';
+        const jam = item.getAttribute('data-jam') || '';
+        
+        console.log('Checking:', nama, instansi, jam); // DEBUG
+        
+        // Kalau input kosong, tampilkan semua
+        if (!input) {
+            item.classList.remove('js-hidden');
+            visibleCount++;
+            return;
+        }
+        
+        // Cek apakah input ada di salah satu field
+        const isMatch = nama.indexOf(input) !== -1 || 
+                       instansi.indexOf(input) !== -1 || 
+                       jam.indexOf(input) !== -1;
+        
+        console.log('Match:', isMatch); // DEBUG
+        
+        if (isMatch) {
+            item.classList.remove('js-hidden');
+            visibleCount++;
+        } else {
+            item.classList.add('js-hidden');
+        }
     });
     
-    // Show/hide no results message
+    console.log('Visible:', visibleCount); // DEBUG
+    
+    // Handle empty state / no results
     if (input && visibleCount === 0) {
         noResults.style.display = 'flex';
+        searchCount.style.display = 'none';
     } else {
         noResults.style.display = 'none';
-    }
-    
-    // Update count
-    if (input) {
-        searchCount.textContent = visibleCount + ' hasil ditemukan';
-        searchCount.style.display = 'block';
-    } else {
-        searchCount.style.display = 'none';
+        if (input) {
+            searchCount.textContent = visibleCount + ' hasil ditemukan';
+            searchCount.style.display = 'block';
+        } else {
+            searchCount.style.display = 'none';
+        }
     }
 }
 
 function clearSearch() {
-    const input = document.getElementById('searchLayanan');
-    input.value = '';
+    document.getElementById('searchLayanan').value = '';
     filterLayanan();
-    input.focus();
 }
 
+// Ganti fungsi bookingLayanan jadi:
 function bookingLayanan(serviceId) {
     window.location.href = '/user/booking/new?layanan_id=' + encodeURIComponent(serviceId);
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('searchLayanan').focus();
-});
+// Run once on load
+filterLayanan();
 </script>
 {% endblock %}

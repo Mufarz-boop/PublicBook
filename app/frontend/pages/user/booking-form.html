@@ -1,0 +1,1083 @@
+{% extends "user/base.html" %}
+
+{% block title %}Buat Booking - PublicBook{% endblock %}
+{% set active_page = 'layanan' %}
+{% set header_title = 'Buat Booking' %}
+{% set header_icon = 'fa-calendar-plus' %}
+
+{% block extra_css %}
+<style>
+/* ========== PAGE BACKGROUND ANIMATION ========== */
+.booking-page-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 30%, #FFA500 70%, #FFB347 100%);
+    z-index: -1;
+}
+
+.booking-page-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: bgMove 20s linear infinite;
+}
+
+@keyframes bgMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+/* ========== FLOATING PARTICLES ========== */
+.particle {
+    position: fixed;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatUp 15s infinite;
+    z-index: 0;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+}
+
+/* ========== MAIN CONTAINER ========== */
+.booking-form-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* ========== SERVICE CARD (PREVIEW) ========== */
+.service-preview-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.3);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.service-preview-card:hover {
+    transform: translateY(-5px);
+}
+
+.service-preview-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #FF6B00, #FF8C00, #FFB347, #FF6B00);
+    background-size: 300% 100%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.service-icon-wrap {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(255,107,0,0.3);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.service-preview-card h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.service-preview-card .instansi {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #FFF5EB, #FFE8D1);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 14px;
+    color: #FF6B00;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.service-preview-card .jam-operasional {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.service-preview-card .deskripsi {
+    color: #888;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 12px;
+    padding-top: 15px;
+    border-top: 1px dashed #e0e0e0;
+}
+
+/* ========== FORM CARD ========== */
+.form-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 35px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #FF6B00, #FF8C00, #FFB347);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h3 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.form-header p {
+    color: #888;
+    font-size: 14px;
+}
+
+/* ========== FORM STEPS INDICATOR ========== */
+.steps-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 35px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #999;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+}
+
+.step.active .step-circle {
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(255,107,0,0.4);
+    border-color: rgba(255,107,0,0.2);
+}
+
+.step.completed .step-circle {
+    background: #4CAF50;
+    color: #fff;
+}
+
+.step-label {
+    font-size: 12px;
+    color: #999;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.step.active .step-label {
+    color: #FF6B00;
+    font-weight: 600;
+}
+
+.step-connector {
+    width: 60px;
+    height: 3px;
+    background: #f0f0f0;
+    margin: 0 10px;
+    margin-bottom: 25px;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-connector.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #FF6B00, #FF8C00);
+    animation: fillLine 0.5s ease forwards;
+}
+
+@keyframes fillLine {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+/* ========== FORM FIELDS ========== */
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.form-group:focus-within label {
+    color: #FF6B00;
+}
+
+.form-group label .required {
+    color: #E74C3C;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc;
+    font-size: 16px;
+    transition: color 0.3s;
+    z-index: 2;
+}
+
+.form-group:focus-within .input-icon {
+    color: #FF6B00;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    border: 2px solid #e8e8e8;
+    border-radius: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #FF6B00;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1), 0 4px 20px rgba(255,107,0,0.1);
+}
+
+.form-control::placeholder {
+    color: #bbb;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+    padding-left: 16px;
+}
+
+textarea.form-control + .input-icon {
+    top: 24px;
+    transform: none;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* ========== DATE PICKER CUSTOM ========== */
+input[type="date"].form-control,
+input[type="time"].form-control {
+    padding-left: 16px;
+    cursor: pointer;
+}
+
+/* ========== SUMMARY BOX ========== */
+.booking-summary {
+    background: linear-gradient(135deg, #FFF8F0, #FFF0E0);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 2px dashed rgba(255,107,0,0.2);
+}
+
+.booking-summary h4 {
+    font-size: 14px;
+    color: #FF6B00;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,107,0,0.1);
+    font-size: 14px;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-label {
+    color: #888;
+}
+
+.summary-value {
+    font-weight: 600;
+    color: #333;
+}
+
+/* ========== SUBMIT BUTTON ========== */
+.btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-submit:hover::before {
+    left: 100%;
+}
+
+.btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4);
+}
+
+.btn-submit:active {
+    transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-submit.success {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+}
+
+/* ========== ALERTS ========== */
+.alert {
+    padding: 16px 20px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    font-size: 14px;
+    display: none;
+    animation: slideIn 0.4s ease;
+    border: 2px solid transparent;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-danger {
+    background: #FFEBEE;
+    color: #C62828;
+    border-color: #EF9A9A;
+}
+
+.alert-success {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-color: #A5D6A7;
+}
+
+.alert i {
+    margin-right: 8px;
+}
+
+/* ========== BACK BUTTON ========== */
+.btn-back-float {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-back-float:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateX(-5px);
+    color: #fff;
+}
+
+/* ========== LOADING SPINNER ========== */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========== SUCCESS ANIMATION ========== */
+.success-checkmark {
+    display: none;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+}
+
+.success-checkmark .check-icon {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    border-radius: 50%;
+    box-sizing: content-box;
+    border: 4px solid #4CAF50;
+}
+
+.success-checkmark .check-icon::before {
+    top: 3px;
+    left: -2px;
+    width: 30px;
+    transform-origin: 100% 50%;
+    border-radius: 100px 0 0 100px;
+}
+
+.success-checkmark .check-icon::after {
+    top: 0;
+    left: 30px;
+    width: 60px;
+    transform-origin: 0 50%;
+    border-radius: 0 100px 100px 0;
+    animation: rotate-circle 4.25s ease-in;
+}
+
+.success-checkmark .icon-line {
+    height: 5px;
+    background-color: #4CAF50;
+    display: block;
+    border-radius: 2px;
+    position: absolute;
+    z-index: 10;
+}
+
+.success-checkmark .icon-line.line-tip {
+    top: 46px;
+    left: 14px;
+    width: 25px;
+    transform: rotate(45deg);
+    animation: icon-line-tip 0.75s;
+}
+
+.success-checkmark .icon-line.line-long {
+    top: 38px;
+    right: 8px;
+    width: 47px;
+    transform: rotate(-45deg);
+    animation: icon-line-long 0.75s;
+}
+
+.success-checkmark .icon-circle {
+    top: -4px;
+    left: -4px;
+    z-index: 10;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: absolute;
+    box-sizing: content-box;
+    border: 4px solid rgba(76, 175, 80, 0.5);
+}
+
+.success-checkmark .icon-fix {
+    top: 8px;
+    width: 5px;
+    left: 26px;
+    z-index: 1;
+    height: 85px;
+    position: absolute;
+    transform: rotate(-45deg);
+    background-color: #fff;
+}
+
+/* Toast notification styles */
+#bookingToast {
+    font-family: 'Poppins', sans-serif;
+}
+
+#bookingToast strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+@keyframes rotate-circle {
+    0% { transform: rotate(-45deg); }
+    5% { transform: rotate(-45deg); }
+    12% { transform: rotate(-405deg); }
+    100% { transform: rotate(-405deg); }
+}
+
+@keyframes icon-line-tip {
+    0% { width: 0; left: 1px; top: 19px; }
+    54% { width: 0; left: 1px; top: 19px; }
+    70% { width: 50px; left: -8px; top: 37px; }
+    84% { width: 17px; left: 21px; top: 48px; }
+    100% { width: 25px; left: 14px; top: 46px; }
+}
+
+@keyframes icon-line-long {
+    0% { width: 0; right: 46px; top: 54px; }
+    65% { width: 0; right: 46px; top: 54px; }
+    84% { width: 55px; right: 0px; top: 35px; }
+    100% { width: 47px; right: 8px; top: 38px; }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .booking-form-wrapper {
+        padding: 0 15px;
+    }
+    
+    .service-preview-card,
+    .form-card {
+        padding: 20px;
+        border-radius: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .steps-indicator {
+        transform: scale(0.85);
+    }
+    
+    .service-preview-card h2 {
+        font-size: 20px;
+    }
+}
+
+/* ========== ENTRANCE ANIMATIONS ========== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in-1 { animation: fadeInUp 0.6s ease forwards; }
+.animate-in-2 { animation: fadeInUp 0.6s ease 0.15s forwards; opacity: 0; }
+.animate-in-3 { animation: fadeInUp 0.6s ease 0.3s forwards; opacity: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Background Effects -->
+<div class="booking-page-bg"></div>
+<div class="particle" style="width: 10px; height: 10px; left: 10%; animation-delay: 0s;"></div>
+<div class="particle" style="width: 15px; height: 15px; left: 30%; animation-delay: 3s;"></div>
+<div class="particle" style="width: 8px; height: 8px; left: 50%; animation-delay: 7s;"></div>
+<div class="particle" style="width: 12px; height: 12px; left: 70%; animation-delay: 5s;"></div>
+<div class="particle" style="width: 6px; height: 6px; left: 90%; animation-delay: 2s;"></div>
+
+<div class="booking-form-wrapper">
+    <!-- Back Button -->
+    <a href="{{ url_for('user_routes.layanan') }}" class="btn-back-float animate-in-1">
+        <i class="fas fa-arrow-left"></i> Kembali ke Layanan
+    </a>
+
+    <!-- Service Preview Card -->
+    <div class="service-preview-card animate-in-1">
+        <div class="service-icon-wrap">
+            <i class="fas fa-concierge-bell"></i>
+        </div>
+        <h2>{{ service.nama_layanan }}</h2>
+        <span class="instansi">
+            <i class="fas fa-building"></i> {{ service.instansi }}
+        </span>
+        {% if service.jam_operasional %}
+        <div class="jam-operasional">
+            <i class="fas fa-clock" style="color: #FF6B00;"></i>
+            <span>Jam Operasional: <strong>{{ service.jam_operasional }}</strong></span>
+        </div>
+        {% endif %}
+        {% if service.deskripsi %}
+        <div class="deskripsi">
+            {{ service.deskripsi }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card animate-in-2">
+        <!-- Steps -->
+        <div class="steps-indicator">
+            <div class="step active" id="step1">
+                <div class="step-circle">1</div>
+                <span class="step-label">Pilih Layanan</span>
+            </div>
+            <div class="step-connector active"></div>
+            <div class="step active" id="step2">
+                <div class="step-circle">2</div>
+                <span class="step-label">Isi Detail</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" id="step3">
+                <div class="step-circle">3</div>
+                <span class="step-label">Selesai</span>
+            </div>
+        </div>
+
+        <div class="form-header">
+            <h3>Detail Booking</h3>
+            <p>Lengkapi informasi berikut untuk melanjutkan</p>
+        </div>
+
+        <!-- Success Checkmark (hidden by default) -->
+        <div class="success-checkmark" id="successCheckmark">
+            <div class="check-icon">
+                <span class="icon-line line-tip"></span>
+                <span class="icon-line line-long"></span>
+                <div class="icon-circle"></div>
+                <div class="icon-fix"></div>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alert alert-danger" id="errorAlert">
+            <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+        </div>
+        <div class="alert alert-success" id="successAlert">
+            <i class="fas fa-check-circle"></i> <span id="successText"></span>
+        </div>
+
+        <form id="bookingForm" action="{{ url_for('user_routes.booking_create') }}" method="POST">
+            <input type="hidden" name="layanan_id" value="{{ service.id }}">
+            
+            <!-- Nama -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-user"></i> Nama Pendaftar <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" name="nama_pendaftar" class="form-control" 
+                           value="{{ user.nama_lengkap }}" placeholder="Masukkan nama lengkap" required>
+                </div>
+            </div>
+
+            <!-- Tanggal & Jam -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calendar-alt"></i> Tanggal <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="date" name="tanggal_booking" class="form-control" 
+                               min="{{ min_date }}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-clock"></i> Jam <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="time" name="jam_booking" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catatan -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-sticky-note"></i> Catatan (Opsional)
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-pen input-icon"></i>
+                    <textarea name="catatan" class="form-control" 
+                              placeholder="Tambahkan catatan atau permintaan khusus..."></textarea>
+                </div>
+            </div>
+
+            <!-- Live Summary -->
+            <div class="booking-summary" id="bookingSummary">
+                <h4><i class="fas fa-clipboard-list"></i> Ringkasan Booking</h4>
+                <div class="summary-item">
+                    <span class="summary-label">Layanan</span>
+                    <span class="summary-value" id="summaryService">{{ service.nama_layanan }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Nama</span>
+                    <span class="summary-value" id="summaryNama">{{ user.nama_lengkap }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Tanggal</span>
+                    <span class="summary-value" id="summaryTanggal">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Jam</span>
+                    <span class="summary-value" id="summaryJam">-</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fas fa-calendar-check"></i> Konfirmasi Booking
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// PENTING: Wrap dalam IIFE biar nggak bentrok sama script lain
+(function() {
+    'use strict';
+    
+    // Tunggu DOM fully loaded
+    function initBookingForm() {
+        const form = document.getElementById('bookingForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (!form) {
+            console.error('❌ Form bookingForm tidak ditemukan!');
+            return;
+        }
+        if (!submitBtn) {
+            console.error('❌ Tombol submitBtn tidak ditemukan!');
+            return;
+        }
+        
+        console.log('✅ Booking form initialized'); // DEBUG
+        
+        // ===== LIVE SUMMARY UPDATE =====
+        const summaryNama = document.getElementById('summaryNama');
+        const summaryTanggal = document.getElementById('summaryTanggal');
+        const summaryJam = document.getElementById('summaryJam');
+        
+        const namaInput = form.querySelector('[name="nama_pendaftar"]');
+        const tanggalInput = form.querySelector('[name="tanggal_booking"]');
+        const jamInput = form.querySelector('[name="jam_booking"]');
+        
+        if (namaInput) {
+            namaInput.addEventListener('input', function() {
+                if (summaryNama) summaryNama.textContent = this.value || '-';
+            });
+        }
+        if (tanggalInput) {
+            tanggalInput.addEventListener('change', function() {
+                if (summaryTanggal) summaryTanggal.textContent = this.value || '-';
+            });
+        }
+        if (jamInput) {
+            jamInput.addEventListener('change', function() {
+                if (summaryJam) summaryJam.textContent = this.value || '-';
+            });
+        }
+        
+        // ===== FORM SUBMIT HANDLER =====
+        form.addEventListener('submit', function(e) {
+            // PENTING: Prevent default form submission
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('🚀 Form submit intercepted!'); // DEBUG
+            
+            const errorAlert = document.getElementById('errorAlert');
+            const successAlert = document.getElementById('successAlert');
+            const errorText = document.getElementById('errorText');
+            const successText = document.getElementById('successText');
+            const successCheckmark = document.getElementById('successCheckmark');
+            const step3 = document.getElementById('step3');
+            
+            // Reset alerts
+            if (errorAlert) errorAlert.style.display = 'none';
+            if (successAlert) successAlert.style.display = 'none';
+            
+            // Validasi
+            const layananId = form.querySelector('[name="layanan_id"]')?.value;
+            const nama = namaInput?.value.trim();
+            const tanggal = tanggalInput?.value;
+            const jam = jamInput?.value;
+            
+            if (!layananId || !nama || !tanggal || !jam) {
+                if (errorText) errorText.textContent = 'Semua field wajib diisi!';
+                if (errorAlert) errorAlert.style.display = 'block';
+                return false;
+            }
+            
+            // Disable button & show loading
+            submitBtn.disabled = true;
+            const originalHTML = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
+            
+            // Kirim data via fetch
+            const formData = new FormData(form);
+            
+            fetch('/user/booking/create', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(response) {
+                console.log('📡 Response status:', response.status); // DEBUG
+                
+                if (!response.ok) {
+                    throw new Error('Server error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(result) {
+                console.log('📦 Response data:', result); // DEBUG
+                
+                if (result.success) {
+                    // Update step indicator
+                    if (step3) step3.classList.add('active');
+                    const connectors = document.querySelectorAll('.step-connector');
+                    if (connectors[1]) connectors[1].classList.add('active');
+                    
+                    // Show success checkmark animation
+                    if (successCheckmark) successCheckmark.style.display = 'block';
+                    
+                    // Show success notification (TANPA REDIRECT!)
+                    if (successText) {
+                        successText.innerHTML = 
+                            '<strong>' + result.message + '</strong><br>' +
+                            'No. Booking: <span style="font-size:18px;color:#FF6B00;">' + result.data.no_booking + '</span>';
+                    }
+                    if (successAlert) {
+                        successAlert.style.display = 'block';
+                        successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    
+                    // Change button to success state
+                    submitBtn.classList.add('success');
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Booking Berhasil!';
+                    
+                    // TAMBAHAN: Munculin notifikasi toast
+                    showToast('🎉 Booking berhasil dibuat! No. ' + result.data.no_booking, 'success');
+                    
+                    // Reset form setelah 3 detik (opsional, kalau mau booking lagi)
+                    setTimeout(function() {
+                        // Kalau mau reset form:
+                        // form.reset();
+                        // submitBtn.disabled = false;
+                        // submitBtn.classList.remove('success');
+                        // submitBtn.innerHTML = originalHTML;
+                        
+                        // Kalau mau redirect manual:
+                        // window.location.href = result.data.redirect_url;
+                    }, 3000);
+                    
+                } else {
+                    // Show error
+                    if (errorText) errorText.textContent = result.message || 'Terjadi kesalahan';
+                    if (errorAlert) errorAlert.style.display = 'block';
+                    
+                    // Re-enable button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                    
+                    showToast('❌ ' + (result.message || 'Gagal membuat booking'), 'error');
+                }
+            })
+            .catch(function(error) {
+                console.error('❌ Error:', error);
+                
+                if (errorText) errorText.textContent = 'Gagal mengirim data. Cek koneksi atau refresh halaman.';
+                if (errorAlert) errorAlert.style.display = 'block';
+                
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHTML;
+                
+                showToast('❌ Koneksi error. Coba lagi!', 'error');
+            });
+            
+            // PENTING: Return false biar form nggak submit normal
+            return false;
+        });
+    }
+    
+    // ===== TOAST NOTIFICATION =====
+    function showToast(message, type) {
+        // Hapus toast lama kalau ada
+        const oldToast = document.getElementById('bookingToast');
+        if (oldToast) oldToast.remove();
+        
+        const toast = document.createElement('div');
+        toast.id = 'bookingToast';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            animation: toastSlide 0.4s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 350px;
+            line-height: 1.5;
+        `;
+        
+        if (type === 'success') {
+            toast.style.background = 'linear-gradient(135deg, #4CAF50, #66BB6A)';
+            toast.style.color = '#fff';
+        } else {
+            toast.style.background = 'linear-gradient(135deg, #f44336, #ef5350)';
+            toast.style.color = '#fff';
+        }
+        
+        toast.innerHTML = message;
+        
+        // Tambah style animasi kalau belom ada
+        if (!document.getElementById('toastStyle')) {
+            const style = document.createElement('style');
+            style.id = 'toastStyle';
+            style.textContent = `
+                @keyframes toastSlide {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes toastFade {
+                    from { opacity: 1; }
+                    to { opacity: 0; transform: translateX(100%); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(toast);
+        
+        // Auto remove after 5 detik
+        setTimeout(function() {
+            toast.style.animation = 'toastFade 0.4s ease forwards';
+            setTimeout(function() {
+                toast.remove();
+            }, 400);
+        }, 5000);
+    }
+    
+    // ===== INIT =====
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBookingForm);
+    } else {
+        initBookingForm();
+    }
+})();
+</script>
+{% endblock %}
