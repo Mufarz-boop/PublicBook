@@ -1,7 +1,6 @@
 /* ============================================================
-   LOGIN PAGE
+   REGISTER PAGE
    ============================================================ */
-
 :root {
       --orange-50: #fff7ed;
       --orange-100: #ffedd5;
@@ -61,7 +60,7 @@
     /* ============================================
        CARD HORIZONTAL - TRANSPARENT + BLUR
        ============================================ */
-    .login-card {
+    .register-card {
       display: flex;
       width: 100%;
       max-width: 872px;
@@ -103,16 +102,16 @@
       transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .login-card:hover .card-left img {
+    .register-card:hover .card-left img {
       transform: scale(1.05);
     }
 
     /* ============================================
-       SISI KANAN - FORM LOGIN (NO SCROLL)
+       SISI KANAN - FORM REGISTER (NO SCROLL)
        ============================================ */
     .card-right {
       flex: 1;
-      padding: 36px 44px;
+      padding: 28px 44px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -121,24 +120,26 @@
     }
 
     /* ----------------------------------------
-       LOGO BULAT - PURE IMAGE, NO SHADOW
+       HEADER: LOGO + BRAND NAME (LEFT ALIGNED)
        ---------------------------------------- */
     .brand-header {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      margin-bottom: 28px;
+      justify-content: flex-start;
+      gap: 16px;
+      margin-bottom: 8px;
+      margin-left: 8px;
       flex-shrink: 0;
       animation: fadeUp 0.6s 0.2s both;
     }
 
     .logo-wrapper {
-      width: 96px;
-      height: 96px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       overflow: hidden;
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
     }
 
     .logo-wrapper:hover {
@@ -152,45 +153,44 @@
       display: block;
     }
 
+    .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-name .text-public {
+      color: #f8fafc;
+    }
+
+    .brand-name .text-book {
+      background: linear-gradient(135deg, #fb923c, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     /* ----------------------------------------
-       HEADING
+       SUBTITLE (CENTER)
        ---------------------------------------- */
-    .login-heading {
+    .register-subtitle {
       text-align: center;
-      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--gray-500);
+      font-weight: 400;
+      margin-bottom: 20px;
       flex-shrink: 0;
       animation: fadeUp 0.6s 0.3s both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .login-heading h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--gray-900);
-      margin-bottom: 6px;
-      letter-spacing: -0.6px;
-      line-height: 1.2;
-    }
-
-    .login-heading p {
-      font-size: 13px;
-      color: var(--gray-400);
-      font-weight: 400;
-      letter-spacing: 0.2px;
     }
 
     /* ----------------------------------------
        FORM
        ---------------------------------------- */
-    .login-form {
+    .register-form {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
       animation: fadeUp 0.6s 0.4s both;
     }
 
@@ -200,7 +200,7 @@
 
     .input-group i {
       position: absolute;
-      left: 18px;
+      left: 16px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--gray-400);
@@ -211,10 +211,10 @@
 
     .input-group input {
       width: 100%;
-      padding: 13px 18px 13px 46px;
+      padding: 11px 16px 11px 42px;
       background: var(--gray-50);
       border: 2px solid var(--gray-100);
-      border-radius: 14px;
+      border-radius: 12px;
       font-family: 'Inter', sans-serif;
       font-size: 13px;
       color: var(--gray-800);
@@ -247,55 +247,16 @@
     }
 
     /* ----------------------------------------
-       LUPA PASSWORD
-       ---------------------------------------- */
-    .forgot-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: -2px;
-      margin-bottom: 2px;
-    }
-
-    .forgot-link {
-      font-size: 11.5px;
-      color: var(--gray-400);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s;
-      letter-spacing: 0.2px;
-      position: relative;
-    }
-
-    .forgot-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 1.5px;
-      background: var(--orange-500);
-      transition: width 0.3s ease;
-    }
-
-    .forgot-link:hover {
-      color: var(--orange-600);
-    }
-
-    .forgot-link:hover::after {
-      width: 100%;
-    }
-
-    /* ----------------------------------------
-       TOMBOL MASUK
+       TOMBOL DAFTAR
        ---------------------------------------- */
     .btn-submit {
       width: 100%;
-      padding: 14px;
-      margin-top: 4px;
+      padding: 12px;
+      margin-top: 6px;
       background: linear-gradient(135deg, #ea580c, #f97316);
       color: var(--white);
       border: none;
-      border-radius: 14px;
+      border-radius: 12px;
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       font-weight: 700;
@@ -307,6 +268,7 @@
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
+      animation: fadeUp 0.6s 0.5s both;
     }
 
     .btn-submit::before {
@@ -342,41 +304,19 @@
     }
 
     /* ----------------------------------------
-       DIVIDER
+       LOGIN LINK
        ---------------------------------------- */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin: 18px 0;
-      animation: fadeUp 0.6s 0.5s both;
-    }
-
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--gray-200), transparent);
-    }
-
-    .divider-text {
-      font-size: 11px;
-      color: var(--gray-400);
-      font-weight: 500;
-    }
-
-    /* ----------------------------------------
-       REGISTER LINK
-       ---------------------------------------- */
-    .register-row {
+    .login-row {
       text-align: center;
-      font-size: 12.5px;
+      margin-top: 14px;
+      font-size: 12px;
       color: var(--gray-500);
       font-weight: 500;
       flex-shrink: 0;
       animation: fadeUp 0.6s 0.6s both;
     }
 
-    .register-row a {
+    .login-row a {
       color: var(--orange-500);
       text-decoration: none;
       font-weight: 700;
@@ -384,7 +324,7 @@
       position: relative;
     }
 
-    .register-row a::after {
+    .login-row a::after {
       content: '';
       position: absolute;
       bottom: -2px;
@@ -395,11 +335,11 @@
       transition: width 0.3s ease;
     }
 
-    .register-row a:hover {
+    .login-row a:hover {
       color: var(--orange-700);
     }
 
-    .register-row a:hover::after {
+    .login-row a:hover::after {
       width: 100%;
     }
 
@@ -420,47 +360,53 @@
         padding-bottom: 30px;
       }
 
-      .login-card {
+      .register-card {
         border-radius: 24px;
         height: auto;
         max-width: 412px;
-        min-height: 472px;
+        min-height: 520px;
       }
 
       .card-right {
-        padding: 32px 28px;
+        padding: 28px 28px;
         overflow: hidden;
       }
 
-      .login-heading h1 {
-        font-size: 22px;
-      }
-
       .brand-header {
-        margin-bottom: 24px;
+        justify-content: center;
+        margin-left: 0;
+        margin-bottom: 10px;
       }
 
       .logo-wrapper {
-        width: 80px;
-        height: 80px;
+        width: 64px;
+        height: 64px;
+      }
+
+      .brand-name {
+        font-size: 28px;
+      }
+
+      .register-subtitle {
+        margin-bottom: 16px;
       }
     }
 
     @media (max-width: 380px) {
       .card-right {
-        padding: 28px 22px;
+        padding: 24px 22px;
       }
 
-      .login-heading h1 {
-        font-size: 20px;
+      .brand-name {
+        font-size: 24px;
       }
 
       .input-group input {
-        padding: 12px 14px 12px 42px;
+        padding: 10px 14px 10px 38px;
       }
 
       .logo-wrapper {
-        width: 72px;
-        height: 72px;
+        width: 56px;
+        height: 56px;
       }
     }

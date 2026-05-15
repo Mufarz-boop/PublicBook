@@ -1,17 +1,27 @@
 /**
-     * Handle login form submission
+     * Handle register form submission
      */
-    function handleLogin(event) {
+    function handleRegister(event) {
       event.preventDefault();
 
+      const nama = document.getElementById('nama').value.trim();
       const email = document.getElementById('email').value.trim();
+      const telepon = document.getElementById('telepon').value.trim();
       const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
       const btn = document.getElementById('btnSubmit');
       const originalText = btn.innerText;
 
       // Validasi sederhana
-      if (!email || !password) {
+      if (!nama || !email || !telepon || !password || !confirmPassword) {
         shakeButton(btn);
+        return;
+      }
+
+      // Cek password match
+      if (password !== confirmPassword) {
+        shakeButton(btn);
+        alert('Password tidak cocok!');
         return;
       }
 
@@ -20,31 +30,23 @@
       btn.disabled = true;
       btn.style.opacity = '0.85';
 
-      // Call API backend
-      fetch('/api/auth/login', {
+      fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ nama, email, telepon, password })
       })
       .then(async (res) => {
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) {
-          throw new Error(data.message || 'Login gagal');
+          throw new Error(data.message || 'Registrasi gagal');
         }
         return data;
       })
-      .then((data) => {
-        const role = data && data.role ? data.role : null;
-        // admins.role: 'super_admin' | 'admin_instansi'
-        if (role && (role === 'super_admin' || role === 'admin_instansi')) {
-          window.location.href = '/admin/dashboard';
-          return;
-        }
-        window.location.href = '/user/dashboard';
+      .then(() => {
+        window.location.href = '/login';
       })
-
       .catch((err) => {
-        alert(err.message || 'Login gagal');
+        alert(err.message || 'Registrasi gagal');
         // Reset button
         btn.innerHTML = originalText;
         btn.disabled = false;

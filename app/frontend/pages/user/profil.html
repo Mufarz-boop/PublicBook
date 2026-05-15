@@ -5,190 +5,54 @@
 {% set header_title = 'Profil' %}
 {% set header_icon = 'fa-user' %}
 
-{% block extra_css %}
-        /* ========== PROFILE GRID ========== */
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        /* ========== PROFILE INFO CARD ========== */
-        .profile-info-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            animation: fadeInUp 0.5s ease forwards;
-        }
-
-        .profile-avatar-wrap {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #fff;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .info-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .info-item {
-            background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
-            border-radius: 12px;
-            padding: 12px 16px;
-            transition: all 0.3s ease;
-        }
-
-        .info-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.15);
-        }
-
-        .info-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: #888;
-            margin-bottom: 2px;
-        }
-
-        .info-value {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .status-active {
-            color: #10B981;
-        }
-
-        /* ========== QUEUE CARD ========== */
-        .queue-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            animation: fadeInUp 0.5s ease 0.1s both;
-        }
-
-        .queue-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .queue-number-label {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 8px;
-        }
-
-        .queue-number {
-            font-size: 72px;
-            font-weight: 700;
-            color: #333;
-            line-height: 1;
-            margin-bottom: 20px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .queue-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .queue-info-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 13px;
-            color: #555;
-        }
-
-        .queue-info-item strong {
-            color: #333;
-            font-weight: 600;
-        }
-
-        @media (max-width: 992px) {
-            .profile-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .queue-number {
-                font-size: 56px;
-            }
-        }
-{% endblock %}
-
 {% block content %}
-            <h1 class="page-title">Profil Pengguna</h1>
+<h1 class="user-page-title">Profil Pengguna</h1>
 
-            <!-- PROFILE GRID -->
-            <div class="profile-grid">
-                <!-- LEFT: PROFILE INFO -->
-                <div class="profile-info-card">
-                    <div class="profile-avatar-wrap">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face" alt="Ms. Hutao" class="profile-avatar">
-                    </div>
+<!-- PROFILE GRID -->
+<div class="profil-grid">
+    <!-- LEFT: PROFILE INFO -->
+    <div class="profil-info-card">
+        <div class="profil-avatar-wrap">
+            <img src="../../assets/images/icons/Afdal Adha Firnansyah.png" alt="Ms. Hutao" class="profil-avatar">
+        </div>
 
-                    <div class="info-list">
-                        <div class="info-item">
-                            <div class="info-label">Nama Lengkap</div>
-                            <div class="info-value">Hutao</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Email</div>
-                            <div class="info-value">hutao@gmail.com</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Nomor Telepon</div>
-                            <div class="info-value">+62 856-2782-4273</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">NIK</div>
-                            <div class="info-value">627275627275</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Status Akun</div>
-                            <div class="info-value status-active">Active</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGHT: QUEUE INFO -->
-                <div class="queue-card">
-                    <div class="queue-title">Pembuatan Kartu Keluarga</div>
-                    <div class="queue-number-label">Nomor Antrean</div>
-                    <div class="queue-number">124</div>
-                    <div class="queue-info">
-                        <div class="queue-info-item">
-                            Antrean saat ini: <strong>121</strong>
-                        </div>
-                        <div class="queue-info-item">
-                            Estimasi: <strong>20 Menit</strong>
-                        </div>
-                    </div>
-                </div>
+        <div class="profil-info-list">
+            <div class="profil-info-item">
+                <div class="profil-info-label">Nama Lengkap</div>
+                <div class="profil-info-value">Hutao</div>
             </div>
+            <div class="profil-info-item">
+                <div class="profil-info-label">Email</div>
+                <div class="profil-info-value">hutao@gmail.com</div>
+            </div>
+            <div class="profil-info-item">
+                <div class="profil-info-label">Nomor Telepon</div>
+                <div class="profil-info-value">+62 856-2782-4273</div>
+            </div>
+            <div class="profil-info-item">
+                <div class="profil-info-label">NIK</div>
+                <div class="profil-info-value">627275627275</div>
+            </div>
+            <div class="profil-info-item">
+                <div class="profil-info-label">Status Akun</div>
+                <div class="profil-info-value profil-status-active">Active</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: QUEUE INFO -->
+    <div class="profil-queue-card">
+        <div class="profil-queue-title">Pembuatan Kartu Keluarga</div>
+        <div class="profil-queue-number-label">Nomor Antrean</div>
+        <div class="profil-queue-number">124</div>
+        <div class="profil-queue-info">
+            <div class="profil-queue-info-item">
+                Antrean saat ini: <strong>121</strong>
+            </div>
+            <div class="profil-queue-info-item">
+                Estimasi: <strong>20 Menit</strong>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

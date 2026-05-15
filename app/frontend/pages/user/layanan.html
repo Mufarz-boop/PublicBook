@@ -5,161 +5,34 @@
 {% set header_title = 'Layanan' %}
 {% set header_icon = 'fa-list' %}
 
-{% block extra_css %}
-        /* ========== SEARCH BAR ========== */
-        .search-section {
-            margin-bottom: 25px;
-        }
-
-        .search-box {
-            position: relative;
-            max-width: 500px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 14px 16px 14px 50px;
-            border: none;
-            border-radius: 14px;
-            font-size: 14px;
-            font-family: 'Poppins', sans-serif;
-            background: rgba(255,255,255,0.9);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .search-box input:focus {
-            background: #fff;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-
-        .search-box input::placeholder {
-            color: #aaa;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #aaa;
-            font-size: 16px;
-        }
-
-        /* ========== SERVICES LIST ========== */
-        .services-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 10px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            overflow: hidden;
-        }
-
-        .service-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 24px;
-            border-radius: 14px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .service-item:nth-child(odd) {
-            background: #f8f9fa;
-        }
-
-        .service-item:nth-child(even) {
-            background: #fff;
-        }
-
-        .service-item:hover {
-            background: linear-gradient(135deg, #FFF8F0, #FFF0E0);
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.1);
-        }
-
-        .service-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .btn-booking {
-            padding: 8px 28px;
-            background: linear-gradient(135deg, #FF8C42, #FFB347);
-            color: #fff;
-            border: none;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif;
-            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
-        }
-
-        .btn-booking:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
-        }
-
-        @media (max-width: 768px) {
-            .service-item {
-                padding: 14px 16px;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .btn-booking {
-                width: 100%;
-                text-align: center;
-            }
-        }
-
-        .search-section {
-            animation: fadeInUp 0.4s ease forwards;
-        }
-
-        .services-card {
-            animation: fadeInUp 0.5s ease 0.1s both;
-        }
-{% endblock %}
-
 {% block content %}
-            <h1 class="page-title">Layanan Pengguna</h1>
+<h1 class="user-page-title">Layanan Pengguna</h1>
 
-            <!-- SEARCH BAR -->
-            <div class="search-section">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Cari layanan tersedia...">
-                </div>
-            </div>
+<!-- SEARCH BAR -->
+<div class="layanan-search-section">
+    <div class="layanan-search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Cari layanan tersedia...">
+    </div>
+</div>
 
-            <!-- SERVICES LIST -->
-            <div class="services-card">
-                <div class="service-item">
-                    <span class="service-name">Pembuatan Kartu Keluarga</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pembuatan Akta Kematian</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pembuatan Akta Kelahiran</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pengurusan Mutasi Penduduk</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-                <div class="service-item">
-                    <span class="service-name">Pengurusan Surat Keterangan Usaha</span>
-                    <button class="btn-booking">Booking</button>
-                </div>
-            </div>
+<!-- SERVICES LIST -->
+<div class="layanan-services-card">
+    <div class="layanan-service-item">
+        <span class="layanan-service-name">Pembuatan Kartu Keluarga</span>
+        <button class="layanan-btn-booking">Booking</button>
+    </div>
+    <div class="layanan-service-item">
+        <span class="layanan-service-name">Pembuatan Akta Kematian</span>
+        <button class="layanan-btn-booking">Booking</button>
+    </div>
+    <div class="layanan-service-item">
+        <span class="layanan-service-name">Pembuatan Akta Kelahiran</span>
+        <button class="layanan-btn-booking">Booking</button>
+    </div>
+    <div class="layanan-service-item">
+        <span class="layanan-service-name">Pengurusan Mutasi Penduduk</span>
+        <button class="layanan-btn-booking">Booking</button>
+    </div>
+</div>
 {% endblock %}

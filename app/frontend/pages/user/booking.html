@@ -5,100 +5,14 @@
 {% set header_title = 'Booking Saya' %}
 {% set header_icon = 'fa-calendar-check' %}
 
-{% block extra_css %}
-        .content-area {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 80px);
-        }
-
-        /* ========== BOOKING CARD ========== */
-        .booking-card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 50px 60px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-            animation: fadeInUp 0.6s ease forwards;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .booking-card::before {
-            content: '';
-            position: absolute;
-            top: -100px;
-            right: -100px;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, rgba(255,107,0,0.05), rgba(255,140,0,0.02));
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .booking-card::after {
-            content: '';
-            position: absolute;
-            bottom: -80px;
-            left: -80px;
-            width: 160px;
-            height: 160px;
-            background: linear-gradient(135deg, rgba(255,140,0,0.05), rgba(255,107,0,0.02));
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .qr-code-wrap {
-            margin-bottom: 25px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .qr-code {
-            width: 280px;
-            height: 280px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-        }
-
-        .wait-time {
-            font-size: 16px;
-            font-weight: 500;
-            color: #555;
-            position: relative;
-            z-index: 1;
-        }
-
-        .wait-time strong {
-            color: #FF6B00;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .content-area {
-                padding: 20px;
-            }
-
-            .booking-card {
-                padding: 30px 25px;
-            }
-
-            .qr-code {
-                width: 220px;
-                height: 220px;
-            }
-        }
-{% endblock %}
-
 {% block content %}
-            <!-- BOOKING CARD -->
-            <div class="booking-card">
-                <div class="qr-code-wrap">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=PB-240410-001-BOOKING-PUBLICBOOK&color=333333&bgcolor=ffffff" alt="QR Code Booking" class="qr-code">
-                </div>
-                <p class="wait-time">Estimasi wait time : <strong>20 minute</strong></p>
-            </div>
+<div class="booking-content-area">
+    <!-- BOOKING CARD -->
+    <div class="booking-card">
+        <div class="booking-qr-code-wrap">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=PB-240410-001-BOOKING-PUBLICBOOK&color=333333&bgcolor=ffffff" alt="QR Code Booking" class="booking-qr-code">
+        </div>
+        <p class="booking-wait-time">Estimasi wait time : <strong>20 minute</strong></p>
+    </div>
+</div>
 {% endblock %}

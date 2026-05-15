@@ -2,7 +2,6 @@ app/
     backend/
         database/
             database.py
-            db_publicbook.sql
         models/
             booking.py
             queue.py
