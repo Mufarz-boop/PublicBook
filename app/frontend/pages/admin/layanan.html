@@ -4,6 +4,218 @@
 {% block header_title %}Services{% endblock %}
 {% block nav_layanan_active %}active{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* Modal Styles - Shared */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-box {
+    background: #fff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease;
+  }
+  .modal-header {
+    padding: 24px 28px 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .modal-header-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pb-orange);
+    font-size: 20px;
+  }
+  .modal-header-icon.edit {
+    background: linear-gradient(135deg, #DBEAFE, #EFF6FF);
+    color: var(--pb-blue);
+  }
+  .modal-header-icon.delete {
+    background: linear-gradient(135deg, #FEE2E2, #FEF2F2);
+    color: var(--pb-red);
+  }
+  .modal-header-text h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+  }
+  .modal-header-text p {
+    font-size: 13px;
+    color: #888;
+  }
+  .modal-close {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: #f5f5f5;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  .modal-close:hover {
+    background: #fee2e2;
+    color: #e74c3c;
+  }
+  .modal-form {
+    padding: 0 28px 28px;
+  }
+  .modal-form .form-group {
+    margin-bottom: 16px;
+  }
+  .modal-form .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .modal-form .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .modal-form .input-wrap > i:first-child {
+    position: absolute;
+    left: 14px;
+    color: #aaa;
+    font-size: 14px;
+    z-index: 2;
+  }
+  .modal-form .input-wrap input,
+  .modal-form .input-wrap select,
+  .modal-form .input-wrap textarea {
+    width: 100%;
+    padding: 14px 14px 14px 44px;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+    outline: none;
+    background: #fafafa;
+    color: #333;
+  }
+  .modal-form .input-wrap textarea {
+    padding-left: 16px;
+    min-height: 80px;
+    resize: vertical;
+  }
+  .modal-form .input-wrap input:focus,
+  .modal-form .input-wrap select:focus,
+  .modal-form .input-wrap textarea:focus {
+    border-color: var(--pb-orange);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.08);
+  }
+  .modal-form .input-wrap input::placeholder,
+  .modal-form .input-wrap textarea::placeholder {
+    color: #bbb;
+  }
+  .modal-form .btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--pb-orange), var(--pb-orange-2));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .modal-form .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 0, 0.35);
+  }
+  .modal-form .btn-submit.edit {
+    background: linear-gradient(135deg, var(--pb-blue), #60A5FA);
+  }
+  .modal-form .btn-submit.edit:hover {
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+  }
+  .modal-form .btn-submit.delete {
+    background: linear-gradient(135deg, var(--pb-red), var(--pb-red-2));
+  }
+  .modal-form .btn-submit.delete:hover {
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.35);
+  }
+  .delete-warning {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #991B1B;
+    font-size: 13px;
+  }
+  .delete-warning i {
+    font-size: 20px;
+    color: var(--pb-red);
+  }
+  .delete-info {
+    text-align: center;
+    padding: 20px 0;
+    color: #666;
+    font-size: 14px;
+  }
+  .delete-info strong {
+    color: #1a1a1a;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 16px;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
   <h1 class="page-title">Services</h1>
   <p class="page-subtitle">Kelola semua layanan publik yang dapat dipesan</p>
@@ -15,11 +227,10 @@
         <input type="text" id="searchService" placeholder="Cari layanan..." onkeyup="filterService()">
       </div>
 
-      <div class="action-icons">
-        <button class="icon-btn" title="Edit"><i class="fas fa-pencil-alt"></i></button>
-        <button class="icon-btn" title="Toggle"><i class="fas fa-toggle-on"></i></button>
-        <button class="icon-btn" title="Delete"><i class="fas fa-trash-alt"></i></button>
-      </div>
+      <button class="btn-add" onclick="openModal('add')">
+        <i class="fas fa-plus"></i>
+        <span>Tambah Layanan</span>
+      </button>
     </div>
 
     <div class="table-wrapper">
@@ -51,9 +262,13 @@
               </td>
               <td>
                 <div class="action-group">
-                  <button class="action-edit"><i class="fas fa-pencil-alt"></i></button>
-                  <button class="toggle-switch {% if service.status == 'active' %}active{% endif %}" type="button" onclick="toggleSwitch(this)"></button>
-                  <button class="action-delete"><i class="fas fa-trash-alt"></i></button>
+                  <button class="action-edit" onclick="openEditModal({{ service.id }}, '{{ service.nama_layanan }}', '{{ service.instansi }}', '{{ service.jam_operasional or '' }}', '{{ service.deskripsi or '' }}', '{{ service.status }}')" title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button class="toggle-switch {% if service.status == 'active' %}active{% endif %}" type="button" onclick="toggleStatus({{ service.id }}, this)" title="Toggle Status"></button>
+                  <button class="action-delete" onclick="openDeleteModal({{ service.id }}, '{{ service.nama_layanan }}')" title="Hapus">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -68,6 +283,162 @@
     </div>
   </div>
 
+  <!-- Modal Tambah Layanan -->
+  <div class="modal-overlay" id="modalAdd" onclick="closeModalOutside(event, 'add')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <i class="fas fa-plus-circle"></i>
+        </div>
+        <div class="modal-header-text">
+          <h3>Tambah Layanan Baru</h3>
+          <p>Tambahkan layanan publik yang dapat dipesan</p>
+        </div>
+        <button class="modal-close" onclick="closeModal('add')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.tambah_layanan') }}">
+        <div class="form-group">
+          <label>Nama Layanan</label>
+          <div class="input-wrap">
+            <i class="fas fa-concierge-bell"></i>
+            <input type="text" name="nama_layanan" placeholder="Masukkan nama layanan" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Instansi</label>
+          <div class="input-wrap">
+            <i class="fas fa-building"></i>
+            <input type="text" name="instansi" placeholder="Masukkan nama instansi" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Jam Operasional</label>
+          <div class="input-wrap">
+            <i class="fas fa-clock"></i>
+            <input type="text" name="jam_operasional" placeholder="Contoh: 08:00 - 16:00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Deskripsi</label>
+          <div class="input-wrap">
+            <textarea name="deskripsi" placeholder="Deskripsi layanan (opsional)"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <div class="input-wrap">
+            <i class="fas fa-toggle-on"></i>
+            <select name="status" style="padding-left: 44px;">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-save"></i>
+          Simpan Layanan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Edit Layanan -->
+  <div class="modal-overlay" id="modalEdit" onclick="closeModalOutside(event, 'edit')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-icon edit">
+          <i class="fas fa-pencil-alt"></i>
+        </div>
+        <div class="modal-header-text">
+          <h3>Edit Layanan</h3>
+          <p>Perbarui data layanan yang sudah ada</p>
+        </div>
+        <button class="modal-close" onclick="closeModal('edit')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.edit_layanan') }}" id="editForm">
+        <input type="hidden" name="service_id" id="editServiceId">
+        <div class="form-group">
+          <label>Nama Layanan</label>
+          <div class="input-wrap">
+            <i class="fas fa-concierge-bell"></i>
+            <input type="text" name="nama_layanan" id="editNama" placeholder="Masukkan nama layanan" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Instansi</label>
+          <div class="input-wrap">
+            <i class="fas fa-building"></i>
+            <input type="text" name="instansi" id="editInstansi" placeholder="Masukkan nama instansi" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Jam Operasional</label>
+          <div class="input-wrap">
+            <i class="fas fa-clock"></i>
+            <input type="text" name="jam_operasional" id="editJam" placeholder="Contoh: 08:00 - 16:00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Deskripsi</label>
+          <div class="input-wrap">
+            <textarea name="deskripsi" id="editDeskripsi" placeholder="Deskripsi layanan (opsional)"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <div class="input-wrap">
+            <i class="fas fa-toggle-on"></i>
+            <select name="status" id="editStatus" style="padding-left: 44px;">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit edit">
+          <i class="fas fa-save"></i>
+          Update Layanan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Hapus Layanan -->
+  <div class="modal-overlay" id="modalDelete" onclick="closeModalOutside(event, 'delete')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-icon delete">
+          <i class="fas fa-trash-alt"></i>
+        </div>
+        <div class="modal-header-text">
+          <h3>Hapus Layanan</h3>
+          <p>Tindakan ini tidak dapat dibatalkan</p>
+        </div>
+        <button class="modal-close" onclick="closeModal('delete')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.hapus_layanan') }}" id="deleteForm">
+        <input type="hidden" name="service_id" id="deleteServiceId">
+        <div class="delete-warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Layanan yang dihapus tidak dapat dikembalikan. Pastikan Anda yakin dengan tindakan ini.</span>
+        </div>
+        <div class="delete-info">
+          <span>Anda akan menghapus layanan:</span>
+          <strong id="deleteServiceName">-</strong>
+        </div>
+        <button type="submit" class="btn-submit delete">
+          <i class="fas fa-trash-alt"></i>
+          Ya, Hapus Layanan
+        </button>
+      </form>
+    </div>
+  </div>
+
   <script>
     function filterService() {
       const input = document.getElementById('searchService').value.toLowerCase();
@@ -78,15 +449,132 @@
       });
     }
 
-    function toggleSwitch(btn) {
-      btn.classList.toggle('active');
-      const row = btn.closest('tr');
-      const statusCell = row.querySelector('td:nth-child(5)');
-      if (btn.classList.contains('active')) {
-        statusCell.innerHTML = '<span class="status-bar"></span>';
-      } else {
-        statusCell.innerHTML = '<span class="status-stopped">Sedang Dihentikan</span>';
+    // Modal Functions
+    function openModal(type) {
+      document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(type) {
+      document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function closeModalOutside(event, type) {
+      if (event.target === document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1))) {
+        closeModal(type);
       }
     }
+
+    // Edit Modal
+    function openEditModal(id, nama, instansi, jam, deskripsi, status) {
+      document.getElementById('editServiceId').value = id;
+      document.getElementById('editNama').value = nama;
+      document.getElementById('editInstansi').value = instansi;
+      document.getElementById('editJam').value = jam;
+      document.getElementById('editDeskripsi').value = deskripsi;
+      document.getElementById('editStatus').value = status;
+      openModal('edit');
+    }
+
+    // Delete Modal
+    function openDeleteModal(id, nama) {
+      document.getElementById('deleteServiceId').value = id;
+      document.getElementById('deleteServiceName').textContent = nama;
+      openModal('delete');
+    }
+
+    // Toggle Status (AJAX)
+    function toggleStatus(id, btn) {
+      fetch("{{ url_for('admin_routes.toggle_layanan') }}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'service_id=' + encodeURIComponent(id)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          btn.classList.toggle('active');
+          const row = btn.closest('tr');
+          const statusCell = row.querySelector('td:nth-child(5)');
+          if (btn.classList.contains('active')) {
+            statusCell.innerHTML = '<span class="status-bar"></span>';
+          } else {
+            statusCell.innerHTML = '<span class="status-stopped">Sedang Dihentikan</span>';
+          }
+          // Show toast notification
+          showToast(data.message, 'success');
+        } else {
+          showToast(data.message || 'Gagal mengubah status', 'danger');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Terjadi kesalahan', 'danger');
+      });
+    }
+
+    // Toast notification helper
+    function showToast(message, type) {
+      const container = document.getElementById('toast-container');
+      const icons = {
+        success: 'fa-check-circle',
+        danger: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+      };
+      const colors = {
+        success: '#065F46',
+        danger: '#991B1B',
+        warning: '#92400E',
+        info: '#1E40AF'
+      };
+      const bgColors = {
+        success: '#D1FAE5',
+        danger: '#FEE2E2',
+        warning: '#FEF3C7',
+        info: '#DBEAFE'
+      };
+      
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        background: ${bgColors[type] || bgColors.info};
+        color: ${colors[type] || colors.info};
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease;
+        min-width: 280px;
+      `;
+      toast.innerHTML = `
+        <i class="fas ${icons[type] || icons.info}" style="font-size: 16px;"></i>
+        ${message}
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'all 0.5s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 500);
+      }, 3000);
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        ['Add', 'Edit', 'Delete'].forEach(type => {
+          document.getElementById('modal' + type).classList.remove('active');
+        });
+        document.body.style.overflow = '';
+      }
+    });
   </script>
 {% endblock %}

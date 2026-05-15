@@ -1,5 +1,5 @@
 # backend/routes/admin.py
-from flask import Blueprint, render_template, session, redirect, url_for, flash, request
+from flask import Blueprint, render_template, session, redirect, url_for, flash, request, jsonify
 from models.user import User
 from models.booking import Booking
 from models.services import Service
@@ -53,6 +53,143 @@ def layanan():
     services = Service.get_all()
     admin = Admin.get_by_id(session.get('user_id'))
     return render_template('admin/layanan.html', services=services, admin=admin)
+
+@bp.route('/layanan/tambah', methods=['POST'])
+@admin_required
+def tambah_layanan():
+    """Proses tambah layanan baru"""
+    nama_layanan = request.form.get('nama_layanan', '').strip()
+    instansi = request.form.get('instansi', '').strip()
+    jam_operasional = request.form.get('jam_operasional', '').strip()
+    deskripsi = request.form.get('deskripsi', '').strip()
+    status = request.form.get('status', 'active')
+    
+    if not nama_layanan or not instansi:
+        flash('Nama layanan dan instansi wajib diisi', 'danger')
+        return redirect(url_for('admin_routes.layanan'))
+    
+    db = get_db()
+    try:
+        db.execute(
+            text("""
+                INSERT INTO services (nama_layanan, instansi, jam_operasional, deskripsi, status, created_at)
+                VALUES (:nama, :instansi, :jam, :deskripsi, :status, NOW())
+            """),
+            {
+                'nama': nama_layanan,
+                'instansi': instansi,
+                'jam': jam_operasional or None,
+                'deskripsi': deskripsi or None,
+                'status': status
+            }
+        )
+        db.commit()
+        flash('Layanan berhasil ditambahkan', 'success')
+    except Exception as e:
+        db.rollback()
+        flash(f'Gagal menambahkan layanan: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_routes.layanan'))
+
+@bp.route('/layanan/edit', methods=['POST'])
+@admin_required
+def edit_layanan():
+    """Proses edit layanan"""
+    service_id = request.form.get('service_id')
+    nama_layanan = request.form.get('nama_layanan', '').strip()
+    instansi = request.form.get('instansi', '').strip()
+    jam_operasional = request.form.get('jam_operasional', '').strip()
+    deskripsi = request.form.get('deskripsi', '').strip()
+    status = request.form.get('status', 'active')
+    
+    if not service_id or not nama_layanan or not instansi:
+        flash('Data tidak lengkap', 'danger')
+        return redirect(url_for('admin_routes.layanan'))
+    
+    db = get_db()
+    try:
+        db.execute(
+            text("""
+                UPDATE services 
+                SET nama_layanan = :nama, instansi = :instansi, jam_operasional = :jam,
+                    deskripsi = :deskripsi, status = :status
+                WHERE id = :id
+            """),
+            {
+                'nama': nama_layanan,
+                'instansi': instansi,
+                'jam': jam_operasional or None,
+                'deskripsi': deskripsi or None,
+                'status': status,
+                'id': service_id
+            }
+        )
+        db.commit()
+        flash('Layanan berhasil diperbarui', 'success')
+    except Exception as e:
+        db.rollback()
+        flash(f'Gagal memperbarui layanan: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_routes.layanan'))
+
+@bp.route('/layanan/hapus', methods=['POST'])
+@admin_required
+def hapus_layanan():
+    """Proses hapus layanan"""
+    service_id = request.form.get('service_id')
+    
+    if not service_id:
+        flash('ID layanan tidak valid', 'danger')
+        return redirect(url_for('admin_routes.layanan'))
+    
+    db = get_db()
+    try:
+        db.execute(
+            text("DELETE FROM services WHERE id = :id"),
+            {'id': service_id}
+        )
+        db.commit()
+        flash('Layanan berhasil dihapus', 'success')
+    except Exception as e:
+        db.rollback()
+        flash(f'Gagal menghapus layanan: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_routes.layanan'))
+
+@bp.route('/layanan/toggle', methods=['POST'])
+@admin_required
+def toggle_layanan():
+    """Toggle status layanan via AJAX"""
+    service_id = request.form.get('service_id')
+    
+    if not service_id:
+        return jsonify({'success': False, 'message': 'ID tidak valid'})
+    
+    db = get_db()
+    try:
+        # Get current status
+        result = db.execute(
+            text("SELECT status FROM services WHERE id = :id"),
+            {'id': service_id}
+        ).mappings().first()
+        
+        if not result:
+            return jsonify({'success': False, 'message': 'Layanan tidak ditemukan'})
+        
+        current_status = result['status']
+        new_status = 'inactive' if current_status == 'active' else 'active'
+        
+        db.execute(
+            text("UPDATE services SET status = :status WHERE id = :id"),
+            {'status': new_status, 'id': service_id}
+        )
+        db.commit()
+        
+        status_text = 'diaktifkan' if new_status == 'active' else 'dinonaktifkan'
+        return jsonify({'success': True, 'message': f'Layanan berhasil {status_text}'})
+    except Exception as e:
+        db.rollback()
+        return jsonify({'success': False, 'message': str(e)})
 
 @bp.route('/booking-list')
 @admin_required
