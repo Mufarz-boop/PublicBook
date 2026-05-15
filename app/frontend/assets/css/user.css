@@ -668,6 +668,24 @@
     color: #888;
 }
 
+.layanan-search-count {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+    display: none;
+}
+
+.layanan-no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: #fff;
+    border-radius: 16px;
+    margin-top: 20px;
+}
+
 /* ========== PROFIL PAGE TAMBAHAN ========== */
 
 .profil-status-inactive {

@@ -72,7 +72,7 @@ def tambah_layanan():
     try:
         db.execute(
             text("""
-                INSERT INTO services (nama_layanan, instansi, jam_operasional, deskripsi, status, created_at)
+                INSERT INTO layanan (nama_layanan, instansi, jam_operasional, deskripsi, status, created_at)
                 VALUES (:nama, :instansi, :jam, :deskripsi, :status, NOW())
             """),
             {
@@ -110,7 +110,7 @@ def edit_layanan():
     try:
         db.execute(
             text("""
-                UPDATE services 
+                UPDATE layanan 
                 SET nama_layanan = :nama, instansi = :instansi, jam_operasional = :jam,
                     deskripsi = :deskripsi, status = :status
                 WHERE id = :id
@@ -145,7 +145,7 @@ def hapus_layanan():
     db = get_db()
     try:
         db.execute(
-            text("DELETE FROM services WHERE id = :id"),
+            text("DELETE FROM layanan WHERE id = :id"),
             {'id': service_id}
         )
         db.commit()
@@ -167,9 +167,8 @@ def toggle_layanan():
     
     db = get_db()
     try:
-        # Get current status
         result = db.execute(
-            text("SELECT status FROM services WHERE id = :id"),
+            text("SELECT status FROM layanan WHERE id = :id"),
             {'id': service_id}
         ).mappings().first()
         
@@ -180,7 +179,7 @@ def toggle_layanan():
         new_status = 'inactive' if current_status == 'active' else 'active'
         
         db.execute(
-            text("UPDATE services SET status = :status WHERE id = :id"),
+            text("UPDATE layanan SET status = :status WHERE id = :id"),
             {'status': new_status, 'id': service_id}
         )
         db.commit()

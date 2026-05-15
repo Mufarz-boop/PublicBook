@@ -12,15 +12,16 @@
 <div class="layanan-search-section">
     <div class="layanan-search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchLayanan" placeholder="Cari layanan tersedia..." onkeyup="filterLayanan()">
+        <input type="text" id="searchLayanan" placeholder="Cari layanan tersedia..." onkeyup="filterLayanan()" autocomplete="off">
     </div>
+    <div class="layanan-search-count" id="searchCount"></div>
 </div>
 
 <!-- SERVICES LIST -->
 <div class="layanan-services-card" id="layananList">
     {% if services %}
         {% for service in services %}
-        <div class="layanan-service-item" data-name="{{ service.nama_layanan|lower }}">
+        <div class="layanan-service-item" data-search="{{ (service.nama_layanan ~ ' ' ~ service.instansi ~ ' ' ~ (service.jam_operasional or ''))|lower }}">
             <div class="layanan-service-info">
                 <span class="layanan-service-name">{{ service.nama_layanan }}</span>
                 <span class="layanan-service-instansi">{{ service.instansi }}</span>
@@ -32,27 +33,65 @@
         </div>
         {% endfor %}
     {% else %}
-        <div class="layanan-empty">
+        <div class="layanan-empty" id="emptyState">
             <p>Tidak ada layanan tersedia saat ini.</p>
         </div>
     {% endif %}
+</div>
+
+<div class="layanan-no-results" id="noResults" style="display: none;">
+    <i class="fas fa-search" style="font-size: 48px; color: #ddd; margin-bottom: 16px;"></i>
+    <p style="color: #888; font-size: 14px;">Tidak ada layanan yang cocok dengan pencarian Anda.</p>
+    <button onclick="clearSearch()" style="margin-top: 12px; padding: 10px 20px; background: linear-gradient(135deg, #FF6B00, #FF8C00); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600;">Tampilkan Semua</button>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 function filterLayanan() {
-    const input = document.getElementById('searchLayanan').value.toLowerCase();
+    const input = document.getElementById('searchLayanan').value.toLowerCase().trim();
     const items = document.querySelectorAll('.layanan-service-item');
+    const noResults = document.getElementById('noResults');
+    const searchCount = document.getElementById('searchCount');
+    let visibleCount = 0;
+    
     items.forEach(item => {
-        const name = item.getAttribute('data-name');
-        item.style.display = name.includes(input) ? 'flex' : 'none';
+        const searchData = item.getAttribute('data-search') || '';
+        const isMatch = searchData.includes(input);
+        item.style.display = isMatch ? 'flex' : 'none';
+        if (isMatch) visibleCount++;
     });
+    
+    // Show/hide no results message
+    if (input && visibleCount === 0) {
+        noResults.style.display = 'flex';
+    } else {
+        noResults.style.display = 'none';
+    }
+    
+    // Update count
+    if (input) {
+        searchCount.textContent = visibleCount + ' hasil ditemukan';
+        searchCount.style.display = 'block';
+    } else {
+        searchCount.style.display = 'none';
+    }
+}
+
+function clearSearch() {
+    const input = document.getElementById('searchLayanan');
+    input.value = '';
+    filterLayanan();
+    input.focus();
 }
 
 function bookingLayanan(serviceId) {
-    // Redirect ke halaman booking dengan ID layanan
-    window.location.href = '/user/booking/new?layanan_id=' + serviceId;
+    window.location.href = '/user/booking/new?layanan_id=' + encodeURIComponent(serviceId);
 }
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('searchLayanan').focus();
+});
 </script>
 {% endblock %}
