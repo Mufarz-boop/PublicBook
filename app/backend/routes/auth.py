@@ -22,12 +22,7 @@ def forgot_password():
 
 @bp.route('/logout')
 def logout():
-    """Logout user/admin — clear session dan redirect ke login page"""
+    """Logout user/admin — clear session dan redirect ke index page"""
     session.clear()
     flash('Anda telah logout', 'info')
-    # ═══════════════════════════════════════════════════════════════
-    # PERUBAHAN: redirect string hardcoded → url_for() agar konsisten
-    # SEBELUM: return redirect('/login')
-    # SESUDAH: return redirect(url_for('auth_routes.login_page'))
-    # ═══════════════════════════════════════════════════════════════
-    return redirect(url_for('auth_routes.login_page'))
+    return redirect(url_for('static_routes.index'))

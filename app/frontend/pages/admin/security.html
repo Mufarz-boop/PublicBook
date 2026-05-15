@@ -6,35 +6,109 @@
 
 {% block content %}
   <div class="cards-row">
+    <!-- LEFT: Password Form -->
     <div class="password-card">
-      <h3 class="card-title">Ubah Password</h3>
+      <div class="card-header">
+        <div class="header-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="header-text">
+          <h3>Ubah Password</h3>
+          <p>Perbarui keamanan akun Anda</p>
+        </div>
+      </div>
+      
       <form>
         <div class="form-group">
-          <label>Password saat ini</label>
-          <input type="password" placeholder="Password saat ini">
+          <label>Password Saat Ini</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Masukkan password saat ini">
+          </div>
         </div>
         <div class="form-group">
-          <label>Password baru</label>
-          <input type="password" placeholder="Password baru">
+          <label>Password Baru</label>
+          <div class="input-wrap">
+            <i class="fas fa-key"></i>
+            <input type="password" placeholder="Masukkan password baru">
+          </div>
         </div>
         <div class="form-group">
           <label>Konfirmasi Password Baru</label>
-          <input type="password" placeholder="Konfirmasi Password Baru">
+          <div class="input-wrap">
+            <i class="fas fa-check-circle"></i>
+            <input type="password" placeholder="Konfirmasi password baru">
+          </div>
         </div>
-        <button type="submit" class="btn-save">Simpan Password Baru</button>
+        <button type="submit" class="btn-save">
+          <i class="fas fa-save"></i>
+          Simpan Password Baru
+        </button>
       </form>
     </div>
 
-    <div class="profile-card">
-      <div class="profile-bg"></div>
-      <div class="profile-avatar-wrap">
-        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face" alt="Profile" class="profile-avatar">
+    <!-- RIGHT: Profile Card (Standar Industri) -->
+    <div class="profile-card-v2">
+      <!-- Cover Image -->
+      <div class="profile-cover">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=200&fit=crop" alt="Cover">
+        <div class="cover-overlay"></div>
+      </div>
+      
+      <!-- Avatar (overlap cover + content) -->
+      <div class="profile-avatar-section">
+        <div class="avatar-wrap">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face" alt="Admin" class="avatar-img">
+          <div class="avatar-status online"></div>
+        </div>
+      </div>
+      
+      <!-- Profile Info -->
+      <div class="profile-content">
+        <div class="profile-main">
+          <h2 class="profile-name">Ms. Hutao</h2>
+          <span class="profile-role">Administrator</span>
+          <p class="profile-bio">Mengelola sistem PublicBook dengan penuh dedikasi</p>
+        </div>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-value">1,247</span>
+            <span class="stat-label">Bookings</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">89</span>
+            <span class="stat-label">Services</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">5.0</span>
+            <span class="stat-label">Rating</span>
+          </div>
+        </div>
+        
+        <div class="profile-actions">
+          <a href="/admin/profil" class="btn-profile btn-primary">
+            <i class="fas fa-user"></i> Lihat Profil
+          </a>
+          <a href="/admin/security/change-password" class="btn-profile btn-secondary">
+            <i class="fas fa-lock"></i> Ubah Password
+          </a>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- BOTTOM: Login History -->
   <div class="history-section">
-    <h3 class="history-title">Riwayat Login</h3>
+    <div class="history-header">
+      <div class="header-icon">
+        <i class="fas fa-history"></i>
+      </div>
+      <h3 class="history-title">Riwayat Login</h3>
+    </div>
+    
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
@@ -48,43 +122,117 @@
         </thead>
         <tbody>
           <tr>
-            <td>01 April 2026, 08:11</td>
-            <td>Chrome Windows</td>
-            <td>192.168.1.1</td>
-            <td>Aceh Tamiang</td>
-            <td><span class="status-badge status-success">Berhasil</span></td>
+            <td>
+              <div class="time-cell">
+                <span class="time-date">01 Apr 2026</span>
+                <span class="time-hour">08:11</span>
+              </div>
+            </td>
+            <td>
+              <div class="device-cell">
+                <i class="fab fa-chrome"></i>
+                <span>Chrome Windows</span>
+              </div>
+            </td>
+            <td><code class="ip-code">192.168.1.1</code></td>
+            <td>
+              <div class="location-cell">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Aceh Tamiang</span>
+              </div>
+            </td>
+            <td><span class="status-badge status-success"><i class="fas fa-check-circle"></i> Berhasil</span></td>
           </tr>
           <tr>
-            <td>02 April 2026, 17:06</td>
-            <td>Chrome Windows</td>
-            <td>192.168.1.1</td>
-            <td>Aceh Tamiang</td>
-            <td><span class="status-badge status-success">Berhasil</span></td>
+            <td>
+              <div class="time-cell">
+                <span class="time-date">02 Apr 2026</span>
+                <span class="time-hour">17:06</span>
+              </div>
+            </td>
+            <td>
+              <div class="device-cell">
+                <i class="fab fa-chrome"></i>
+                <span>Chrome Windows</span>
+              </div>
+            </td>
+            <td><code class="ip-code">192.168.1.1</code></td>
+            <td>
+              <div class="location-cell">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Aceh Tamiang</span>
+              </div>
+            </td>
+            <td><span class="status-badge status-success"><i class="fas fa-check-circle"></i> Berhasil</span></td>
           </tr>
           <tr>
-            <td>05 April 2026, 08:09</td>
-            <td>Chrome Windows</td>
-            <td>192.168.1.1</td>
-            <td>Aceh Tamiang</td>
-            <td><span class="status-badge status-success">Berhasil</span></td>
+            <td>
+              <div class="time-cell">
+                <span class="time-date">05 Apr 2026</span>
+                <span class="time-hour">08:09</span>
+              </div>
+            </td>
+            <td>
+              <div class="device-cell">
+                <i class="fab fa-chrome"></i>
+                <span>Chrome Windows</span>
+              </div>
+            </td>
+            <td><code class="ip-code">192.168.1.1</code></td>
+            <td>
+              <div class="location-cell">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Aceh Tamiang</span>
+              </div>
+            </td>
+            <td><span class="status-badge status-success"><i class="fas fa-check-circle"></i> Berhasil</span></td>
           </tr>
           <tr>
-            <td>07 April 2026, 08:02</td>
-            <td>Chrome Windows</td>
-            <td>192.168.1.1</td>
-            <td>Aceh Tamiang</td>
-            <td><span class="status-badge status-success">Berhasil</span></td>
+            <td>
+              <div class="time-cell">
+                <span class="time-date">07 Apr 2026</span>
+                <span class="time-hour">08:02</span>
+              </div>
+            </td>
+            <td>
+              <div class="device-cell">
+                <i class="fab fa-chrome"></i>
+                <span>Chrome Windows</span>
+              </div>
+            </td>
+            <td><code class="ip-code">192.168.1.1</code></td>
+            <td>
+              <div class="location-cell">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Aceh Tamiang</span>
+              </div>
+            </td>
+            <td><span class="status-badge status-success"><i class="fas fa-check-circle"></i> Berhasil</span></td>
           </tr>
           <tr>
-            <td>13 April 2026, 09:15</td>
-            <td>Chrome Windows</td>
-            <td>192.168.1.1</td>
-            <td>Aceh Tamiang</td>
-            <td><span class="status-badge status-success">Berhasil</span></td>
+            <td>
+              <div class="time-cell">
+                <span class="time-date">13 Apr 2026</span>
+                <span class="time-hour">09:15</span>
+              </div>
+            </td>
+            <td>
+              <div class="device-cell">
+                <i class="fab fa-chrome"></i>
+                <span>Chrome Windows</span>
+              </div>
+            </td>
+            <td><code class="ip-code">192.168.1.1</code></td>
+            <td>
+              <div class="location-cell">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Aceh Tamiang</span>
+              </div>
+            </td>
+            <td><span class="status-badge status-success"><i class="fas fa-check-circle"></i> Berhasil</span></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 {% endblock %}
-
