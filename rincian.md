@@ -1,92 +1,81 @@
-publicbook/
-│
-├── publicbook/               ← venv
-├── app/
-├── backend/
-│   ├── app.py
-│   ├── config.py
-│   ├── __init__.py
-│   ├── requirements.txt
-│   │
-│   ├── database/
-│   │   └── database.py
-│   │
-│   ├── models/
-│   │   ├── user.py
-│   │   ├── booking.py
-│   │   ├── __init__.py
-│   │   ├── service.py
-│   │   └── queue.py
-│   │
-│   └── routes/
-│       ├── auth.py
-│       ├── booking.py
-│       ├── __init__.py
-│       ├── services.py
-│       ├── static.py
-│       └── admin.py
-│
-├── frontend/
-│   │
-│   ├── pages/
-│   │   ├── index.html              ← Landing page
-│   │   │
-│   │   ├── auth/
-│   │   │   ├── login.html          ← Admin Login (dari desain)
-│   │   │   └── register.html       ← Register Page
-│   │   │
-│   │   ├── user/
-│   │   │   ├── base.html
-│   │   │   ├── dashboard.html      ← Dashboard User
-│   │   │   ├── layanan.html        ← Daftar Layanan
-│   │   │   ├── booking.html        ← Form Booking + QR
-│   │   │   ├── riwayat.html        ← Riwayat Pemesanan
-│   │   │   └── profil.html         ← Profil Pengguna
-│   │   │
-│   │   ├── admin/
-│   │   │   ├── base.html
-│   │   │   ├── dashboard.html      ← Dashboard Admin
-│   │   │   ├── antrean.html        ← Pantau Antrean Real-time
-│   │   │   ├── booking-list.html   ← Daftar Semua Booking
-│   │   │   ├── layanan.html        ← Kelola Layanan
-│   │   │   ├── pengguna.html       ← Kelola User
-│   │   │   └── security.html       ← Keamanan & Audit
-│   │   │
-│   │   └── legal/
-│   │       ├── disclaimer.html
-│   │       ├── privacy.html
-│   │       ├── hubungi.html
-│   │       ├── about.html
-│   │       └── terms.html
-│   │
-│   └── assets/
-│       │
-│       ├── css/
-│       │   ├── global.css          ← Reset, variable, utility
-│       │   ├── auth.css            ← Login & Register styles
-│       │   ├── user.css            ← User dashboard styles
-│       │   ├── admin.css           ← Admin dashboard styles
-│       │   └── components.css      ← Sidebar, cards, buttons, tables
-│       │
-│       ├── js/
-│       │   ├── main.js             ← Sidebar toggle, navbar active
-│       │   ├── auth.js             ← Login/register logic
-│       │   ├── booking.js          ← Pilih slot, QR generate
-│       │   ├── queue.js            ← Antrean real-time
-│       │   ├── dashboard.js        ← Chart & statistik
-│       │   └── api.js              ← Fetch helper ke backend
-│       │
-│       └── images/
-│           ├── bg/
-│           │   ├── Background PublicBook,jpg
-│           │   └── login side.jpg
-│           │
-│           ├── icons/
-│           │   └── Icon PublicBook.jpg
-│           │
-│           └── avatars/
-├── .env
-├── .test_connection.py
-├── .gitignore
-├── README.md
-└── rincian.md
+app/
+    backend/
+        database/
+            database.py
+            db_publicbook (2).sql
+        models/
+            booking.py
+            queue.py
+            services.py
+            user.py
+        routes/
+            __init__.py
+            admin.py
+            auth_api.py
+            auth.py
+            booking.py
+            services.py
+            static.py
+            user.py
+        test/
+            python test.py
+        app.py
+        config.py
+        requirements.txt
+    frontend/
+        assets/
+            css/
+                admin.css
+                auth.css
+                componets.css
+                global.css
+                user.css
+            images/
+                avatars/
+                bg/
+                    Background PublicBook.jpg
+                    background1.jpeg
+                    login side.jpg
+                icons/
+                    Afdal Adha Firnansyah.png
+                    Icon PublicBook.jpg
+                    PublicBook Icon2.png
+                    PublicBook.png
+            js/
+                api.js
+                auth.js
+                booking.js
+                dashboard.js
+                main.js
+                queue.js
+        pages/
+            admin/
+                base.html
+                booking-list.html
+                dashboard.html
+                layanan.html
+                pengguna.html
+                profil.html
+                security.html
+            auth/
+                forgot_password.html
+                login.html
+                register.html
+            legal/
+                about.html
+                disclaimer.html
+                hubungi.html
+                privacy.html
+                terms.html
+            user/
+                base.html
+                booking.html
+                dashboard.html
+                layanan.html
+                profil.html
+            index.html
+publicbook/ <-env
+.env
+.gitignore
+README.md
+rincian.md
