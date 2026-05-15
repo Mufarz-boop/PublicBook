@@ -5,6 +5,19 @@
 {% block nav_security_active %}active{% endblock %}
 
 {% block content %}
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
   <div class="cards-row">
     <!-- LEFT: Password Form -->
     <div class="password-card">
@@ -18,7 +31,7 @@
         </div>
       </div>
       
-      <form method="POST" action="{{ url_for('admin_routes.ubah_password') }}">
+      <form method="POST" action="{{ url_for('admin_routes.ubah_password_post') }}">
         <div class="form-group">
           <label>Password Saat Ini</label>
           <div class="input-wrap">
@@ -30,7 +43,7 @@
           <label>Password Baru</label>
           <div class="input-wrap">
             <i class="fas fa-key"></i>
-            <input type="password" name="new_password" placeholder="Masukkan password baru" required>
+            <input type="password" name="new_password" placeholder="Masukkan password baru (min. 6 karakter)" required minlength="6">
           </div>
         </div>
         <div class="form-group">
@@ -50,13 +63,13 @@
     <!-- RIGHT: Profile Card -->
     <div class="profile-card-v2">
       <div class="profile-cover">
-        <img src="../../assets/images/bg/background2.jpg" alt="Cover">
+        <img src="{{ url_for('static', filename='images/bg/background2.jpg') }}" alt="Cover">
         <div class="cover-overlay"></div>
       </div>
       
       <div class="profile-avatar-section">
         <div class="avatar-wrap">
-          <img src="{{ admin.foto_profil or '../../assets/images/icons/Afdal Adha Firnansyah.png' }}" 
+          <img src="{{ admin.foto_profil or url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}" 
                alt="{{ admin.nama_lengkap }}" 
                class="avatar-img">
           <div class="avatar-status online"></div>
@@ -91,15 +104,13 @@
           <a href="{{ url_for('admin_routes.profil') }}" class="btn-profile btn-primary">
             <i class="fas fa-user"></i> Lihat Profil
           </a>
-          <a href="{{ url_for('admin_routes.ubah_password') }}" class="btn-profile btn-secondary">
-            <i class="fas fa-lock"></i> Ubah Password
-          </a>
+          <!-- Button Ubah Password DIHAPUS -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM: Login History (masih statis, perlu tabel logs) -->
+  <!-- BOTTOM: Login History -->
   <div class="history-section">
     <div class="history-header">
       <div class="header-icon">
