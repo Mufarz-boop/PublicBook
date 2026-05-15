@@ -1,11 +1,7 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Profil Page - PublicBook{% endblock %}
+{% block title %}Profil - PublicBook{% endblock %}
 {% block header_title %}Profil{% endblock %}
-{% block nav_pengguna_active %}{% endblock %}
-{% block nav_layanan_active %}{% endblock %}
-{% block nav_booking_active %}{% endblock %}
-{% block nav_security_active %}{% endblock %}
 
 {% block content %}
   <div class="profile-container">
@@ -14,7 +10,7 @@
         <h1>Profil</h1>
         <p>Kelola Informasi Akun Anda</p>
       </div>
-      <a href="/admin/dashboard" class="btn-back">
+      <a href="{{ url_for('admin_routes.dashboard') }}" class="btn-back">
         <i class="fas fa-arrow-left"></i>
         <span>Back</span>
       </a>
@@ -23,30 +19,32 @@
     <div class="profile-card">
       <div class="profile-top">
         <div class="profile-avatar-wrap">
-          <img src="../../assets/images/icons/Afdal Adha Firnansyah.png" alt="Admin" class="profile-avatar">
+          <img src="{{ admin.foto_profil or '../../assets/images/icons/Afdal Adha Firnansyah.png' }}" 
+               alt="{{ admin.nama_lengkap }}" 
+               class="profile-avatar">
         </div>
         <div class="profile-info">
-          <h2 class="profile-name">Ms. Hutao</h2>
-          <span class="badge-admin">Administrator</span>
+          <h2 class="profile-name">{{ admin.nama_lengkap }}</h2>
+          <span class="badge-admin">{{ admin.role|replace('_', ' ')|title }}</span>
         </div>
       </div>
 
       <div class="info-grid">
         <div class="info-box">
           <div class="info-label">Email</div>
-          <div class="info-value">hutao@gmail.com</div>
+          <div class="info-value">{{ admin.email }}</div>
         </div>
         <div class="info-box">
           <div class="info-label">No. HP</div>
-          <div class="info-value">+62 849-6391-7263</div>
+          <div class="info-value">{{ admin.nomor_telepon or '-' }}</div>
         </div>
         <div class="info-box">
-          <div class="info-label">Tanggal Bergabung</div>
-          <div class="info-value">15 April 2026</div>
+          <div class="info-label">Instansi</div>
+          <div class="info-value">{{ admin.instansi_nama or '-' }}</div>
         </div>
         <div class="info-box">
-          <div class="info-label">Terakhir Login</div>
-          <div class="info-value">20 April 2026</div>
+          <div class="info-label">Status</div>
+          <div class="info-value">{{ admin.status|title }}</div>
         </div>
       </div>
 

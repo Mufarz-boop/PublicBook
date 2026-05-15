@@ -1,5 +1,9 @@
 # backend/routes/admin.py
 from flask import Blueprint, render_template, session, redirect, url_for, flash
+from models.user import User
+from models.booking import Booking
+from models.services import Service
+from models.admin import Admin
 
 bp = Blueprint('admin_routes', __name__, url_prefix='/admin')
 
@@ -21,32 +25,64 @@ def admin_required(f):
 @bp.route('/dashboard')
 @admin_required
 def dashboard():
-    return render_template('admin/dashboard.html')
+    # Statistik
+    stats = {
+        'booking_today': Booking.count_today(),
+        'booking_month': Booking.count_this_month(),
+        'total_users': User.count_all(),
+        'active_services': Service.count_active()
+    }
+    
+    # Booking terbaru (10 terakhir)
+    recent_bookings = Booking.get_all(limit=10)
+    
+    # Data admin yang login
+    admin = Admin.get_by_id(session.get('user_id'))
+    
+    return render_template('admin/dashboard.html', 
+                         stats=stats, 
+                         bookings=recent_bookings,
+                         admin=admin)
 
 @bp.route('/layanan')
 @admin_required
 def layanan():
-    return render_template('admin/layanan.html')
+    services = Service.get_all()
+    admin = Admin.get_by_id(session.get('user_id'))
+    return render_template('admin/layanan.html', services=services, admin=admin)
 
 @bp.route('/booking-list')
 @admin_required
 def booking_list():
-    return render_template('admin/booking-list.html')
+    bookings = Booking.get_all()
+    admin = Admin.get_by_id(session.get('user_id'))
+    return render_template('admin/booking-list.html', bookings=bookings, admin=admin)
 
 @bp.route('/pengguna')
 @admin_required
 def pengguna():
-    return render_template('admin/pengguna.html')
+    users = User.get_all()
+    admin = Admin.get_by_id(session.get('user_id'))
+    return render_template('admin/pengguna.html', users=users, admin=admin)
 
 @bp.route('/security')
 @admin_required
 def security():
-    return render_template('admin/security.html')
+    admin = Admin.get_by_id(session.get('user_id'))
+    
+    # Stats untuk sidebar profile card
+    stats = {
+        'booking_total': Booking.count_all(),
+        'service_total': Service.count_active()
+    }
+    
+    return render_template('admin/security.html', admin=admin, stats=stats)
 
 @bp.route('/profil')
 @admin_required
 def profil():
-    return render_template('admin/profil.html')
+    admin = Admin.get_by_id(session.get('user_id'))
+    return render_template('admin/profil.html', admin=admin)
 
 @bp.route('/ubah-password')
 @admin_required

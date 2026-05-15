@@ -37,3 +37,9 @@ class User:
         db = get_db()
         rows = db.execute(text("SELECT * FROM users ORDER BY id DESC")).mappings().all()
         return [User(dict(row)) for row in rows]
+    
+    @staticmethod
+    def count_all():
+        db = get_db()
+        result = db.execute(text("SELECT COUNT(*) as total FROM users")).mappings().first()
+        return result['total'] if result else 0

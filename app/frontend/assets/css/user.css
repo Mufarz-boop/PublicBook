@@ -469,6 +469,285 @@
 }
 
 /* ============================================================
+   TAMBAHAN CSS UNTUK TEMPLATE DINAMIS
+   Tambahkan di bagian bawah user.css sebelum @media
+   ============================================================ */
+
+/* ========== DASHBOARD TAMBAHAN ========== */
+
+/* Stat Number (baru) */
+.dashboard-stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 5px 0;
+}
+
+/* Table Header (baru) */
+.dashboard-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.dashboard-table-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.dashboard-btn-lihat-semua {
+    font-size: 13px;
+    color: #FF6B00;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.dashboard-btn-lihat-semua:hover {
+    color: #E55A00;
+    text-decoration: underline;
+}
+
+/* Empty State */
+.dashboard-empty {
+    text-align: center;
+    padding: 30px;
+    color: #888;
+    font-size: 14px;
+}
+
+.dashboard-empty a {
+    color: #FF6B00;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.dashboard-empty a:hover {
+    text-decoration: underline;
+}
+
+/* Status badge tambahan */
+.status-proses {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.status-dibatalkan {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* ========== BOOKING PAGE TAMBAHAN ========== */
+
+.booking-list-section {
+    margin-top: 30px;
+}
+
+.booking-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.booking-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.booking-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.booking-item-info h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.booking-item-info p {
+    font-size: 12px;
+    color: #888;
+    margin: 2px 0;
+}
+
+.booking-item-status .status-badge {
+    font-size: 11px;
+    padding: 4px 12px;
+}
+
+.booking-empty {
+    text-align: center;
+    padding: 40px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.booking-empty p {
+    color: #888;
+    margin-bottom: 15px;
+}
+
+/* QR Header */
+.booking-qr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.booking-qr-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.booking-qr-info {
+    margin-top: 20px;
+    text-align: left;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.booking-qr-info p {
+    font-size: 13px;
+    color: #555;
+    margin: 5px 0;
+}
+
+.booking-qr-info strong {
+    color: #333;
+}
+
+/* ========== LAYANAN PAGE TAMBAHAN ========== */
+
+.layanan-service-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.layanan-service-instansi {
+    font-size: 12px;
+    color: #888;
+    font-weight: 400;
+}
+
+.layanan-service-jam {
+    font-size: 11px;
+    color: #FF6B00;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.layanan-empty {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+}
+
+/* ========== PROFIL PAGE TAMBAHAN ========== */
+
+.profil-status-inactive {
+    color: #EF4444;
+}
+
+.profil-status-active {
+    color: #10B981;
+}
+
+/* Queue Empty State */
+.profil-queue-empty {
+    justify-content: center;
+    text-align: center;
+    padding: 50px 30px;
+}
+
+.profil-queue-empty p {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.profil-btn-booking {
+    display: inline-block;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #FF8C42, #FFB347);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+}
+
+.profil-btn-booking:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+}
+
+/* ========== BUTTON UTILITY ========== */
+
+.btn-primary {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #FF8C42, #FFB347);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+}
+
+/* ========== ANIMATIONS ========== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
    6. RESPONSIVE STYLES
    ============================================================ */
 

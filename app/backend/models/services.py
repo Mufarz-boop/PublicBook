@@ -44,3 +44,19 @@ class Service:
             {'kw': f'%{keyword}%'}
         ).mappings().all()
         return [Service(dict(row)) for row in rows]
+    
+    @staticmethod
+    def count_active():
+        db = get_db()
+        result = db.execute(
+            text("SELECT COUNT(*) as total FROM layanan WHERE status = 'active'")
+        ).mappings().first()
+        return result['total'] if result else 0
+
+    @staticmethod
+    def get_all():
+        db = get_db()
+        rows = db.execute(
+            text("SELECT * FROM layanan ORDER BY id DESC")
+        ).mappings().all()
+        return [Service(dict(row)) for row in rows]

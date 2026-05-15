@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}PublicBook Admin{% endblock %}</title>
-  <link rel="icon" type="image/jpeg" href="../assets/images/icons/Icon PublicBook.jpg">
+  <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/icons/Icon PublicBook.jpg') }}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <!-- CSS Admin shared -->
-  <link rel="stylesheet" href="/assets/css/admin.css">
-
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
   <!-- Overlay for mobile -->
@@ -78,8 +79,10 @@
           <span class="notif-badge"></span>
         </button>
         <a href="{{ url_for('admin_routes.profil') }}" class="user-profile">
-          <img src="../../assets/images/icons/Afdal Adha Firnansyah.png" alt="Admin" class="user-avatar">
-          <span class="user-name">Ms. Hutao</span>
+          <img src="{{ current_user.avatar or url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}" 
+               alt="{{ current_user.nama or 'Admin' }}" 
+               class="user-avatar">
+          <span class="user-name">{{ current_user.nama or 'Admin' }}</span>
         </a>
       </div>
     </header>
@@ -138,11 +141,12 @@
         a.classList.remove('active');
       });
 
-      // naive but effective: activate based on href
       document.querySelectorAll('.nav-item').forEach(a => {
         if (a.getAttribute('href') === path) a.classList.add('active');
       });
     })();
+
+    {% block extra_js %}{% endblock %}
   </script>
 </body>
 </html>

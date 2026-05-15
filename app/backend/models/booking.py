@@ -77,3 +77,44 @@ class Booking:
             {'user_id': user_id}
         ).mappings().first()
         return Booking(dict(row)) if row else None
+    
+    # === METHOD UNTUK ADMIN ===
+    
+    @staticmethod
+    def get_all(limit=None):
+        db = get_db()
+        sql = """
+            SELECT b.*, 
+                   l.nama_layanan, l.instansi,
+                   u.nama_lengkap as user_nama, u.email as user_email
+            FROM bookings b
+            LEFT JOIN layanan l ON b.layanan_id = l.id
+            LEFT JOIN users u ON b.user_id = u.id
+            ORDER BY b.created_at DESC
+        """
+        if limit:
+            sql += f" LIMIT {int(limit)}"
+        rows = db.execute(text(sql)).mappings().all()
+        return [Booking(dict(row)) for row in rows]
+
+    @staticmethod
+    def count_all():
+        db = get_db()
+        result = db.execute(text("SELECT COUNT(*) as total FROM bookings")).mappings().first()
+        return result['total'] if result else 0
+
+    @staticmethod
+    def count_today():
+        db = get_db()
+        result = db.execute(
+            text("SELECT COUNT(*) as total FROM bookings WHERE DATE(tanggal_booking) = CURDATE()")
+        ).mappings().first()
+        return result['total'] if result else 0
+
+    @staticmethod
+    def count_this_month():
+        db = get_db()
+        result = db.execute(
+            text("SELECT COUNT(*) as total FROM bookings WHERE MONTH(tanggal_booking) = MONTH(CURDATE()) AND YEAR(tanggal_booking) = YEAR(CURDATE())")
+        ).mappings().first()
+        return result['total'] if result else 0

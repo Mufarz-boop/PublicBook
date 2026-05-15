@@ -1,6 +1,6 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Booking List Page - PublicBook{% endblock %}
+{% block title %}Booking List - PublicBook{% endblock %}
 {% block header_title %}Booking List{% endblock %}
 {% block nav_booking_active %}active{% endblock %}
 
@@ -12,12 +12,12 @@
     <div class="table-controls">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Cari Nomor Booking atau nama user...">
+        <input type="text" id="searchBooking" placeholder="Cari Nomor Booking atau nama user..." onkeyup="filterBooking()">
       </div>
     </div>
 
     <div class="table-wrapper">
-      <table class="data-table">
+      <table class="data-table" id="bookingTable">
         <thead>
           <tr>
             <th>No Booking</th>
@@ -28,30 +28,38 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>PB-240410-001</strong></td>
-            <td>Rudi Santoso</td>
-            <td>Pengurusan AKTA</td>
-            <td>10 Apr 2026, 08:00</td>
-            <td><span class="status-bar status-confirmed">Dikonfirmasi</span></td>
-          </tr>
-          <tr>
-            <td><strong>PB-240410-001</strong></td>
-            <td>Siti Rahayu</td>
-            <td>Pembuatan KK</td>
-            <td>10 Apr 2026, 10:30</td>
-            <td><span class="status-bar status-pending">Belum Dikonfirmasi</span></td>
-          </tr>
-          <tr>
-            <td><strong>PB-240410-001</strong></td>
-            <td>Ahmad Fauzi</td>
-            <td>Pendaftaran Nikah</td>
-            <td>10 Apr 2026, 13:00</td>
-            <td><span class="status-bar status-pending">Belum Dikonfirmasi</span></td>
-          </tr>
+          {% if bookings %}
+            {% for booking in bookings %}
+            <tr data-search="{{ booking.no_booking|lower }} {{ booking.user_nama|lower }} {{ booking.nama_layanan|lower }}">
+              <td><strong>{{ booking.no_booking }}</strong></td>
+              <td>{{ booking.user_nama or 'User #' + booking.user_id|string }}</td>
+              <td>{{ booking.nama_layanan or 'Layanan #' + booking.layanan_id|string }}</td>
+              <td>{{ booking.tanggal_booking }}, {{ booking.jam_booking }}</td>
+              <td>
+                <span class="status-badge status-{{ booking.status }}">
+                  {{ booking.status|title }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5" class="dashboard-empty">Belum ada booking</td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
   </div>
-{% endblock %}
 
+  <script>
+    function filterBooking() {
+      const input = document.getElementById('searchBooking').value.toLowerCase();
+      const rows = document.querySelectorAll('#bookingTable tbody tr');
+      rows.forEach(row => {
+        const search = row.getAttribute('data-search') || '';
+        row.style.display = search.includes(input) ? '' : 'none';
+      });
+    }
+  </script>
+{% endblock %}

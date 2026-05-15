@@ -1,6 +1,6 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Dashboard Admin Page - PublicBook{% endblock %}
+{% block title %}Dashboard Admin - PublicBook{% endblock %}
 {% block header_title %}Dashboard{% endblock %}
 {% block nav_dashboard_active %}active{% endblock %}
 
@@ -10,7 +10,7 @@
     <div class="stat-card">
       <div class="stat-label">Total Booking<br>Hari Ini</div>
       <div class="stat-value-row">
-        <span class="stat-value">245</span>
+        <span class="stat-value">{{ stats.booking_today }}</span>
         <div class="stat-icon orange">
           <i class="fas fa-calendar-check"></i>
         </div>
@@ -20,7 +20,7 @@
     <div class="stat-card">
       <div class="stat-label">Total Booking<br>Bulan Ini</div>
       <div class="stat-value-row">
-        <span class="stat-value">1,248</span>
+        <span class="stat-value">{{ stats.booking_month }}</span>
         <div class="stat-icon green">
           <i class="fas fa-chart-line"></i>
         </div>
@@ -30,7 +30,7 @@
     <div class="stat-card">
       <div class="stat-label">Total Pengguna<br>Terdaftar</div>
       <div class="stat-value-row">
-        <span class="stat-value">3,892</span>
+        <span class="stat-value">{{ stats.total_users }}</span>
         <div class="stat-icon blue">
           <i class="fas fa-users"></i>
         </div>
@@ -40,7 +40,7 @@
     <div class="stat-card">
       <div class="stat-label">Total Layanan<br>Aktif</div>
       <div class="stat-value-row">
-        <span class="stat-value">28</span>
+        <span class="stat-value">{{ stats.active_services }}</span>
         <div class="stat-icon purple">
           <i class="fas fa-trophy"></i>
         </div>
@@ -53,8 +53,7 @@
     <div class="table-header">
       <h3 class="table-title">Booking Terbaru</h3>
       <div class="table-actions">
-        <button class="btn-filter"><i class="fas fa-filter"></i> Filter</button>
-        <button class="btn-filter"><i class="fas fa-download"></i> Export</button>
+        <a href="{{ url_for('admin_routes.booking_list') }}" class="btn-filter">Lihat Semua</a>
       </div>
     </div>
 
@@ -71,49 +70,28 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td><strong>H. Karyadi</strong></td>
-            <td>Pembuatan Kartu Keluarga (KK)</td>
-            <td>Dukcapil</td>
-            <td>Saturday, 12 April 2026</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td><strong>Irwan Sukiman</strong></td>
-            <td>Pembuatan Kartu Keluarga (KK)</td>
-            <td>Dukcapil</td>
-            <td>Saturday, 12 April 2026</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td><strong>Udin Kuswanto</strong></td>
-            <td>Pengurusan KTP Elektronik</td>
-            <td>Dukcapil</td>
-            <td>Saturday, 12 April 2026</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td><strong>Hafidz Al-Farisi</strong></td>
-            <td>Pengurusan BPJS Kesehatan Baru</td>
-            <td>BPJS / Dinas Kesehatan</td>
-            <td>Saturday, 12 April 2026</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td><strong>Ahmad Fauzi</strong></td>
-            <td>Pengurusan BPJS Kesehatan Baru</td>
-            <td>BPJS / Dinas Kesehatan</td>
-            <td>Saturday, 12 April 2026</td>
-            <td><span class="status-badge status-pending">Pending</span></td>
-          </tr>
+          {% if bookings %}
+            {% for booking in bookings %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td><strong>{{ booking.user_nama or 'User #' + booking.user_id|string }}</strong></td>
+              <td>{{ booking.nama_layanan or 'Layanan #' + booking.layanan_id|string }}</td>
+              <td>{{ booking.instansi or '-' }}</td>
+              <td>{{ booking.tanggal_booking }} {{ booking.jam_booking }}</td>
+              <td>
+                <span class="status-badge status-{{ booking.status }}">
+                  {{ booking.status|title }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" class="dashboard-empty">Belum ada booking</td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
   </div>
 {% endblock %}
-

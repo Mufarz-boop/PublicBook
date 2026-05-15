@@ -1,6 +1,6 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Users Page - PublicBook{% endblock %}
+{% block title %}Users - PublicBook{% endblock %}
 {% block header_title %}Users{% endblock %}
 {% block nav_pengguna_active %}active{% endblock %}
 
@@ -11,7 +11,7 @@
     <div class="table-controls">
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Cari User...">
+        <input type="text" id="searchUser" placeholder="Cari User..." onkeyup="filterUser()">
       </div>
       <button class="btn-add">
         <i class="fas fa-plus"></i>
@@ -20,7 +20,7 @@
     </div>
 
     <div class="table-wrapper">
-      <table class="data-table">
+      <table class="data-table" id="userTable">
         <thead>
           <tr>
             <th>No</th>
@@ -32,59 +32,41 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td><strong>Ahmad Azhar Firmansyah</strong></td>
-            <td>ahm@gmail.com</td>
-            <td>+62 852 9201 4382</td>
-            <td><span class="status-badge status-active">Active</span></td>
-            <td>
-              <button class="action-btn"><i class="fas fa-pencil-alt"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td><strong>M. Rayyan Rafif Firmansyah</strong></td>
-            <td>rayyan@gmail.com</td>
-            <td>+62 852 9201 4382</td>
-            <td><span class="status-badge status-active">Active</span></td>
-            <td>
-              <button class="action-btn"><i class="fas fa-pencil-alt"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td><strong>Anisa Septiani</strong></td>
-            <td>anisa@gmail.com</td>
-            <td>+62 852 9201 4382</td>
-            <td><span class="status-badge status-active">Active</span></td>
-            <td>
-              <button class="action-btn"><i class="fas fa-pencil-alt"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td><strong>Eka Sari Handayani</strong></td>
-            <td>eka@gmail.com</td>
-            <td>+62 852 9201 4382</td>
-            <td><span class="status-badge status-active">Active</span></td>
-            <td>
-              <button class="action-btn"><i class="fas fa-pencil-alt"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td><strong>Ichsan Faridhan</strong></td>
-            <td>ichsan@gmail.com</td>
-            <td>+62 852 9201 4382</td>
-            <td><span class="status-badge status-active">Active</span></td>
-            <td>
-              <button class="action-btn"><i class="fas fa-pencil-alt"></i></button>
-            </td>
-          </tr>
+          {% if users %}
+            {% for user in users %}
+            <tr data-search="{{ user.nama_lengkap|lower }} {{ user.email|lower }}">
+              <td>{{ loop.index }}</td>
+              <td><strong>{{ user.nama_lengkap }}</strong></td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.nomor_telepon or '-' }}</td>
+              <td>
+                <span class="status-badge status-{{ user.status }}">
+                  {{ user.status|title }}
+                </span>
+              </td>
+              <td>
+                <button class="action-btn"><i class="fas fa-pencil-alt"></i></button>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" class="dashboard-empty">Belum ada user terdaftar</td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
   </div>
-{% endblock %}
 
+  <script>
+    function filterUser() {
+      const input = document.getElementById('searchUser').value.toLowerCase();
+      const rows = document.querySelectorAll('#userTable tbody tr');
+      rows.forEach(row => {
+        const search = row.getAttribute('data-search') || '';
+        row.style.display = search.includes(input) ? '' : 'none';
+      });
+    }
+  </script>
+{% endblock %}
