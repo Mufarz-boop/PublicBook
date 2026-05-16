@@ -3,6 +3,7 @@ from flask import Flask, session
 from config import config_by_publicbook
 from database.database import init_db, close_db, get_db
 from sqlalchemy import text
+import socket  # ← TAMBAHKAN INI
 import os
 
 env = os.getenv('ENV', 'development')
@@ -87,6 +88,31 @@ def inject_current_user():
         role = None
     
     return {'current_user': AnonymousUser()}
+
+# ═══════════════════════════════════════════════════════════════════
+# Context processor untuk local_ip (auto-detect untuk QR Code)
+# ═══════════════════════════════════════════════════════════════════
+@app.context_processor
+def inject_local_ip():
+    """Auto-detect IP lokal untuk QR Code"""
+    try:
+        # Cara 1: Connect ke Google DNS untuk dapat IP outbound
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        # Fallback: coba ambil dari hostname
+        try:
+            local_ip = socket.gethostbyname(socket.gethostname())
+        except Exception:
+            local_ip = '127.0.0.1'  # Last resort fallback
+    
+    port = app.config.get('PORT', 5000)
+    return {
+        'local_ip': local_ip,
+        'local_url': f'http://{local_ip}:{port}'
+    }
 
 from routes.static import bp as static_bp
 from routes.auth import bp as auth_bp

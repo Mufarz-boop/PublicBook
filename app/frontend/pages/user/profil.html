@@ -618,7 +618,7 @@
             </div>
         </div>
 
-        <!-- RIGHT: QUEUE INFO -->
+                <!-- RIGHT: QUEUE INFO -->
         {% if queue %}
         <div class="queue-card animate-in-4">
             <div class="queue-card-header">
@@ -633,7 +633,7 @@
             </div>
             
             <div class="queue-number-section">
-                <div class="queue-number-label">Nomor Antrean</div>
+                <div class="queue-number-label">Nomor Antrean Anda</div>
                 <div class="queue-number-big">
                     {% if queue.nomor_antrian %}
                         #{{ queue.nomor_antrian }}
@@ -641,6 +641,31 @@
                         <span class="empty">-</span>
                     {% endif %}
                 </div>
+                
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <!-- BARU: Info posisi antrean -->
+                <!-- ═══════════════════════════════════════════════════════ -->
+                {% if queue_info %}
+                <div style="margin-top: 15px; font-size: 14px;">
+                    {% if queue.status == 'proses' %}
+                        <span style="color: #4CAF50; font-weight: 600;">
+                            <i class="fas fa-user-clock"></i> Giliran Anda Sekarang!
+                        </span>
+                    {% elif queue.status == 'dikonfirmasi' %}
+                        <span style="color: #1976D2; font-weight: 600;">
+                            <i class="fas fa-hourglass-half"></i> Menunggu Dipanggil
+                        </span>
+                    {% elif queue_info.orang_di_depan > 0 %}
+                        <span style="color: #FF6B00; font-weight: 600;">
+                            <i class="fas fa-users"></i> {{ queue_info.orang_di_depan }} orang lagi di depan Anda
+                        </span>
+                    {% else %}
+                        <span style="color: #FF6B00; font-weight: 600;">
+                            <i class="fas fa-arrow-up"></i> Anda berikutnya!
+                        </span>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
             
             <div class="queue-details">
@@ -666,12 +691,13 @@
             
             <!-- QR Code Mini -->
             <div class="queue-qr-mini">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ queue.no_booking }}&color=333333&bgcolor=ffffff" 
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ local_url }}/scan/{{ queue.no_booking }}&color=333333&bgcolor=ffffff" 
                      alt="QR Code">
                 <div class="queue-qr-label">Scan untuk verifikasi</div>
             </div>
         </div>
         {% else %}
+        
         <div class="queue-card animate-in-4">
             <div class="queue-empty">
                 <div class="queue-empty-icon">

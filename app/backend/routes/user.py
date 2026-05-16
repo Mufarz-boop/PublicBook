@@ -77,9 +77,8 @@ def booking_new():
 @bp.route('/booking/create', methods=['POST'])
 @user_required
 def booking_create():
-    """API to create booking"""
+    """API to create booking dengan nomor antrean otomatis"""
     user_id = session.get('user_id')
-    user = User.get_by_id(user_id)
     
     try:
         layanan_id = request.form.get('layanan_id', type=int)
@@ -97,7 +96,7 @@ def booking_create():
         if not service:
             return jsonify({'success': False, 'message': 'Layanan tidak ditemukan'}), 404
         
-        # Create booking
+        # Create booking (nomor antrean otomatis dari model)
         booking = Booking.create(
             user_id=user_id,
             layanan_id=layanan_id,
@@ -107,18 +106,23 @@ def booking_create():
             catatan=catatan
         )
         
+        # Get queue info
+        queue_info = Booking.get_queue_position(booking.id)
+        
         return jsonify({
             'success': True,
-            'message': 'Booking berhasil dibuat!',
+            'message': f'Booking berhasil! Nomor antrean Anda: #{booking.nomor_antrian}',
             'data': {
                 'no_booking': booking.no_booking,
+                'nomor_antrian': booking.nomor_antrian,
+                'orang_di_depan': queue_info['orang_di_depan'] if queue_info else 0,
                 'redirect_url': url_for('user_routes.booking')
             }
         })
         
     except Exception as e:
         return jsonify({'success': False, 'message': f'Terjadi kesalahan: {str(e)}'}), 500
-
+    
 @bp.route('/layanan')
 @user_required
 def layanan():
@@ -137,11 +141,21 @@ def profil():
     user = User.get_by_id(user_id)
     active_queue = Booking.get_active_queue(user_id)
     
-    # Tambahin stats
+    # ═══════════════════════════════════════════════════════════════
+    # BARU: Ambil info posisi antrean
+    # ═══════════════════════════════════════════════════════════════
+    queue_info = None
+    if active_queue and active_queue.nomor_antrian:
+        queue_info = Booking.get_queue_position(active_queue.id)
+    
     stats = {
         'total_booking': Booking.count_by_user(user_id),
         'menunggu': Booking.count_by_user(user_id, status='menunggu'),
         'selesai': Booking.count_by_user(user_id, status='selesai')
     }
     
-    return render_template('user/profil.html', user=user, queue=active_queue, stats=stats)
+    return render_template('user/profil.html', 
+                         user=user, 
+                         queue=active_queue, 
+                         queue_info=queue_info,  # ← BARU
+                         stats=stats)

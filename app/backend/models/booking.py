@@ -126,11 +126,9 @@ class Booking:
         """Generate unique booking number: PB-XXXXXX"""
         db = get_db()
         while True:
-            # Generate random 6 alphanumeric
             code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
             no_booking = f"PB-{code}"
             
-            # Check if exists
             result = db.execute(
                 text("SELECT id FROM bookings WHERE no_booking = :no"),
                 {'no': no_booking}
@@ -138,6 +136,66 @@ class Booking:
             
             if not result:
                 return no_booking
+
+    # ═══════════════════════════════════════════════════════════════════
+    # BARU: Generate Nomor Antrean Otomatis
+    # ═══════════════════════════════════════════════════════════════════
+    @staticmethod
+    def generate_nomor_antrian(layanan_id, tanggal_booking):
+        """Generate nomor antrean unik per layanan & tanggal"""
+        db = get_db()
+        
+        # Cari nomor antrean terakhir untuk layanan & tanggal ini
+        result = db.execute(
+            text("""
+                SELECT MAX(nomor_antrian) as last_queue
+                FROM bookings 
+                WHERE layanan_id = :layanan_id 
+                AND tanggal_booking = :tanggal
+                AND nomor_antrian IS NOT NULL
+            """),
+            {'layanan_id': layanan_id, 'tanggal': tanggal_booking}
+        ).mappings().first()
+        
+        last_queue = result['last_queue'] if result and result['last_queue'] else 0
+        new_queue = last_queue + 1
+        
+        return new_queue
+
+    # ═══════════════════════════════════════════════════════════════════
+    # BARU: Get posisi antrean (berapa orang di depan)
+    # ═══════════════════════════════════════════════════════════════════
+    @staticmethod
+    def get_queue_position(booking_id):
+        """Dapatkan posisi antrean user"""
+        db = get_db()
+        
+        booking = Booking.get_by_id(booking_id)
+        if not booking or not booking.nomor_antrian:
+            return None
+        
+        # Hitung berapa orang dengan nomor antrean lebih kecil & status aktif
+        result = db.execute(
+            text("""
+                SELECT COUNT(*) as ahead
+                FROM bookings 
+                WHERE layanan_id = :layanan_id 
+                AND tanggal_booking = :tanggal
+                AND nomor_antrian < :nomor
+                AND status IN ('menunggu', 'dikonfirmasi', 'proses')
+            """),
+            {
+                'layanan_id': booking.layanan_id,
+                'tanggal': booking.tanggal_booking,
+                'nomor': booking.nomor_antrian
+            }
+        ).mappings().first()
+        
+        return {
+            'nomor_antrian': booking.nomor_antrian,
+            'orang_di_depan': result['ahead'] if result else 0,
+            'status': booking.status
+        }
 
     @staticmethod
     def create(user_id, layanan_id, nama_pendaftar, tanggal_booking, jam_booking, catatan=None):
@@ -151,13 +209,18 @@ class Booking:
         ).mappings().first()
         admin_id = service['admin_id'] if service else None
         
+        # ═══════════════════════════════════════════════════════════════
+        # BARU: Generate nomor antrean otomatis
+        # ═══════════════════════════════════════════════════════════════
+        nomor_antrian = Booking.generate_nomor_antrian(layanan_id, tanggal_booking)
+        
         sql = """
             INSERT INTO bookings 
             (user_id, layanan_id, admin_id, no_booking, nama_pendaftar, 
-             tanggal_booking, jam_booking, status, catatan, created_at, updated_at)
+             tanggal_booking, jam_booking, status, nomor_antrian, catatan, created_at, updated_at)
             VALUES 
             (:user_id, :layanan_id, :admin_id, :no_booking, :nama_pendaftar,
-             :tanggal_booking, :jam_booking, 'menunggu', :catatan, NOW(), NOW())
+             :tanggal_booking, :jam_booking, 'menunggu', :nomor_antrian, :catatan, NOW(), NOW())
         """
         
         result = db.execute(text(sql), {
@@ -168,12 +231,11 @@ class Booking:
             'nama_pendaftar': nama_pendaftar,
             'tanggal_booking': tanggal_booking,
             'jam_booking': jam_booking,
+            'nomor_antrian': nomor_antrian,  # ← BARU
             'catatan': catatan or ''
         })
         
         db.commit()
-        
-        # Get the created booking ID
         booking_id = result.lastrowid
         
         return Booking.get_by_id(booking_id)
@@ -183,14 +245,12 @@ class Booking:
         """Update status booking dan catat riwayat"""
         db = get_db()
         
-        # Get booking current status
         booking = Booking.get_by_id(booking_id)
         if not booking:
             return None
             
         status_sebelum = booking.status
         
-        # Update booking status
         db.execute(
             text("""
                 UPDATE bookings 
@@ -200,7 +260,6 @@ class Booking:
             {'status': status_baru, 'id': booking_id}
         )
         
-        # Insert riwayat status
         db.execute(
             text("""
                 INSERT INTO riwayat_status 

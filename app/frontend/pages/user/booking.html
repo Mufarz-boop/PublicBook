@@ -411,11 +411,14 @@
     <div class="qr-section animate-in">
         <div class="qr-card-main">
             <div class="qr-left">
-                <!-- QR Code mengarah ke IP lokal laptop (192.168.100.224) -->
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=http://192.168.100.224:5000/scan/{{ active_booking.no_booking }}&color=333333&bgcolor=ffffff" 
+                <!-- IP otomatis dari Python context processor -->
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data={{ local_url }}/scan/{{ active_booking.no_booking }}&color=333333&bgcolor=ffffff" 
                     alt="QR Code Booking" 
                     class="qr-code-img">
                 <div class="qr-scan-label">Scan untuk Selesaikan</div>
+                <div style="margin-top:8px; font-size:11px; color:#888;">
+                    <i class="fas fa-wifi"></i> {{ local_ip }}:5000
+                </div>
             </div>
             
             <div class="qr-right">
@@ -439,12 +442,19 @@
                         </div>
                     </div>
                     
-                    <div class="qr-detail-row">
-                        <div class="qr-detail-icon"><i class="fas fa-list-ol"></i></div>
+                    <!-- NOMOR ANTREAN - TAMPIL BESAR & MENONJOL -->
+                    <div class="qr-detail-row" style="background: linear-gradient(135deg, #FFF5EB, #FFE8D1); border: 2px solid #FF6B00;">
+                        <div class="qr-detail-icon" style="background: linear-gradient(135deg, #FF6B00, #FF8C00);">
+                            <i class="fas fa-list-ol"></i>
+                        </div>
                         <div class="qr-detail-text">
-                            <div class="qr-detail-label">Nomor Antrean</div>
-                            <div class="qr-detail-value" style="color: #FF6B00; font-size: 18px;">
-                                {{ active_booking.nomor_antrian or '-' }}
+                            <div class="qr-detail-label">Nomor Antrean Anda</div>
+                            <div class="qr-detail-value" style="color: #FF6B00; font-size: 28px; font-weight: 700;">
+                                {% if active_booking.nomor_antrian %}
+                                    #{{ active_booking.nomor_antrian }}
+                                {% else %}
+                                    <span style="color: #ccc; font-size: 16px;">Menunggu</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
