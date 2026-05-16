@@ -93,12 +93,18 @@ from routes.auth import bp as auth_bp
 from routes.auth_api import bp as auth_api_bp
 from routes.user import bp as user_bp
 from routes.admin import bp as admin_bp
+from routes.scan import bp as scan_bp
 
 app.register_blueprint(static_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(auth_api_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(admin_bp)
+app.register_blueprint(scan_bp)
 
 if __name__ == '__main__':
-    app.run(debug=app.config.get('DEBUG', True), port=app.config.get('PORT', 5000))
+    app.run(
+        host='0.0.0.0',  # ← TAMBAHKAN INI (agar bisa diakses dari HP/lan)
+        debug=app.config.get('DEBUG', True), 
+        port=app.config.get('PORT', 5000)
+    )

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Scan - PublicBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6B00, #FF8C00);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .scan-result-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .status-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 48px;
+        }
+        .status-icon.success { background: #E8F5E9; color: #4CAF50; }
+        .status-icon.already_done { background: #E3F2FD; color: #1976D2; }
+        .status-icon.invalid { background: #FFF3E0; color: #FF9800; }
+        
+        .scan-result-card h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .scan-result-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .booking-info {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #888; font-size: 13px; }
+        .info-value { color: #333; font-weight: 600; font-size: 14px; }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #FF6B00, #FF8C00);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-back:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,0,0.3); }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .badge-selesai { background: #E8F5E9; color: #388E3C; }
+        .badge-menunggu { background: #FFF3E0; color: #FF6B00; }
+    </style>
+</head>
+<body>
+    <div class="scan-result-card">
+        {% if status == 'success' %}
+            <div class="status-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Berhasil!</h2>
+            <p>{{ message }}</p>
+            
+        {% elif status == 'already_done' %}
+            <div class="status-icon already_done">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <h2>Sudah Selesai</h2>
+            <p>{{ message }}</p>
+            
+        {% else %}
+            <div class="status-icon invalid">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>Tidak Dapat Diproses</h2>
+            <p>{{ message }}</p>
+        {% endif %}
+        
+        <div class="booking-info">
+            <div class="info-row">
+                <span class="info-label">No. Booking</span>
+                <span class="info-value">{{ booking.no_booking }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Layanan</span>
+                <span class="info-value">{{ booking.nama_layanan }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Nama</span>
+                <span class="info-value">{{ booking.nama_pendaftar }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status</span>
+                <span class="info-value">
+                    <span class="badge badge-{{ booking.status }}">{{ booking.status|title }}</span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tanggal</span>
+                <span class="info-value">{{ booking.tanggal_booking }}</span>
+            </div>
+        </div>
+        
+        <a href="{{ url_for('user_routes.dashboard') }}" class="btn-back">
+            <i class="fas fa-home"></i> Kembali ke Dashboard
+        </a>
+    </div>
+</body>
+</html>

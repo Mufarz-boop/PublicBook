@@ -10,6 +10,7 @@ app/
             user.py
         routes/
             __init__.py
+            scan.py
             admin.py
             auth_api.py
             auth.py
@@ -60,6 +61,9 @@ app/
                 pengguna.html
                 profil.html
                 security.html
+            scan/
+                error.html
+                result.html
             auth/
                 forgot_password.html
                 login.html

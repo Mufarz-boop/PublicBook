@@ -177,3 +177,60 @@ class Booking:
         booking_id = result.lastrowid
         
         return Booking.get_by_id(booking_id)
+    
+    @staticmethod
+    def update_status(booking_id, status_baru, admin_id=None, keterangan=None):
+        """Update status booking dan catat riwayat"""
+        db = get_db()
+        
+        # Get booking current status
+        booking = Booking.get_by_id(booking_id)
+        if not booking:
+            return None
+            
+        status_sebelum = booking.status
+        
+        # Update booking status
+        db.execute(
+            text("""
+                UPDATE bookings 
+                SET status = :status, updated_at = NOW() 
+                WHERE id = :id
+            """),
+            {'status': status_baru, 'id': booking_id}
+        )
+        
+        # Insert riwayat status
+        db.execute(
+            text("""
+                INSERT INTO riwayat_status 
+                (booking_id, status_sebelum, status_baru, admin_id, keterangan, waktu_perubahan)
+                VALUES 
+                (:booking_id, :status_sebelum, :status_baru, :admin_id, :keterangan, NOW())
+            """),
+            {
+                'booking_id': booking_id,
+                'status_sebelum': status_sebelum,
+                'status_baru': status_baru,
+                'admin_id': admin_id,
+                'keterangan': keterangan or f'Status diubah via QR Scan dari {status_sebelum} ke {status_baru}'
+            }
+        )
+        
+        db.commit()
+        return Booking.get_by_id(booking_id)
+
+    @staticmethod
+    def get_by_booking_number(no_booking):
+        """Get booking by booking number"""
+        db = get_db()
+        row = db.execute(
+            text("""
+                SELECT b.*, l.nama_layanan, l.instansi 
+                FROM bookings b
+                LEFT JOIN layanan l ON b.layanan_id = l.id
+                WHERE b.no_booking = :no_booking
+            """),
+            {'no_booking': no_booking}
+        ).mappings().first()
+        return Booking(dict(row)) if row else None
