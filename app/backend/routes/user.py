@@ -52,6 +52,22 @@ def booking():
     
     return render_template('user/booking.html', user=user, bookings=bookings, active_booking=active_booking)
 
+@bp.route('/booking/detail/<int:id>')
+@user_required
+def booking_detail(id):
+    user_id = session.get('user_id')
+    user = User.get_by_id(user_id)
+        
+    booking = Booking.get_by_id(id)
+        
+    # Cek kepemilikan
+    if not booking or booking.user_id != user_id:
+        flash('Booking tidak ditemukan', 'danger')
+        return redirect(url_for('user_routes.booking'))
+        
+    return render_template('user/booking-detail.html', user=user, booking=booking)
+    
+
 @bp.route('/booking/new', methods=['GET'])
 @user_required
 def booking_new():

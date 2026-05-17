@@ -47,6 +47,10 @@
 
 .qr-left {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
 .qr-code-img {
@@ -63,10 +67,9 @@
 
 .qr-scan-label {
     display: inline-block;
-    margin-top: 12px;
     background: linear-gradient(135deg, #FF6B00, #FF8C00);
     color: #fff;
-    padding: 6px 16px;
+    padding: 8px 20px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 700;
@@ -211,6 +214,7 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .booking-card-item::before {
@@ -292,6 +296,91 @@
     font-weight: 600;
 }
 
+/* ========== CARD EXPAND DETAIL ========== */
+.booking-card-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease;
+    padding: 0 16px;
+    border-top: 1px solid transparent;
+    opacity: 0;
+}
+
+.booking-card-item.open .booking-card-details {
+    max-height: 400px;
+    padding: 16px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 12px;
+    opacity: 1;
+}
+
+.booking-card-item .toggle-icon {
+    transition: transform 0.3s ease;
+    color: #aaa;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.booking-card-item.open .toggle-icon {
+    transform: rotate(180deg);
+    color: #FF6B00;
+}
+
+.booking-card-item.open {
+    border-color: rgba(255,107,0,0.3);
+    box-shadow: 0 12px 40px rgba(255,107,0,0.1);
+}
+
+/* ========== ACTION BUTTONS ========== */
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-card-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-card-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+    color: #fff;
+}
+
+.btn-card-action.btn-danger {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+
+.btn-card-action.btn-danger:hover {
+    box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+}
+
+.btn-card-action.btn-secondary {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.btn-card-action.btn-secondary:hover {
+    background: #e0e0e0;
+    box-shadow: none;
+    color: #333;
+}
+
 /* ========== EMPTY STATE ========== */
 .booking-empty-state {
     text-align: center;
@@ -361,27 +450,31 @@
         text-align: center;
         padding: 25px;
     }
-    
+
     .qr-left {
         order: 2;
     }
-    
+
     .qr-right {
         order: 1;
     }
-    
+
     .qr-details-grid {
         text-align: left;
     }
-    
+
     .booking-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .section-header-bar {
         flex-direction: column;
         gap: 10px;
         align-items: flex-start;
+    }
+
+    .card-actions {
+        flex-direction: column;
     }
 }
 
@@ -405,19 +498,18 @@
 
 {% block content %}
 <div class="booking-container">
-    
+
     {% if active_booking %}
     <!-- QR CODE SECTION -->
     <div class="qr-section animate-in">
         <div class="qr-card-main">
             <div class="qr-left">
-                <!-- QR Code mengarah ke IP lokal laptop (192.168.1.2) -->
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=http:/10.137.12.241:5000/scan/{{ active_booking.no_booking }}&color=333333&bgcolor=ffffff" 
                     alt="QR Code Booking" 
                     class="qr-code-img">
                 <div class="qr-scan-label">Scan untuk Selesaikan</div>
             </div>
-            
+
             <div class="qr-right">
                 <div>
                     <div class="qr-service-title">
@@ -429,7 +521,7 @@
                         {{ active_booking.status|title }}
                     </span>
                 </div>
-                
+
                 <div class="qr-details-grid">
                     <div class="qr-detail-row">
                         <div class="qr-detail-icon"><i class="fas fa-hashtag"></i></div>
@@ -438,7 +530,7 @@
                             <div class="qr-detail-value">{{ active_booking.no_booking }}</div>
                         </div>
                     </div>
-                    
+
                     <div class="qr-detail-row">
                         <div class="qr-detail-icon"><i class="fas fa-list-ol"></i></div>
                         <div class="qr-detail-text">
@@ -448,7 +540,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="qr-detail-row">
                         <div class="qr-detail-icon"><i class="fas fa-calendar"></i></div>
                         <div class="qr-detail-text">
@@ -475,17 +567,21 @@
     {% if bookings %}
     <div class="booking-grid">
         {% for booking in bookings %}
-        <div class="booking-card-item animate-in">
+        <div class="booking-card-item animate-in" onclick="toggleCard(this)">
             <div class="booking-card-header">
                 <div class="booking-card-title">
                     <i class="fas fa-circle" style="font-size: 6px; color: #FF6B00; vertical-align: middle; margin-right: 8px;"></i>
                     {{ booking.nama_layanan or 'Layanan #' + booking.layanan_id|string }}
                 </div>
-                <span class="booking-card-status status-{{ booking.status }}">
-                    {{ booking.status|title }}
-                </span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="booking-card-status status-{{ booking.status }}">
+                        {{ booking.status|title }}
+                    </span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
             </div>
-            
+
+            <!-- Ringkasan (selalu terlihat) -->
             <div class="booking-card-body">
                 <div class="booking-card-meta">
                     <i class="fas fa-hashtag"></i>
@@ -495,6 +591,10 @@
                     <i class="fas fa-calendar"></i>
                     <span>Tanggal: <strong>{{ booking.tanggal_booking }}</strong></span>
                 </div>
+            </div>
+
+            <!-- Detail tersembunyi (muncul saat diklik) -->
+            <div class="booking-card-details">
                 <div class="booking-card-meta">
                     <i class="fas fa-clock"></i>
                     <span>Jam: <strong>{{ booking.jam_booking }}</strong></span>
@@ -505,6 +605,37 @@
                     <span>Antrean: <strong style="color: #FF6B00;">#{{ booking.nomor_antrian }}</strong></span>
                 </div>
                 {% endif %}
+                <div class="booking-card-meta">
+                    <i class="fas fa-building"></i>
+                    <span>Instansi: <strong>{{ booking.instansi or '-' }}</strong></span>
+                </div>
+                <div class="booking-card-meta">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Lokasi: <strong>{{ booking.lokasi or '-' }}</strong></span>
+                </div>
+                <div class="booking-card-meta">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Catatan: <strong>{{ booking.catatan or '-' }}</strong></span>
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="card-actions">
+                    <a href="{{ url_for('user_routes.booking_detail', id=booking.id) }}" 
+                       class="btn-card-action">
+                        <i class="fas fa-eye"></i> Lihat Detail
+                    </a>
+                    {% if booking.status == 'menunggu' %}
+                    <button onclick="event.stopPropagation(); cancelBooking({{ booking.id }})" 
+                            class="btn-card-action btn-danger">
+                        <i class="fas fa-times"></i> Batalkan
+                    </button>
+                    {% elif booking.status == 'selesai' %}
+                    <button onclick="event.stopPropagation(); downloadReceipt({{ booking.id }})" 
+                            class="btn-card-action btn-secondary">
+                        <i class="fas fa-download"></i> Bukti
+                    </button>
+                    {% endif %}
+                </div>
             </div>
         </div>
         {% endfor %}
@@ -521,6 +652,122 @@
         </a>
     </div>
     {% endif %}
-    
+
 </div>
+
+<script>
+function toggleCard(card) {
+    // Tutup card lain yang terbuka (accordion style)
+    document.querySelectorAll('.booking-card-item.open').forEach(c => {
+        if (c !== card) c.classList.remove('open');
+    });
+
+    // Toggle card yang diklik
+    card.classList.toggle('open');
+}
+
+// Batalkan booking
+function cancelBooking(id) {
+    event.stopPropagation();
+    if (confirm('Yakin ingin membatalkan booking ini?')) {
+        fetch(`/booking/cancel/${id}`, { 
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message || 'Booking dibatalkan', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.message || 'Gagal membatalkan', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Terjadi kesalahan', 'danger');
+        });
+    }
+}
+
+// Download bukti
+function downloadReceipt(id) {
+    event.stopPropagation();
+    window.open(`/booking/receipt/${id}`, '_blank');
+}
+
+// Toast notification
+function showToast(message, type) {
+    const container = document.getElementById('toast-container') || createToastContainer();
+    const icons = {
+        success: 'fa-check-circle',
+        danger: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    const colors = {
+        success: { bg: '#D1FAE5', color: '#065F46' },
+        danger: { bg: '#FEE2E2', color: '#991B1B' },
+        warning: { bg: '#FEF3C7', color: '#92400E' },
+        info: { bg: '#DBEAFE', color: '#1E40AF' }
+    };
+
+    const toast = document.createElement('div');
+    const style = colors[type] || colors.info;
+    toast.style.cssText = `
+        background: ${style.bg};
+        color: ${style.color};
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease;
+        min-width: 280px;
+        margin-bottom: 10px;
+    `;
+    toast.innerHTML = `
+        <i class="fas ${icons[type] || icons.info}" style="font-size: 16px;"></i>
+        ${message}
+    `;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.transition = 'all 0.5s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    `;
+    document.body.appendChild(container);
+    return container;
+}
+
+// Tutup card dengan Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.booking-card-item.open').forEach(c => {
+            c.classList.remove('open');
+        });
+    }
+});
+</script>
 {% endblock %}

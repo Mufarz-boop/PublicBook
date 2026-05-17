@@ -471,6 +471,114 @@
     from { transform: translateY(30px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* TABLE WRAPPER - HILANGKAN SCROLLBAR */
+/* ═══════════════════════════════════════════════════════════════ */
+.table-wrapper {
+    overflow-x: auto;
+    /* Hilangkan scrollbar di Firefox */
+    scrollbar-width: none;
+    /* Hilangkan scrollbar di IE/Edge */
+    -ms-overflow-style: none;
+}
+
+/* Hilangkan scrollbar di Chrome/Safari */
+.table-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* RESPONSIVE TABLE - Agar tidak perlu scroll */
+/* ═══════════════════════════════════════════════════════════════ */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+}
+
+.data-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+.data-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+    background: #FFF5EB;
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* RESPONSIVE: Stack table di mobile */
+/* ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .data-table thead {
+        display: none; /* Sembunyikan header di mobile */
+    }
+    
+    .data-table tbody tr {
+        display: block;
+        margin-bottom: 16px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border: 1px solid #eee;
+        background: #fff;
+    }
+    
+    .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    
+    .data-table td:last-child {
+        border-bottom: none;
+    }
+    
+    /* Tambah label untuk setiap kolom di mobile */
+    .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #888;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    
+    /* Override cell styles di mobile */
+    .time-cell {
+        flex-direction: row !important;
+        gap: 8px !important;
+        align-items: center;
+    }
+    
+    .device-cell, .location-cell {
+        justify-content: flex-end;
+    }
+    
+    .ip-badge {
+        margin-left: auto;
+    }
+}
 </style>
 {% endblock %}
 
@@ -557,8 +665,8 @@
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
-            <span class="stat-value">5.0</span>
-            <span class="stat-label">Rating</span>
+            <span class="stat-value">{{ admin.status|title }}</span>
+            <span class="stat-label">Status</span>
           </div>
         </div>
 
