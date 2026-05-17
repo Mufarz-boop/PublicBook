@@ -80,6 +80,8 @@ app/
             user/
                 base.html
                 booking.html
+                booking-form.html
+                booking-detail.html
                 dashboard.html
                 layanan.html
                 profil.html

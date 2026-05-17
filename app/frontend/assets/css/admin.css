@@ -1964,3 +1964,28 @@ body {
     transform: translateX(0);
   }
 }
+
+/* Sembunyikan scrollbar tapi tetap bisa scroll */
+
+  /* Chrome, Safari, Edge, Opera */
+  .modal-box::-webkit-scrollbar,
+  .table-wrapper::-webkit-scrollbar,
+  textarea::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;
+  }
+
+  /* Firefox */
+  .modal-box,
+  .table-wrapper,
+  textarea {
+    scrollbar-width: none;
+  }
+
+  /* IE dan Edge lama */
+  .modal-box,
+  .table-wrapper,
+  textarea {
+    -ms-overflow-style: none;
+  }
