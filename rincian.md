@@ -46,6 +46,8 @@ app/
                     PublicBook Icon2.png
                     PublicBook.png
                 uploads/
+                    cover/
+                    profil/
             js/
                 api.js
                 auth.js

@@ -201,10 +201,10 @@
           <!-- ═══════════════════════════════════════════════════════════ -->
           <!-- PERBAIKAN: Foto profil admin pakai url_for static -->
           <!-- ═══════════════════════════════════════════════════════════ -->
-          <img src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
+          <img src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Icon PublicBook.jpg') }}" 
                alt="{{ admin.nama_lengkap }}" 
                class="profile-avatar"
-               onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
+               onerror="this.src='{{ url_for('static', filename='images/icons/Icon PublicBook.jpg') }}'">
         </div>
         <div class="profile-info">
           <h2 class="profile-name">{{ admin.nama_lengkap }}</h2>
@@ -255,9 +255,9 @@
 
         <div class="preview-container">
           <img id="previewFoto" 
-               src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
+               src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Icon PublicBook.jpg') }}" 
                alt="Preview"
-               onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
+               onerror="this.src='{{ url_for('static', filename='images/icons/Icon PublicBook.jpg') }}'">
         </div>
 
         <div class="form-group">

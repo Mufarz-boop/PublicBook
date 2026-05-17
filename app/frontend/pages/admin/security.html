@@ -6,7 +6,7 @@
 
 {% block extra_css %}
 <style>
-/* ========== MODAL UPLOAD FOTO ========== */
+/* ========== MODAL UPLOAD ========== */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -80,6 +80,13 @@
     object-fit: cover;
     border: 3px solid #FF6B00;
     background: #fff;
+}
+
+.preview-box.cover-preview img {
+    width: 100%;
+    height: 150px;
+    border-radius: 12px;
+    object-fit: cover;
 }
 
 .upload-area {
@@ -160,6 +167,54 @@
     z-index: 2;
 }
 
+/* ═══════════════════════════════════════════════════════════════ */
+/* COVER - PERBAIKAN UKURAN LEBIH BESAR */
+/* ═══════════════════════════════════════════════════════════════ */
+.profile-cover {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+    height: 180px;  /* ← DARI 120px JADI 180px */
+    min-height: 180px;
+}
+
+.profile-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-cover:hover .cover-camera {
+    opacity: 1;
+}
+
+.cover-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.2);
+}
+
+.cover-camera {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;  /* ← DARI 50px JADI 60px */
+    height: 60px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;  /* ← DARI 20px JADI 24px */
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -217,18 +272,20 @@
 
     <!-- RIGHT: Profile Card -->
     <div class="profile-card-v2">
-      <div class="profile-cover">
-        <img src="{{ url_for('static', filename='images/bg/background2.jpg') }}" alt="Cover">
+      <div class="profile-cover" onclick="openCoverModal()">
+        <img src="{{ url_for('static', filename=current_user.foto_cover or 'images/bg/background2.jpg') }}" 
+             alt="Cover"
+             onerror="this.src='{{ url_for('static', filename='images/bg/background2.jpg') }}'">
         <div class="cover-overlay"></div>
+        <div class="cover-camera">
+          <i class="fas fa-camera"></i>
+        </div>
       </div>
 
       <div class="profile-avatar-section">
-        <!-- ═══════════════════════════════════════════════════════════ -->
-        <!-- PERBAIKAN: Avatar bisa diklik untuk ganti foto -->
-        <!-- ═══════════════════════════════════════════════════════════ -->
-        <div class="avatar-wrap" onclick="openModal()">
-          <img src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
-               alt="{{ admin.nama_lengkap }}" 
+        <div class="avatar-wrap">
+          <img src="{{ url_for('static', filename=current_user.foto_profil or 'images/icons/Icon PublicBook.jpg') }}" 
+               alt="{{ current_user.nama_lengkap }}" 
                class="avatar-img"
                onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
         </div>
@@ -236,8 +293,8 @@
 
       <div class="profile-content">
         <div class="profile-main">
-          <h2 class="profile-name">{{ admin.nama_lengkap }}</h2>
-          <span class="profile-role">{{ admin.role|replace('_', ' ')|title }}</span>
+          <h2 class="profile-name">{{ current_user.nama_lengkap }}</h2>
+          <span class="profile-role">{{ current_user.role|replace('_', ' ')|title }}</span>
           <p class="profile-bio">Mengelola sistem PublicBook dengan penuh dedikasi</p>
         </div>
 
@@ -295,4 +352,69 @@
       </table>
     </div>
   </div>
+
+  <!-- MODAL UPLOAD FOTO COVER -->
+  <div id="coverModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-image"></i> Ganti Foto Cover</h3>
+        <button onclick="closeCoverModal()" class="close-btn">&times;</button>
+      </div>
+
+      <form action="{{ url_for('upload_cover') }}" method="POST" enctype="multipart/form-data">
+        <div class="preview-box cover-preview">
+          <img id="previewCover"
+               src="{{ url_for('static', filename=current_user.foto_cover or 'images/bg/background2.jpg') }}"
+               onerror="this.src='{{ url_for('static', filename='images/bg/background2.jpg') }}'">
+        </div>
+
+        <label class="upload-area">
+          <i class="fas fa-cloud-upload-alt"></i> Pilih Cover Baru
+          <input type="file" name="cover" accept="image/*" style="display:none;" onchange="previewFile(this, 'previewCover')">
+        </label>
+        <small style="display:block; text-align:center; color:#888; margin-top:8px;">Format: JPG, PNG (Max 5MB)</small>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="button" onclick="closeCoverModal()" class="btn-batal">Batal</button>
+          <button type="submit" class="btn-simpan"><i class="fas fa-save"></i> Simpan</button>
+        </div>
+      </form>
+
+      {% if current_user.foto_cover %}
+      <form action="{{ url_for('hapus_cover') }}" method="POST" style="margin-top:15px; text-align:center;">
+        <button type="submit" style="background:none; border:none; color:#f44336; cursor:pointer; font-size:13px;">
+          <i class="fas fa-trash"></i> Hapus Cover
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    function openFotoModal() {
+      document.getElementById('fotoModal').classList.add('active');
+    }
+    function closeFotoModal() {
+      document.getElementById('fotoModal').classList.remove('active');
+    }
+    function openCoverModal() {
+      document.getElementById('coverModal').classList.add('active');
+    }
+    function closeCoverModal() {
+      document.getElementById('coverModal').classList.remove('active');
+    }
+    function previewFile(input, previewId) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(previewId).src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    window.onclick = function(e) {
+      if (e.target === document.getElementById('fotoModal')) closeFotoModal();
+      if (e.target === document.getElementById('coverModal')) closeCoverModal();
+    }
+  </script>
 {% endblock %}

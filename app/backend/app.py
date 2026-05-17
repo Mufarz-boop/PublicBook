@@ -18,17 +18,20 @@ app = Flask(
 app.config.from_object(config_by_publicbook[env])
 
 # ═══════════════════════════════════════════════════════════════════
-# KONFIGURASI UPLOAD FOTO PROFIL
+# KONFIGURASI UPLOAD FOTO
 # ═══════════════════════════════════════════════════════════════════
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'frontend', 'assets', 'uploads', 'profil')
+UPLOAD_FOLDER_PROFIL = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'frontend', 'assets', 'uploads', 'profil')
+UPLOAD_FOLDER_COVER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'frontend', 'assets', 'uploads', 'cover')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # Max 2MB
 
-# Pastikan folder upload ada
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER_PROFIL, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER_COVER, exist_ok=True)
 
-# Auto-reload template (tidak perlu restart server tiap ubah HTML)
+app.config['UPLOAD_FOLDER_PROFIL'] = UPLOAD_FOLDER_PROFIL
+app.config['UPLOAD_FOLDER_COVER'] = UPLOAD_FOLDER_COVER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max 5MB
+
+# Auto-reload template
 app.jinja_env.auto_reload = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
@@ -46,9 +49,6 @@ except Exception as e:
 def teardown_db(exception):
     close_db()
 
-# ═══════════════════════════════════════════════════════════════════
-# Helper: Cek ekstensi file yang diizinkan
-# ═══════════════════════════════════════════════════════════════════
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -60,13 +60,11 @@ def inject_current_user():
     user_id = session.get('user_id')
     if user_id:
         db = get_db()
-        # Query SELECT * untuk ambil semua kolom yang ada
         row = db.execute(
             text("SELECT * FROM users WHERE id = :id"),
             {'id': user_id}
         ).mappings().first()
 
-        # Kalau tidak di users, cek tabel admins
         if not row:
             row = db.execute(
                 text("SELECT * FROM admins WHERE id = :id"),
@@ -78,25 +76,21 @@ def inject_current_user():
             class CurrentUser:
                 def __init__(self, data):
                     self.id = data['id']
-                    # Support nama_lengkap (sesuai struktur tabel)
                     self.nama = data.get('nama_lengkap') or data.get('nama', 'User')
                     self.nama_lengkap = data.get('nama_lengkap', self.nama)
                     self.email = data.get('email', 'user@email.com')
-                    # Hanya foto_profil (sesuai struktur tabel, tidak ada avatar)
                     self.foto_profil = data.get('foto_profil')
+                    self.foto_cover = data.get('foto_cover')  # ← TAMBAHAN
                     self.nomor_telepon = data.get('nomor_telepon', '')
                     self.alamat = data.get('alamat', '')
-                    # Status di DB: active/inactive (bukan aktif)
                     self.status = data.get('status', 'active')
                     self.role = data.get('role', 'user')
                     self.is_admin = bool(data.get('is_admin', False))
                     self.is_authenticated = True
-                    # Field khusus admin
                     self.instansi_nama = data.get('instansi_nama', '')
 
             return {'current_user': CurrentUser(user), 'user': CurrentUser(user)}
 
-    # Anonymous user (belum login)
     class AnonymousUser:
         is_authenticated = False
         is_admin = False
@@ -104,6 +98,7 @@ def inject_current_user():
         nama_lengkap = None
         email = None
         foto_profil = None
+        foto_cover = None
         nomor_telepon = None
         alamat = None
         status = None
@@ -113,87 +108,150 @@ def inject_current_user():
     return {'current_user': AnonymousUser(), 'user': AnonymousUser()}
 
 # ═══════════════════════════════════════════════════════════════════
-# ROUTE: Upload Foto Profil (USER & ADMIN)
+# HELPER: Hapus file lama
+# ═══════════════════════════════════════════════════════════════════
+def hapus_file_lama(folder, old_foto, exclude_default=None):
+    """Hapus file lama jika ada dan bukan file default"""
+    if old_foto and exclude_default and exclude_default not in old_foto:
+        old_path = os.path.join(folder, os.path.basename(old_foto))
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+# ═══════════════════════════════════════════════════════════════════
+# HELPER: Simpan file upload
+# ═══════════════════════════════════════════════════════════════════
+def simpan_file_upload(file, folder, user_id, prefix):
+    """Simpan file dan return path relatif"""
+    ext = secure_filename(file.filename).rsplit('.', 1)[1].lower()
+    filename = f"{prefix}_{user_id}_{int(datetime.now().timestamp())}.{ext}"
+    filepath = os.path.join(folder, filename)
+    file.save(filepath)
+    return f"uploads/{os.path.basename(folder)}/{filename}"
+
+# ═══════════════════════════════════════════════════════════════════
+# ROUTE: Upload Foto Profil (User & Admin)
 # ═══════════════════════════════════════════════════════════════════
 @app.route('/profil/upload-foto', methods=['POST'])
 def upload_foto():
-    """Handle upload foto profil user atau admin"""
+    """Handle upload foto profil"""
     user_id = session.get('user_id')
     if not user_id:
         flash('Silakan login terlebih dahulu', 'error')
         return redirect(url_for('auth.login'))
 
-    # Cek apakah ada file yang diupload
     if 'foto' not in request.files:
         flash('Tidak ada file yang dipilih', 'error')
-        return redirect(url_for('user_routes.profil'))
+        return redirect_back()
 
     file = request.files['foto']
-
     if file.filename == '':
         flash('Tidak ada file yang dipilih', 'error')
-        return redirect(url_for('user_routes.profil'))
+        return redirect_back()
 
     if file and allowed_file(file.filename):
         db = get_db()
 
-        # Cek apakah user atau admin
-        user_row = db.execute(
-            text("SELECT foto_profil FROM users WHERE id = :id"),
-            {'id': user_id}
-        ).mappings().first()
-
+        # Cek tabel mana
+        user_row = db.execute(text("SELECT foto_profil FROM users WHERE id = :id"), {'id': user_id}).mappings().first()
         admin_row = None
         if not user_row:
-            admin_row = db.execute(
-                text("SELECT foto_profil FROM admins WHERE id = :id"),
-                {'id': user_id}
-            ).mappings().first()
+            admin_row = db.execute(text("SELECT foto_profil FROM admins WHERE id = :id"), {'id': user_id}).mappings().first()
 
-        # Hapus foto lama jika ada dan bukan foto default
-        old_foto = None
+        # Hapus foto lama
+        old_foto = (user_row.get('foto_profil') if user_row else None) or (admin_row.get('foto_profil') if admin_row else None)
+        hapus_file_lama(current_app.config['UPLOAD_FOLDER_PROFIL'], old_foto, 'Afdal Adha Firnansyah.png')
+
+        # Simpan file baru
+        foto_path = simpan_file_upload(file, current_app.config['UPLOAD_FOLDER_PROFIL'], user_id, 'profil')
+
+        # Update DB
         if user_row:
-            old_foto = user_row.get('foto_profil')
+            db.execute(text("UPDATE users SET foto_profil = :foto WHERE id = :id"), {'foto': foto_path, 'id': user_id})
         elif admin_row:
-            old_foto = admin_row.get('foto_profil')
-
-        if old_foto and 'Afdal Adha Firnansyah.png' not in old_foto:
-            old_path = os.path.join(current_app.config['UPLOAD_FOLDER'], os.path.basename(old_foto))
-            if os.path.exists(old_path):
-                os.remove(old_path)
-
-        # Generate nama file unik dengan timestamp
-        ext = secure_filename(file.filename).rsplit('.', 1)[1].lower()
-        filename = f"profil_{user_id}_{int(datetime.now().timestamp())}.{ext}"
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-
-        # Simpan file
-        file.save(filepath)
-
-        # Path relatif untuk disimpan di database (dari folder assets)
-        foto_profil_path = f"uploads/profil/{filename}"
-
-        # Update database - cek tabel mana yang dipakai
-        if user_row:
-            db.execute(
-                text("UPDATE users SET foto_profil = :foto WHERE id = :id"),
-                {'foto': foto_profil_path, 'id': user_id}
-            )
-        elif admin_row:
-            db.execute(
-                text("UPDATE admins SET foto_profil = :foto WHERE id = :id"),
-                {'foto': foto_profil_path, 'id': user_id}
-            )
+            db.execute(text("UPDATE admins SET foto_profil = :foto WHERE id = :id"), {'foto': foto_path, 'id': user_id})
         db.commit()
 
         flash('Foto profil berhasil diperbarui!', 'success')
     else:
-        flash('Format file tidak didukung. Gunakan JPG, PNG, atau GIF (Max 2MB).', 'error')
+        flash('Format file tidak didukung. Gunakan JPG, PNG, atau GIF (Max 5MB).', 'error')
 
-    # Redirect sesuai role
-    if session.get('is_admin'):
-        return redirect(url_for('admin_routes.profil'))
-    return redirect(url_for('user_routes.profil'))
+    return redirect_back()
+
+# ═══════════════════════════════════════════════════════════════════
+# ROUTE: Upload Foto Cover (Admin Only)
+# ═══════════════════════════════════════════════════════════════════
+@app.route('/profil/upload-cover', methods=['POST'])
+def upload_cover():
+    """Handle upload foto cover admin"""
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Silakan login terlebih dahulu', 'error')
+        return redirect(url_for('auth.login'))
+
+    if 'cover' not in request.files:
+        flash('Tidak ada file yang dipilih', 'error')
+        return redirect(url_for('admin_routes.security'))
+
+    file = request.files['cover']
+    if file.filename == '':
+        flash('Tidak ada file yang dipilih', 'error')
+        return redirect(url_for('admin_routes.security'))
+
+    if file and allowed_file(file.filename):
+        db = get_db()
+
+        # Cek admin
+        admin_row = db.execute(text("SELECT foto_cover FROM admins WHERE id = :id"), {'id': user_id}).mappings().first()
+
+        if not admin_row:
+            flash('Hanya admin yang bisa mengubah cover', 'error')
+            return redirect(url_for('user_routes.profil'))
+
+        # Hapus cover lama
+        hapus_file_lama(current_app.config['UPLOAD_FOLDER_COVER'], admin_row.get('foto_cover'), 'background2.jpg')
+
+        # Simpan file baru
+        cover_path = simpan_file_upload(file, current_app.config['UPLOAD_FOLDER_COVER'], user_id, 'cover')
+
+        # Update DB
+        db.execute(text("UPDATE admins SET foto_cover = :cover WHERE id = :id"), {'cover': cover_path, 'id': user_id})
+        db.commit()
+
+        flash('Foto cover berhasil diperbarui!', 'success')
+    else:
+        flash('Format file tidak didukung. Gunakan JPG, PNG, atau GIF (Max 5MB).', 'error')
+
+    return redirect(url_for('admin_routes.security'))
+
+# ═══════════════════════════════════════════════════════════════════
+# ROUTE: Hapus Foto Cover (Reset ke Default)
+# ═══════════════════════════════════════════════════════════════════
+@app.route('/profil/hapus-cover', methods=['POST'])
+def hapus_cover():
+    """Hapus foto cover dan reset ke default"""
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Silakan login terlebih dahulu', 'error')
+        return redirect(url_for('auth.login'))
+
+    db = get_db()
+
+    # Cek admin
+    admin_row = db.execute(text("SELECT foto_cover FROM admins WHERE id = :id"), {'id': user_id}).mappings().first()
+
+    if not admin_row:
+        flash('Hanya admin yang bisa mengubah cover', 'error')
+        return redirect(url_for('user_routes.profil'))
+
+    # Hapus file
+    hapus_file_lama(current_app.config['UPLOAD_FOLDER_COVER'], admin_row.get('foto_cover'), 'background2.jpg')
+
+    # Reset DB
+    db.execute(text("UPDATE admins SET foto_cover = NULL WHERE id = :id"), {'id': user_id})
+    db.commit()
+
+    flash('Foto cover dihapus. Menggunakan cover default.', 'success')
+    return redirect(url_for('admin_routes.security'))
 
 # ═══════════════════════════════════════════════════════════════════
 # ROUTE: Hapus Foto Profil (Reset ke Default)
@@ -208,47 +266,28 @@ def hapus_foto():
 
     db = get_db()
 
-    # Cek apakah user atau admin
-    user_row = db.execute(
-        text("SELECT foto_profil FROM users WHERE id = :id"),
-        {'id': user_id}
-    ).mappings().first()
-
+    user_row = db.execute(text("SELECT foto_profil FROM users WHERE id = :id"), {'id': user_id}).mappings().first()
     admin_row = None
     if not user_row:
-        admin_row = db.execute(
-            text("SELECT foto_profil FROM admins WHERE id = :id"),
-            {'id': user_id}
-        ).mappings().first()
+        admin_row = db.execute(text("SELECT foto_profil FROM admins WHERE id = :id"), {'id': user_id}).mappings().first()
 
-    # Hapus file foto lama
-    old_foto = None
+    old_foto = (user_row.get('foto_profil') if user_row else None) or (admin_row.get('foto_profil') if admin_row else None)
+    hapus_file_lama(current_app.config['UPLOAD_FOLDER_PROFIL'], old_foto, 'Afdal Adha Firnansyah.png')
+
     if user_row:
-        old_foto = user_row.get('foto_profil')
+        db.execute(text("UPDATE users SET foto_profil = NULL WHERE id = :id"), {'id': user_id})
     elif admin_row:
-        old_foto = admin_row.get('foto_profil')
-
-    if old_foto and 'Afdal Adha Firnansyah.png' not in old_foto:
-        old_path = os.path.join(current_app.config['UPLOAD_FOLDER'], os.path.basename(old_foto))
-        if os.path.exists(old_path):
-            os.remove(old_path)
-
-    # Reset foto_profil di database ke NULL
-    if user_row:
-        db.execute(
-            text("UPDATE users SET foto_profil = NULL WHERE id = :id"),
-            {'id': user_id}
-        )
-    elif admin_row:
-        db.execute(
-            text("UPDATE admins SET foto_profil = NULL WHERE id = :id"),
-            {'id': user_id}
-        )
+        db.execute(text("UPDATE admins SET foto_profil = NULL WHERE id = :id"), {'id': user_id})
     db.commit()
 
     flash('Foto profil dihapus. Menggunakan foto default.', 'success')
+    return redirect_back()
 
-    # Redirect sesuai role
+# ═══════════════════════════════════════════════════════════════════
+# HELPER: Redirect balik sesuai role
+# ═══════════════════════════════════════════════════════════════════
+def redirect_back():
+    """Redirect ke halaman profil sesuai role"""
     if session.get('is_admin'):
         return redirect(url_for('admin_routes.profil'))
     return redirect(url_for('user_routes.profil'))
@@ -269,7 +308,7 @@ app.register_blueprint(scan_bp)
 
 if __name__ == '__main__':
     app.run(
-        host='0.0.0.0',  # ← WAJIB untuk akses dari HP
+        host='0.0.0.0',
         debug=app.config.get('DEBUG', True), 
         port=app.config.get('PORT', 5000)
     )
