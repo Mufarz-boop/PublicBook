@@ -17,6 +17,27 @@ def init_db(app):
         print("  Database connected:", database_uri)
     session_factory = sessionmaker(bind=engine)
     Session = scoped_session(session_factory)
+    
+    # ═══════════════════════════════════════════════════════════════════
+    # AUTO-CREATE TABEL QR_TOKENS (BARU)
+    # ═══════════════════════════════════════════════════════════════════
+    with engine.connect() as conn:
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS qr_tokens (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                booking_id INT NOT NULL,
+                token VARCHAR(64) UNIQUE NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP NOT NULL,
+                used BOOLEAN DEFAULT FALSE,
+                used_at TIMESTAMP NULL,
+                FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+                INDEX idx_token (token),
+                INDEX idx_booking (booking_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """))
+        conn.commit()
+    
     return engine
 
 def get_db():

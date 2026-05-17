@@ -861,7 +861,15 @@ input[type="time"].form-control {
         
         console.log('✅ Booking form initialized'); // DEBUG
         
-        // ===== LIVE SUMMARY UPDATE =====
+        // ═══════════════════════════════════════════════════════════════
+        // PENTING: Hapus attribute action & method untuk mencegah submit normal
+        // ═══════════════════════════════════════════════════════════════
+        form.removeAttribute('action');
+        form.removeAttribute('method');
+        
+        // ═══════════════════════════════════════════════════════════════
+        // LIVE SUMMARY UPDATE
+        // ═══════════════════════════════════════════════════════════════
         const summaryNama = document.getElementById('summaryNama');
         const summaryTanggal = document.getElementById('summaryTanggal');
         const summaryJam = document.getElementById('summaryJam');
@@ -886,7 +894,9 @@ input[type="time"].form-control {
             });
         }
         
-        // ===== FORM SUBMIT HANDLER =====
+        // ═══════════════════════════════════════════════════════════════
+        // FORM SUBMIT HANDLER - AJAX ONLY
+        // ═══════════════════════════════════════════════════════════════
         form.addEventListener('submit', function(e) {
             // PENTING: Prevent default form submission
             e.preventDefault();
@@ -913,7 +923,10 @@ input[type="time"].form-control {
             
             if (!layananId || !nama || !tanggal || !jam) {
                 if (errorText) errorText.textContent = 'Semua field wajib diisi!';
-                if (errorAlert) errorAlert.style.display = 'block';
+                if (errorAlert) {
+                    errorAlert.style.display = 'block';
+                    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
                 return false;
             }
             
@@ -922,8 +935,16 @@ input[type="time"].form-control {
             const originalHTML = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
             
-            // Kirim data via fetch
+            // ═══════════════════════════════════════════════════════════════
+            // Kirim data via fetch AJAX
+            // ═══════════════════════════════════════════════════════════════
             const formData = new FormData(form);
+            
+            // Debug: log form data
+            console.log('📦 FormData:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`  ${key}: ${value}`);
+            }
             
             fetch('/user/booking/create', {
                 method: 'POST',
@@ -956,7 +977,8 @@ input[type="time"].form-control {
                     if (successText) {
                         successText.innerHTML = 
                             '<strong>' + result.message + '</strong><br>' +
-                            'No. Booking: <span style="font-size:18px;color:#FF6B00;">' + result.data.no_booking + '</span>';
+                            'No. Booking: <span style="font-size:18px;color:#FF6B00;">' + result.data.no_booking + '</span><br>' +
+                            (result.data.nomor_antrian ? 'Nomor Antrean: <span style="font-size:18px;color:#FF6B00;">#' + result.data.nomor_antrian + '</span>' : '');
                     }
                     if (successAlert) {
                         successAlert.style.display = 'block';
@@ -968,24 +990,22 @@ input[type="time"].form-control {
                     submitBtn.innerHTML = '<i class="fas fa-check"></i> Booking Berhasil!';
                     
                     // TAMBAHAN: Munculin notifikasi toast
-                    showToast('🎉 Booking berhasil dibuat! No. ' + result.data.no_booking, 'success');
+                    showToast('🎉 ' + result.message, 'success');
                     
-                    // Reset form setelah 3 detik (opsional, kalau mau booking lagi)
-                    setTimeout(function() {
-                        // Kalau mau reset form:
-                        // form.reset();
-                        // submitBtn.disabled = false;
-                        // submitBtn.classList.remove('success');
-                        // submitBtn.innerHTML = originalHTML;
-                        
-                        // Kalau mau redirect manual:
-                        // window.location.href = result.data.redirect_url;
-                    }, 3000);
+                    // ═══════════════════════════════════════════════════════
+                    // OPTIONAL: Redirect setelah 3 detik (bisa dihapus kalau tidak mau)
+                    // ═══════════════════════════════════════════════════════
+                    // setTimeout(function() {
+                    //     window.location.href = result.data.redirect_url;
+                    // }, 3000);
                     
                 } else {
                     // Show error
                     if (errorText) errorText.textContent = result.message || 'Terjadi kesalahan';
-                    if (errorAlert) errorAlert.style.display = 'block';
+                    if (errorAlert) {
+                        errorAlert.style.display = 'block';
+                        errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                     
                     // Re-enable button
                     submitBtn.disabled = false;
@@ -998,7 +1018,10 @@ input[type="time"].form-control {
                 console.error('❌ Error:', error);
                 
                 if (errorText) errorText.textContent = 'Gagal mengirim data. Cek koneksi atau refresh halaman.';
-                if (errorAlert) errorAlert.style.display = 'block';
+                if (errorAlert) {
+                    errorAlert.style.display = 'block';
+                    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
                 
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalHTML;
@@ -1009,9 +1032,23 @@ input[type="time"].form-control {
             // PENTING: Return false biar form nggak submit normal
             return false;
         });
+        
+        // ═══════════════════════════════════════════════════════════════
+        // DOUBLE SAFETY: Tangkap click event juga
+        // ═══════════════════════════════════════════════════════════════
+        submitBtn.addEventListener('click', function(e) {
+            // Cek kalau form sudah di-handle oleh submit event
+            // Ini sebagai backup safety
+            if (!submitBtn.disabled) {
+                e.preventDefault();
+                form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+        });
     }
     
-    // ===== TOAST NOTIFICATION =====
+    // ═══════════════════════════════════════════════════════════════════
+    // TOAST NOTIFICATION
+    // ═══════════════════════════════════════════════════════════════════
     function showToast(message, type) {
         // Hapus toast lama kalau ada
         const oldToast = document.getElementById('bookingToast');
@@ -1072,7 +1109,9 @@ input[type="time"].form-control {
         }, 5000);
     }
     
-    // ===== INIT =====
+    // ═══════════════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════════════
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initBookingForm);
     } else {

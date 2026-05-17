@@ -49,6 +49,11 @@
     text-align: center;
 }
 
+.qr-code-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
 .qr-code-img {
     width: 180px;
     height: 180px;
@@ -59,6 +64,23 @@
 
 .qr-code-img:hover {
     transform: scale(1.05);
+}
+
+.qr-loading {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    color: #888;
+    font-size: 12px;
+}
+
+.qr-loading i {
+    font-size: 24px;
+    color: #FF6B00;
 }
 
 .qr-scan-label {
@@ -72,6 +94,25 @@
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
+}
+
+.qr-security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.qr-info-text {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #888;
 }
 
 .qr-right {
@@ -361,23 +402,23 @@
         text-align: center;
         padding: 25px;
     }
-    
+
     .qr-left {
         order: 2;
     }
-    
+
     .qr-right {
         order: 1;
     }
-    
+
     .qr-details-grid {
         text-align: left;
     }
-    
+
     .booking-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .section-header-bar {
         flex-direction: column;
         gap: 10px;
@@ -405,22 +446,34 @@
 
 {% block content %}
 <div class="booking-container">
-    
+
     {% if active_booking %}
     <!-- QR CODE SECTION -->
     <div class="qr-section animate-in">
         <div class="qr-card-main">
             <div class="qr-left">
-                <!-- IP otomatis dari Python context processor -->
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data={{ local_url }}/scan/{{ active_booking.no_booking }}&color=333333&bgcolor=ffffff" 
-                    alt="QR Code Booking" 
-                    class="qr-code-img">
+                <!-- QR Code dari API -->
+                <div class="qr-code-wrapper">
+                    <img id="qr-image" 
+                         src="" 
+                         alt="QR Code Booking" 
+                         class="qr-code-img"
+                         style="display:none;">
+                    <div id="qr-loading" class="qr-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Memuat QR...</span>
+                    </div>
+                </div>
+
                 <div class="qr-scan-label">Scan untuk Selesaikan</div>
-                <div style="margin-top:8px; font-size:11px; color:#888;">
-                    <i class="fas fa-wifi"></i> {{ local_ip }}:5000
+                <div class="qr-security-badge">
+                    <i class="fas fa-shield-alt"></i> Hanya Admin
+                </div>
+                <div class="qr-info-text">
+                    <i class="fas fa-info-circle"></i> Tunjukkan QR ini ke Admin
                 </div>
             </div>
-            
+
             <div class="qr-right">
                 <div>
                     <div class="qr-service-title">
@@ -432,7 +485,7 @@
                         {{ active_booking.status|title }}
                     </span>
                 </div>
-                
+
                 <div class="qr-details-grid">
                     <div class="qr-detail-row">
                         <div class="qr-detail-icon"><i class="fas fa-hashtag"></i></div>
@@ -441,8 +494,7 @@
                             <div class="qr-detail-value">{{ active_booking.no_booking }}</div>
                         </div>
                     </div>
-                    
-                    <!-- NOMOR ANTREAN - TAMPIL BESAR & MENONJOL -->
+
                     <div class="qr-detail-row" style="background: linear-gradient(135deg, #FFF5EB, #FFE8D1); border: 2px solid #FF6B00;">
                         <div class="qr-detail-icon" style="background: linear-gradient(135deg, #FF6B00, #FF8C00);">
                             <i class="fas fa-list-ol"></i>
@@ -458,7 +510,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="qr-detail-row">
                         <div class="qr-detail-icon"><i class="fas fa-calendar"></i></div>
                         <div class="qr-detail-text">
@@ -495,7 +547,7 @@
                     {{ booking.status|title }}
                 </span>
             </div>
-            
+
             <div class="booking-card-body">
                 <div class="booking-card-meta">
                     <i class="fas fa-hashtag"></i>
@@ -526,11 +578,48 @@
         </div>
         <h3>Belum Ada Booking</h3>
         <p>Yuk, buat booking pertamamu sekarang!</p>
-        <a href="{{ url_for('user_routes.layanan') }}" class="btn-booking-new">
+        <a href="{{ url_for('user.layanan') }}" class="btn-booking-new">
             <i class="fas fa-plus"></i> Booking Layanan
         </a>
     </div>
     {% endif %}
-    
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Load QR Code dari API saat halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    {% if active_booking %}
+    loadQRCode({{ active_booking.id }});
+    {% endif %}
+});
+
+function loadQRCode(bookingId) {
+    fetch(`/scan/api/booking-qr/${bookingId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const img = document.getElementById('qr-image');
+                const loading = document.getElementById('qr-loading');
+                img.src = data.qr_image;
+                img.onload = function() {
+                    loading.style.display = 'none';
+                    img.style.display = 'block';
+                };
+                img.onerror = function() {
+                    loading.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#FF6B00;"></i><br><span style="font-size:12px;">Gagal load QR</span>';
+                };
+            } else {
+                document.getElementById('qr-loading').innerHTML = 
+                    '<i class="fas fa-exclamation-triangle" style="color:#FF6B00;"></i><br><span style="font-size:12px;">' + data.message + '</span>';
+            }
+        })
+        .catch(err => {
+            document.getElementById('qr-loading').innerHTML = 
+                '<i class="fas fa-exclamation-triangle" style="color:#FF6B00;"></i><br><span style="font-size:12px;">Gagal load QR</span>';
+        });
+}
+</script>
 {% endblock %}
