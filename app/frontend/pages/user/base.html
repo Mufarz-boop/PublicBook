@@ -421,7 +421,6 @@
             color: #333;
         }
     </style>
-<base target="_blank">
 </head>
 <body>
     <!-- Page Transition Overlay -->
@@ -519,73 +518,23 @@
         }
 
         // Smooth navigation for all internal links
-        document.querySelectorAll('a[href^="/"], a[href^="{{ url_for"]').forEach(link => {
+        document.querySelectorAll('a').forEach(link => {
+            const href = link.getAttribute('href');
+            // Skip if no href or external link or anchor or javascript
+            if (!href || href.startsWith('http') || href.startsWith('#') || href.startsWith('javascript')) return;
+            // Skip logout confirmation
+            if (link.classList.contains('logout-btn')) return;
+            // Skip links with onclick handlers
+            if (link.getAttribute('onclick')) return;
+            
             link.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                // Skip logout confirmation
-                if (this.classList.contains('logout-btn')) return;
-                // Skip external links
-                if (href.startsWith('http')) return;
-
                 e.preventDefault();
                 showTransition();
-
+                
                 setTimeout(() => {
                     window.location.href = href;
                 }, 300);
             });
-        });
-
-        // Hide transition on page load
-        window.addEventListener('load', hideTransition);
-        window.addEventListener('pageshow', hideTransition);
-
-        // Header scroll effect
-        const topHeader = document.getElementById('topHeader');
-        let lastScroll = 0;
-
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            if (currentScroll > 10) {
-                topHeader.classList.add('scrolled');
-            } else {
-                topHeader.classList.remove('scrolled');
-            }
-            lastScroll = currentScroll;
-        });
-
-        // Sidebar toggle with smooth animation
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-
-        // Logout confirmation with smooth transition
-        function confirmLogout(e) {
-            e.preventDefault();
-            if (confirm('Yakin ingin logout?')) {
-                showTransition();
-                setTimeout(() => {
-                    window.location.href = e.currentTarget.href;
-                }, 300);
-            }
-            return false;
-        }
-
-        // Active nav item animation on load
-        document.addEventListener('DOMContentLoaded', () => {
-            const activeNav = document.querySelector('.nav-item.active');
-            if (activeNav) {
-                activeNav.style.opacity = '0';
-                activeNav.style.transform = 'translateX(-20px)';
-                setTimeout(() => {
-                    activeNav.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    activeNav.style.opacity = '1';
-                    activeNav.style.transform = 'translateX(5px)';
-                }, 100);
-            }
         });
 
         {% block extra_js %}{% endblock %}
