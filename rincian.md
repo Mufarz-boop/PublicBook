@@ -45,6 +45,7 @@ app/
                     Icon PublicBook.jpg
                     PublicBook Icon2.png
                     PublicBook.png
+                uploads/
             js/
                 api.js
                 auth.js

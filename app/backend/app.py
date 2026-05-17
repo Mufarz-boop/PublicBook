@@ -1,11 +1,12 @@
-from flask import Flask, session
+# backend/app.py
+from flask import Flask, session, request, flash, redirect, url_for, current_app
+from werkzeug.utils import secure_filename
 from config import config_by_publicbook
 from database.database import init_db, close_db, get_db
 from sqlalchemy import text
+from datetime import datetime
 import socket
 import os
-import subprocess
-import re
 
 env = os.getenv('ENV', 'development')
 
@@ -16,82 +17,36 @@ app = Flask(
 )
 app.config.from_object(config_by_publicbook[env])
 
+# ═══════════════════════════════════════════════════════════════════
+# KONFIGURASI UPLOAD FOTO PROFIL
+# ═══════════════════════════════════════════════════════════════════
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'frontend', 'assets', 'uploads', 'profil')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Auto-reload template (tidak perlu restart server tiap ubah HTML)
 app.jinja_env.auto_reload = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-
-# ═══════════════════════════════════════════════════════════════════
-# KONFIGURASI PORT
-# ═══════════════════════════════════════════════════════════════════
-PORT = int(os.getenv('PORT', os.getenv('FLASK_RUN_PORT', 5000)))
-app.config['PORT'] = PORT
 
 try:
     init_db(app)
 except Exception as e:
     print(f"Database initialization failed: {e}")
+    print("Pastikan:")
+    print("  1. Laragon/XAMPP MySQL sudah START")
+    print("  2. .env berada di root folder")
+    print("  3. Database db_publicbook sudah dibuat di phpMyAdmin")
     raise
 
 @app.teardown_appcontext
 def teardown_db(exception):
     close_db()
 
-
 # ═══════════════════════════════════════════════════════════════════
-# DETEKSI IP LOKAL
+# Helper: Cek ekstensi file yang diizinkan
 # ═══════════════════════════════════════════════════════════════════
-def get_all_local_ips():
-    ips = []
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.settimeout(2)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        if ip and not ip.startswith("127."):
-            ips.append(ip)
-    except:
-        pass
-
-    try:
-        hostname = socket.gethostname()
-        ip = socket.gethostbyname(hostname)
-        if ip and not ip.startswith("127.") and ip not in ips:
-            ips.append(ip)
-    except:
-        pass
-
-    try:
-        if os.name == 'nt':
-            result = subprocess.run(['ipconfig'], capture_output=True, text=True)
-            ip_pattern = r'IPv4 Address[.\s]*:\s*(\d+\.\d+\.\d+\.\d+)'
-            found = re.findall(ip_pattern, result.stdout)
-            for ip in found:
-                if not ip.startswith("127.") and ip not in ips:
-                    ips.append(ip)
-        else:
-            result = subprocess.run(['hostname', '-I'], capture_output=True, text=True)
-            found = result.stdout.strip().split()
-            for ip in found:
-                if not ip.startswith("127.") and ip not in ips:
-                    ips.append(ip)
-    except:
-        pass
-
-    return ips
-
-
-def get_best_local_ip():
-    ips = get_all_local_ips()
-    for ip in ips:
-        if ip.startswith("192.168."):
-            return ip
-    for ip in ips:
-        if ip.startswith(("10.", "172.")):
-            return ip
-    if ips:
-        return ips[0]
-    return '127.0.0.1'
-
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ═══════════════════════════════════════════════════════════════════
 # Context processor untuk current_user
@@ -101,11 +56,13 @@ def inject_current_user():
     user_id = session.get('user_id')
     if user_id:
         db = get_db()
+        # Query SELECT * untuk ambil semua kolom yang ada
         row = db.execute(
             text("SELECT * FROM users WHERE id = :id"),
             {'id': user_id}
         ).mappings().first()
 
+        # Kalau tidak di users, cek tabel admins
         if not row:
             row = db.execute(
                 text("SELECT * FROM admins WHERE id = :id"),
@@ -117,55 +74,143 @@ def inject_current_user():
             class CurrentUser:
                 def __init__(self, data):
                     self.id = data['id']
-                    self.nama = data.get('nama_lengkap') or data.get('nama', 'User')
+                    # Support nama_lengkap (sesuai struktur tabel)
+                    self.nama = data.get('nama_lengkap', 'User')
+                    self.nama_lengkap = data.get('nama_lengkap', 'User')
                     self.email = data.get('email', 'user@email.com')
-                    self.avatar = data.get('avatar')
+                    # Hanya foto_profil (sesuai struktur tabel, tidak ada avatar)
+                    self.foto_profil = data.get('foto_profil')
+                    self.nomor_telepon = data.get('nomor_telepon', '')
+                    self.alamat = data.get('alamat', '')
+                    # Status di DB: active/inactive (bukan aktif)
+                    self.status = data.get('status', 'active')
                     self.role = data.get('role', 'user')
                     self.is_admin = bool(data.get('is_admin', False))
                     self.is_authenticated = True
 
-            return {'current_user': CurrentUser(user)}
+            return {'current_user': CurrentUser(user), 'user': CurrentUser(user)}
 
+    # Anonymous user (belum login)
     class AnonymousUser:
         is_authenticated = False
         is_admin = False
         nama = None
+        nama_lengkap = None
         email = None
-        avatar = None
+        foto_profil = None
+        nomor_telepon = None
+        alamat = None
+        status = None
         role = None
 
-    return {'current_user': AnonymousUser()}
-
-
-# ═══════════════════════════════════════════════════════════════════
-# Context processor untuk local_ip
-# ═══════════════════════════════════════════════════════════════════
-@app.context_processor
-def inject_local_ip():
-    manual_ip = os.getenv('PUBLICBOOK_IP')
-    local_ip = manual_ip if manual_ip else get_best_local_ip()
-    port = app.config.get('PORT', 5000)
-    local_url = f'http://{local_ip}:{port}'
-
-    return {
-        'local_ip': local_ip,
-        'local_url': local_url,
-        'port': port,
-        'server_url': local_url
-    }
-
+    return {'current_user': AnonymousUser(), 'user': AnonymousUser()}
 
 # ═══════════════════════════════════════════════════════════════════
-# REGISTER BLUEPRINTS
+# ROUTE: Upload Foto Profil
 # ═══════════════════════════════════════════════════════════════════
+@app.route('/profil/upload-foto', methods=['POST'])
+def upload_foto():
+    """Handle upload foto profil user"""
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Silakan login terlebih dahulu', 'error')
+        return redirect(url_for('auth.login'))
+
+    # Cek apakah ada file yang diupload
+    if 'foto' not in request.files:
+        flash('Tidak ada file yang dipilih', 'error')
+        return redirect(url_for('user_routes.profil'))
+
+    file = request.files['foto']
+
+    if file.filename == '':
+        flash('Tidak ada file yang dipilih', 'error')
+        return redirect(url_for('user_routes.profil'))
+
+    if file and allowed_file(file.filename):
+        db = get_db()
+
+        # Ambil data user untuk cek foto lama - HANYA foto_profil
+        row = db.execute(
+            text("SELECT foto_profil FROM users WHERE id = :id"),
+            {'id': user_id}
+        ).mappings().first()
+
+        # Hapus foto lama jika ada dan bukan foto default
+        if row:
+            old_foto = row.get('foto_profil')
+            if old_foto and 'Afdal Adha Firnansyah.png' not in old_foto:
+                old_path = os.path.join(UPLOAD_FOLDER, os.path.basename(old_foto))
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+
+        # Generate nama file unik dengan timestamp
+        ext = secure_filename(file.filename).rsplit('.', 1)[1].lower()
+        filename = f"profil_{user_id}_{int(datetime.now().timestamp())}.{ext}"
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+
+        # Simpan file
+        file.save(filepath)
+
+        # Path relatif untuk disimpan di database (dari folder assets)
+        foto_profil_path = f"uploads/profil/{filename}"
+
+        # Update database - hanya kolom foto_profil
+        db.execute(
+            text("UPDATE users SET foto_profil = :foto WHERE id = :id"),
+            {'foto': foto_profil_path, 'id': user_id}
+        )
+        db.commit()
+
+        flash('Foto profil berhasil diperbarui!', 'success')
+    else:
+        flash('Format file tidak didukung. Gunakan JPG, PNG, atau GIF (Max 2MB).', 'error')
+
+    return redirect(url_for('user_routes.profil'))
+
+# ═══════════════════════════════════════════════════════════════════
+# ROUTE: Hapus Foto Profil (Reset ke Default)
+# ═══════════════════════════════════════════════════════════════════
+@app.route('/profil/hapus-foto', methods=['POST'])
+def hapus_foto():
+    """Hapus foto profil dan reset ke default"""
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Silakan login terlebih dahulu', 'error')
+        return redirect(url_for('auth.login'))
+
+    db = get_db()
+
+    # Ambil foto lama - HANYA foto_profil
+    row = db.execute(
+        text("SELECT foto_profil FROM users WHERE id = :id"),
+        {'id': user_id}
+    ).mappings().first()
+
+    # Hapus file foto lama
+    if row:
+        old_foto = row.get('foto_profil')
+        if old_foto and 'Afdal Adha Firnansyah.png' not in old_foto:
+            old_path = os.path.join(UPLOAD_FOLDER, os.path.basename(old_foto))
+            if os.path.exists(old_path):
+                os.remove(old_path)
+
+    # Reset foto_profil di database ke NULL
+    db.execute(
+        text("UPDATE users SET foto_profil = NULL WHERE id = :id"),
+        {'id': user_id}
+    )
+    db.commit()
+
+    flash('Foto profil dihapus. Menggunakan foto default.', 'success')
+    return redirect(url_for('user_routes.profil'))
+
 from routes.static import bp as static_bp
 from routes.auth import bp as auth_bp
 from routes.auth_api import bp as auth_api_bp
 from routes.user import bp as user_bp
 from routes.admin import bp as admin_bp
 from routes.scan import bp as scan_bp
-# HAPUS: from routes.booking import bp as booking_bp  ← file tidak ada
-from routes.services import bp as services_bp
 
 app.register_blueprint(static_bp)
 app.register_blueprint(auth_bp)
@@ -173,32 +218,10 @@ app.register_blueprint(auth_api_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(scan_bp)
-# HAPUS: app.register_blueprint(booking_bp)  ← file tidak ada
-app.register_blueprint(services_bp)
-
 
 if __name__ == '__main__':
-    detected_ip = get_best_local_ip()
-    all_ips = get_all_local_ips()
-
-    print("=" * 60)
-    print("🚀 PUBLICBOOK SERVER STARTED")
-    print("=" * 60)
-    print(f"🌐 Local URL:      http://localhost:{PORT}")
-    print(f"📡 Best Network IP: http://{detected_ip}:{PORT}")
-    if len(all_ips) > 1:
-        print(f"📡 All IPs found:   {', '.join(all_ips)}")
-    print(f"📱 QR Scan URL:    http://{detected_ip}:{PORT}/scan/<token>")
-    print("=" * 60)
-    print("🔐 QR TOKEN SYSTEM: Aktif")
-    print("   - Token unik per booking")
-    print("   - Expired 24 jam")
-    print("   - Hanya Admin yang bisa scan")
-    print("   - Password Admin wajib untuk konfirmasi")
-    print("=" * 60)
-
     app.run(
-        host='0.0.0.0',
+        host='0.0.0.0',  # ← WAJIB untuk akses dari HP
         debug=app.config.get('DEBUG', True), 
-        port=PORT
+        port=app.config.get('PORT', 5000)
     )

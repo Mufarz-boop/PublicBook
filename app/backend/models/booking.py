@@ -245,12 +245,14 @@ class Booking:
         """Update status booking dan catat riwayat"""
         db = get_db()
         
+        # Get booking current status
         booking = Booking.get_by_id(booking_id)
         if not booking:
             return None
             
         status_sebelum = booking.status
         
+        # Update booking status
         db.execute(
             text("""
                 UPDATE bookings 
@@ -260,6 +262,7 @@ class Booking:
             {'status': status_baru, 'id': booking_id}
         )
         
+        # Insert riwayat status
         db.execute(
             text("""
                 INSERT INTO riwayat_status 

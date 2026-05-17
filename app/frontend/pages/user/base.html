@@ -212,6 +212,7 @@
             object-fit: cover;
             border: 3px solid #fff;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: #f0f0f0;
         }
 
         /* ========== CONTENT AREA ========== */
@@ -303,10 +304,16 @@
             <div class="header-right">
                 <div class="user-info">
                     <div class="user-details">
-                        <h4>{{ session.get('user_nama', 'User') }}</h4>
-                        <p>{{ session.get('user_email', 'user@email.com') }}</p>
+                        <h4>{{ current_user.nama_lengkap or current_user.nama or session.get('user_nama', 'User') }}</h4>
+                        <p>{{ current_user.email or session.get('user_email', 'user@email.com') }}</p>
                     </div>
-                    <img src="{{ session.get('user_avatar') or 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face' }}" alt="Avatar" class="user-avatar">
+                    <!-- ═══════════════════════════════════════════════════════════ -->
+                    <!-- PERBAIKAN: Foto profil header pakai current_user.foto_profil -->
+                    <!-- ═══════════════════════════════════════════════════════════ -->
+                    <img src="{{ url_for('static', filename=current_user.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
+                         alt="Avatar" 
+                         class="user-avatar"
+                         onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
                 </div>
             </div>
             {% endblock %}
@@ -325,7 +332,6 @@
             overlay.classList.toggle('show');
         }
 
-        // Hapus JavaScript fallback yang bentrok — sekarang semua handle di server-side
         {% block extra_js %}{% endblock %}
     </script>
 </body>

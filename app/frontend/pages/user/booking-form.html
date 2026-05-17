@@ -973,7 +973,7 @@ input[type="time"].form-control {
                     // Show success checkmark animation
                     if (successCheckmark) successCheckmark.style.display = 'block';
                     
-                    // Show success notification (TANPA REDIRECT!)
+                    // Show success notification
                     if (successText) {
                         successText.innerHTML = 
                             '<strong>' + result.message + '</strong><br>' +
@@ -989,15 +989,13 @@ input[type="time"].form-control {
                     submitBtn.classList.add('success');
                     submitBtn.innerHTML = '<i class="fas fa-check"></i> Booking Berhasil!';
                     
-                    // TAMBAHAN: Munculin notifikasi toast
+                    // Toast notification
                     showToast('🎉 ' + result.message, 'success');
                     
                     // ═══════════════════════════════════════════════════════
-                    // OPTIONAL: Redirect setelah 3 detik (bisa dihapus kalau tidak mau)
+                    // REDIRECT LANGSUNG KE HALAMAN BOOKING
                     // ═══════════════════════════════════════════════════════
-                    // setTimeout(function() {
-                    //     window.location.href = result.data.redirect_url;
-                    // }, 3000);
+                    window.location.href = '/user/booking';
                     
                 } else {
                     // Show error

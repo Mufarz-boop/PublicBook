@@ -1,306 +1,155 @@
-{% extends "admin/base.html" %}
-
-{% block title %}Scan QR - Verifikasi Booking{% endblock %}
-
-{% block extra_css %}
-<style>
-.scan-container {
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.scan-card {
-    background: #fff;
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    text-align: center;
-}
-
-.scan-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #FF6B00, #FF8C00);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 25px;
-    color: #fff;
-    font-size: 32px;
-}
-
-.scan-card h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.scan-card p {
-    color: #888;
-    font-size: 14px;
-    margin-bottom: 30px;
-}
-
-.booking-info {
-    background: #f8f9fa;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    text-align: left;
-}
-
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.info-row:last-child {
-    border-bottom: none;
-}
-
-.info-label {
-    color: #888;
-    font-size: 13px;
-}
-
-.info-value {
-    color: #333;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.password-section {
-    margin-bottom: 20px;
-}
-
-.password-section label {
-    display: block;
-    text-align: left;
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 8px;
-}
-
-.password-section input {
-    width: 100%;
-    padding: 14px 16px;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 15px;
-    transition: border-color 0.3s;
-    box-sizing: border-box;
-}
-
-.password-section input:focus {
-    outline: none;
-    border-color: #FF6B00;
-}
-
-.btn-confirm {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #FF6B00, #FF8C00);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-confirm:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255,107,0,0.3);
-}
-
-.btn-confirm:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.alert {
-    padding: 12px 16px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    font-size: 13px;
-}
-
-.alert-danger {
-    background: #FFEBEE;
-    color: #C62828;
-    border: 1px solid #EF9A9A;
-}
-
-.alert-success {
-    background: #E8F5E9;
-    color: #2E7D32;
-    border: 1px solid #A5D6A7;
-}
-
-.scan-result {
-    display: none;
-}
-
-.scan-result.show {
-    display: block;
-}
-
-.status-selesai-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: #E8F5E9;
-    color: #2E7D32;
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 14px;
-    margin-top: 20px;
-}
-
-.btn-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 30px;
-    background: linear-gradient(135deg, #FF6B00, #FF8C00);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 14px;
-    margin-top: 20px;
-}
-
-.btn-back:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255,107,0,0.3);
-}
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="scan-container">
-    <div class="scan-card">
-        <div class="scan-icon">
-            <i class="fas fa-qrcode"></i>
-        </div>
-
-        <h2>Verifikasi Booking</h2>
-        <p>Scan QR berhasil! Konfirmasi untuk menyelesaikan booking.</p>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <div id="scanForm">
-            <div class="booking-info">
-                <div class="info-row">
-                    <span class="info-label">No. Booking</span>
-                    <span class="info-value">{{ booking.no_booking }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Layanan</span>
-                    <span class="info-value">{{ booking.nama_layanan }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Pelanggan</span>
-                    <span class="info-value">{{ booking.nama_user }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Tanggal</span>
-                    <span class="info-value">{{ booking.tanggal_booking }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Status Saat Ini</span>
-                    <span class="info-value" style="color: #FF6B00; text-transform: capitalize;">{{ booking.status }}</span>
-                </div>
-            </div>
-
-            <div class="password-section">
-                <label><i class="fas fa-lock"></i> Password Admin (untuk konfirmasi)</label>
-                <input type="password" id="adminPassword" placeholder="Masukkan password admin..." autocomplete="off">
-            </div>
-
-            <button class="btn-confirm" onclick="confirmScan()" id="btnConfirm">
-                <i class="fas fa-check-circle"></i> Konfirmasi & Selesaikan
-            </button>
-        </div>
-
-        <div id="scanSuccess" class="scan-result">
-            <div class="scan-icon" style="background: linear-gradient(135deg, #4CAF50, #66BB6A);">
-                <i class="fas fa-check"></i>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Scan - PublicBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6B00, #FF8C00);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .scan-result-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .status-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 48px;
+        }
+        .status-icon.success { background: #E8F5E9; color: #4CAF50; }
+        .status-icon.already_done { background: #E3F2FD; color: #1976D2; }
+        .status-icon.invalid { background: #FFF3E0; color: #FF9800; }
+        
+        .scan-result-card h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .scan-result-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .booking-info {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #888; font-size: 13px; }
+        .info-value { color: #333; font-weight: 600; font-size: 14px; }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #FF6B00, #FF8C00);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-back:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,0,0.3); }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .badge-selesai { background: #E8F5E9; color: #388E3C; }
+        .badge-menunggu { background: #FFF3E0; color: #FF6B00; }
+    </style>
+</head>
+<body>
+    <div class="scan-result-card">
+        {% if status == 'success' %}
+            <div class="status-icon success">
+                <i class="fas fa-check-circle"></i>
             </div>
             <h2>Berhasil!</h2>
-            <p>Booking telah diselesaikan.</p>
-            <div class="status-selesai-badge">
-                <i class="fas fa-check-circle"></i> STATUS: SELESAI
+            <p>{{ message }}</p>
+            
+        {% elif status == 'already_done' %}
+            <div class="status-icon already_done">
+                <i class="fas fa-info-circle"></i>
             </div>
-            <br><br>
-            <a href="{{ url_for('admin.dashboard') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
-            </a>
+            <h2>Sudah Selesai</h2>
+            <p>{{ message }}</p>
+            
+        {% else %}
+            <div class="status-icon invalid">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>Tidak Dapat Diproses</h2>
+            <p>{{ message }}</p>
+        {% endif %}
+        
+        <div class="booking-info">
+            <div class="info-row">
+                <span class="info-label">No. Booking</span>
+                <span class="info-value">{{ booking.no_booking }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Layanan</span>
+                <span class="info-value">{{ booking.nama_layanan }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Nama</span>
+                <span class="info-value">{{ booking.nama_pendaftar }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status</span>
+                <span class="info-value">
+                    <span class="badge badge-{{ booking.status }}">{{ booking.status|title }}</span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tanggal</span>
+                <span class="info-value">{{ booking.tanggal_booking }}</span>
+            </div>
         </div>
+        
+        <a href="{{ url_for('user_routes.dashboard') }}" class="btn-back">
+            <i class="fas fa-home"></i> Kembali ke Dashboard
+        </a>
     </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function confirmScan() {
-    const password = document.getElementById('adminPassword').value;
-    const btn = document.getElementById('btnConfirm');
-    const token = "{{ token }}";
-
-    if (!password) {
-        alert('Password admin wajib diisi!');
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-
-    fetch('/scan/api/confirm', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            token: token,
-            admin_password: password
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('scanForm').style.display = 'none';
-            document.getElementById('scanSuccess').classList.add('show');
-        } else {
-            alert(data.message || 'Gagal mengkonfirmasi');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> Konfirmasi & Selesaikan';
-        }
-    })
-    .catch(err => {
-        alert('Terjadi kesalahan. Coba lagi.');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> Konfirmasi & Selesaikan';
-    });
-}
-
-// Enter key trigger
-document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') confirmScan();
-});
-</script>
-{% endblock %}
+</body>
+</html>
