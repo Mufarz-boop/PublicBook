@@ -670,24 +670,25 @@ function toggleCard(card) {
 function cancelBooking(id) {
     event.stopPropagation();
     if (confirm('Yakin ingin membatalkan booking ini?')) {
-        fetch(`/booking/cancel/${id}`, { 
+        fetch(`/user/booking/cancel/${id}`, { 
             method: 'POST',
             headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
             }
         })
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                showToast(data.message || 'Booking dibatalkan', 'success');
-                setTimeout(() => location.reload(), 1000);
+                showToast(data.message || 'Booking berhasil dibatalkan', 'success');
+                setTimeout(() => location.reload(), 1500);
             } else {
-                showToast(data.message || 'Gagal membatalkan', 'danger');
+                showToast(data.message || 'Gagal membatalkan booking', 'danger');
             }
         })
         .catch(err => {
             console.error(err);
-            showToast('Terjadi kesalahan', 'danger');
+            showToast('Terjadi kesalahan saat membatalkan booking', 'danger');
         });
     }
 }
@@ -695,7 +696,7 @@ function cancelBooking(id) {
 // Download bukti
 function downloadReceipt(id) {
     event.stopPropagation();
-    window.open(`/booking/receipt/${id}`, '_blank');
+    window.open(`/user/booking/receipt/${id}`, '_blank');
 }
 
 // Toast notification

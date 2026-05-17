@@ -1,0 +1,381 @@
+{% extends "user/base.html" %}
+
+{% block title %}Detail Booking - PublicBook{% endblock %}
+{% set active_page = 'booking' %}
+{% set header_title = 'Detail Booking' %}
+{% set header_icon = 'fa-file-alt' %}
+
+{% block extra_css %}
+<style>
+.detail-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.detail-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,107,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.detail-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF6B00, #FF8C00, #FFB347);
+}
+
+.detail-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.detail-no {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.detail-no strong {
+    color: #FF6B00;
+    font-size: 18px;
+}
+
+.detail-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-menunggu { background: #FFF3E0; color: #FF6B00; }
+.status-dikonfirmasi { background: #E3F2FD; color: #1976D2; }
+.status-proses { background: #F3E5F5; color: #7B1FA2; }
+.status-selesai { background: #E8F5E9; color: #388E3C; }
+.status-dibatalkan { background: #FFEBEE; color: #D32F2F; }
+
+.detail-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+
+.detail-row:hover {
+    background: #FFF5EB;
+}
+
+.detail-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.detail-text {
+    flex: 1;
+}
+
+.detail-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-detail {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-detail.btn-back {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.btn-detail.btn-back:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-detail.btn-cancel {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    color: #fff;
+}
+
+.btn-detail.btn-cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+}
+
+/* QR Section */
+.qr-detail {
+    text-align: center;
+    margin: 30px 0;
+    padding: 25px;
+    background: #f8f9fa;
+    border-radius: 16px;
+}
+
+.qr-detail img {
+    width: 200px;
+    height: 200px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.qr-detail p {
+    margin-top: 12px;
+    color: #888;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .detail-card {
+        padding: 25px;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="detail-no">No. Booking <strong>{{ booking.no_booking }}</strong></div>
+            <span class="detail-status status-{{ booking.status }}">
+                <i class="fas fa-circle" style="font-size: 8px;"></i>
+                {{ booking.status|title }}
+            </span>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-concierge-bell"></i></div>
+                <div class="detail-text">
+                    <div class="detail-label">Layanan</div>
+                    <div class="detail-value">{{ booking.nama_layanan or 'Layanan #' + booking.layanan_id|string }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-building"></i></div>
+                <div class="detail-text">
+                    <div class="detail-label">Instansi</div>
+                    <div class="detail-value">{{ booking.instansi or '-' }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-calendar"></i></div>
+                <div class="detail-text">
+                    <div class="detail-label">Tanggal Booking</div>
+                    <div class="detail-value">{{ booking.tanggal_booking }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                <div class="detail-text">
+                    <div class="detail-label">Jam Booking</div>
+                    <div class="detail-value">{{ booking.jam_booking }}</div>
+                </div>
+            </div>
+
+            {% if booking.nomor_antrian %}
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-list-ol"></i></div>
+                <div class="detail-text">
+                    <div class="detail-label">Nomor Antrean</div>
+                    <div class="detail-value" style="color: #FF6B00; font-size: 22px;">#{{ booking.nomor_antrian }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-user"></i></div>
+                <div class="detail-text">
+                    <div class="detail-label">Nama Pendaftar</div>
+                    <div class="detail-value">{{ booking.nama_pendaftar or user.nama or '-' }}</div>
+                </div>
+            </div>
+
+            {% if booking.catatan %}
+            <div class="detail-row">
+                <div class="detail-icon"><i class="fas fa-sticky-note"></i></div>
+                <div class="detail-text">
+                    <div class="detail-label">Catatan</div>
+                    <div class="detail-value">{{ booking.catatan }}</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if booking.status in ['menunggu', 'dikonfirmasi', 'proses'] %}
+        <div class="qr-detail">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=http:/10.137.12.241:5000/scan/{{ booking.no_booking }}&color=333333&bgcolor=ffffff" 
+                 alt="QR Code Booking">
+            <p>Scan QR code ini di lokasi layanan</p>
+        </div>
+        {% endif %}
+
+        <div class="detail-actions">
+            <a href="{{ url_for('user_routes.booking') }}" class="btn-detail btn-back">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+            {% if booking.status == 'menunggu' %}
+            <button onclick="cancelBooking({{ booking.id }})" class="btn-detail btn-cancel">
+                <i class="fas fa-times"></i> Batalkan Booking
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function cancelBooking(id) {
+    if (confirm('Yakin ingin membatalkan booking ini?')) {
+        fetch(`/user/booking/cancel/${id}`, { 
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(r => {
+            if (!r.ok) throw new Error('Network response was not ok');
+            return r.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showToast(data.message || 'Booking berhasil dibatalkan', 'success');
+                setTimeout(() => {
+                    window.location.href = "{{ url_for('user_routes.booking') }}";
+                }, 1500);
+            } else {
+                showToast(data.message || 'Gagal membatalkan booking', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            showToast('Terjadi kesalahan saat membatalkan booking', 'danger');
+        });
+    }
+}
+
+function showToast(message, type) {
+    const container = document.getElementById('toast-container') || createToastContainer();
+    const icons = {
+        success: 'fa-check-circle',
+        danger: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    const colors = {
+        success: { bg: '#D1FAE5', color: '#065F46' },
+        danger: { bg: '#FEE2E2', color: '#991B1B' },
+        warning: { bg: '#FEF3C7', color: '#92400E' },
+        info: { bg: '#DBEAFE', color: '#1E40AF' }
+    };
+
+    const toast = document.createElement('div');
+    const style = colors[type] || colors.info;
+    toast.style.cssText = `
+        background: ${style.bg};
+        color: ${style.color};
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease;
+        min-width: 280px;
+        margin-bottom: 10px;
+    `;
+    toast.innerHTML = `
+        <i class="fas ${icons[type] || icons.info}" style="font-size: 16px;"></i>
+        ${message}
+    `;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.transition = 'all 0.5s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    `;
+    document.body.appendChild(container);
+    return container;
+}
+</script>
+{% endblock %}

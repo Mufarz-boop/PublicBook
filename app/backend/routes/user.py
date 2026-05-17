@@ -67,6 +67,34 @@ def booking_detail(id):
         
     return render_template('user/booking-detail.html', user=user, booking=booking)
     
+@bp.route('/booking/cancel/<int:id>', methods=['POST'])
+@user_required
+def booking_cancel(id):
+    """Cancel booking yang masih menunggu"""
+    user_id = session.get('user_id')
+    
+    # Ambil booking
+    booking = Booking.get_by_id(id)
+    
+    # Cek kepemilikan
+    if not booking or booking.user_id != user_id:
+        return jsonify({'success': False, 'message': 'Booking tidak ditemukan'}), 404
+    
+    # Cek status - hanya bisa cancel kalau masih menunggu
+    if booking.status != 'menunggu':
+        return jsonify({
+            'success': False, 
+            'message': f'Booking dengan status "{booking.status}" tidak bisa dibatalkan'
+        }), 400
+    
+    # Update status
+    booking.status = 'dibatalkan'
+    booking.save()  # atau db.session.commit() kalau pakai SQLAlchemy
+    
+    return jsonify({
+        'success': True,
+        'message': 'Booking berhasil dibatalkan'
+    })
 
 @bp.route('/booking/new', methods=['GET'])
 @user_required
