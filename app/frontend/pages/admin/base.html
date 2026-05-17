@@ -70,11 +70,15 @@
           <i class="fas fa-bell"></i>
           <span class="notif-badge"></span>
         </button>
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- PERBAIKAN: Foto profil admin pakai current_user.foto_profil -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
         <a href="{{ url_for('admin_routes.profil') }}" class="user-profile">
-          <img src="{{ current_user.avatar or url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}" 
-               alt="{{ current_user.nama or 'Admin' }}" 
-               class="user-avatar">
-          <span class="user-name">{{ current_user.nama or 'Admin' }}</span>
+          <img src="{{ url_for('static', filename=current_user.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
+               alt="{{ current_user.nama_lengkap or current_user.nama or 'Admin' }}" 
+               class="user-avatar"
+               onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
+          <span class="user-name">{{ current_user.nama_lengkap or current_user.nama or 'Admin' }}</span>
         </a>
       </div>
     </header>

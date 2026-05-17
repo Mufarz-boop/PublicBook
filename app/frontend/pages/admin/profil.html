@@ -3,6 +3,185 @@
 {% block title %}Profil - PublicBook{% endblock %}
 {% block header_title %}Profil{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ========== MODAL ========== */
+.modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.btn-close:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.preview-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.preview-container img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #FF6B00;
+    background: #fff;
+}
+
+.upload-btn {
+    display: block;
+    text-align: center;
+    padding: 15px;
+    border: 2px dashed #FF6B00;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #FF6B00;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.upload-btn:hover {
+    background: #FFF5EB;
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #f0f0f0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.btn-primary {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Camera icon on avatar hover */
+.profile-avatar-wrap {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.profile-avatar-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar-wrap:hover::after {
+    opacity: 1;
+}
+
+.camera-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 32px;
+    height: 32px;
+    background: #FF6B00;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    border: 2px solid #fff;
+    z-index: 2;
+}
+</style>
+{% endblock %}
+
 {% block content %}
   <div class="profile-container">
     <div class="profile-header">
@@ -19,9 +198,13 @@
     <div class="profile-card">
       <div class="profile-top">
         <div class="profile-avatar-wrap">
-          <img src="{{ admin.foto_profil or '../../assets/images/icons/Afdal Adha Firnansyah.png' }}" 
+          <!-- ═══════════════════════════════════════════════════════════ -->
+          <!-- PERBAIKAN: Foto profil admin pakai url_for static -->
+          <!-- ═══════════════════════════════════════════════════════════ -->
+          <img src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
                alt="{{ admin.nama_lengkap }}" 
-               class="profile-avatar">
+               class="profile-avatar"
+               onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
         </div>
         <div class="profile-info">
           <h2 class="profile-name">{{ admin.nama_lengkap }}</h2>
@@ -49,11 +232,85 @@
       </div>
 
       <div class="action-buttons">
-        <button class="btn-action" type="button">
-          <i class="fas fa-user-edit"></i>
-          <span>Edit Profil</span>
+        <button class="btn-action" type="button" onclick="openModal()">
+          <i class="fas fa-camera"></i>
+          <span>Ganti Foto</span>
         </button>
       </div>
     </div>
   </div>
+
+  <!-- MODAL EDIT FOTO -->
+  <div id="editFotoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-camera"></i> Ganti Foto Profil</h3>
+        <button onclick="closeModal()" class="btn-close">&times;</button>
+      </div>
+
+      <form id="formUploadFoto" 
+            action="{{ url_for('upload_foto') }}" 
+            method="POST" 
+            enctype="multipart/form-data">
+
+        <div class="preview-container">
+          <img id="previewFoto" 
+               src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
+               alt="Preview"
+               onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
+        </div>
+
+        <div class="form-group">
+          <label class="upload-btn">
+            <i class="fas fa-cloud-upload-alt"></i> Pilih Foto
+            <input type="file" name="foto" id="inputFoto" accept="image/*" style="display:none;" onchange="previewImage(this)">
+          </label>
+          <small style="display:block; text-align:center; color:#888; margin-top:8px;">Format: JPG, PNG (Max 2MB)</small>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="button" onclick="closeModal()" class="btn-secondary">Batal</button>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i> Simpan
+          </button>
+        </div>
+      </form>
+
+      {% if admin.foto_profil %}
+      <form action="{{ url_for('hapus_foto') }}" method="POST" style="margin-top:15px; text-align:center;">
+        <button type="submit" style="background:none; border:none; color:#f44336; cursor:pointer; font-size:13px;">
+          <i class="fas fa-trash"></i> Hapus Foto & Gunakan Default
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('editFotoModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('editFotoModal').classList.remove('active');
+    }
+
+    function previewImage(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewFoto').src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      var modal = document.getElementById('editFotoModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    }
+  </script>
 {% endblock %}

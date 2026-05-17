@@ -4,6 +4,174 @@
 {% block header_title %}Security{% endblock %}
 {% block nav_security_active %}active{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ========== MODAL UPLOAD FOTO ========== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-head h3 {
+    font-size: 18px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.close-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.preview-box {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.preview-box img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #FF6B00;
+    background: #fff;
+}
+
+.upload-area {
+    display: block;
+    text-align: center;
+    padding: 15px;
+    border: 2px dashed #FF6B00;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #FF6B00;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.upload-area:hover {
+    background: #FFF5EB;
+}
+
+.btn-batal {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #f0f0f0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-batal:hover {
+    background: #e0e0e0;
+}
+
+.btn-simpan {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-simpan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+}
+
+/* Camera hover effect on avatar */
+.avatar-wrap {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.avatar-wrap:hover .avatar-camera {
+    opacity: 1;
+}
+
+.avatar-camera {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 32px;
+    height: 32px;
+    background: #FF6B00;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    border: 2px solid #fff;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
   <div class="cards-row">
     <!-- LEFT: Password Form -->
@@ -17,7 +185,7 @@
           <p>Perbarui keamanan akun Anda</p>
         </div>
       </div>
-      
+
       <form method="POST" action="{{ url_for('admin_routes.ubah_password_post') }}">
         <div class="form-group">
           <label>Password Saat Ini</label>
@@ -53,23 +221,26 @@
         <img src="{{ url_for('static', filename='images/bg/background2.jpg') }}" alt="Cover">
         <div class="cover-overlay"></div>
       </div>
-      
+
       <div class="profile-avatar-section">
-        <div class="avatar-wrap">
-          <img src="{{ admin.foto_profil or url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}" 
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- PERBAIKAN: Avatar bisa diklik untuk ganti foto -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <div class="avatar-wrap" onclick="openModal()">
+          <img src="{{ url_for('static', filename=admin.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
                alt="{{ admin.nama_lengkap }}" 
-               class="avatar-img">
-          <div class="avatar-status online"></div>
+               class="avatar-img"
+               onerror="this.src='{{ url_for('static', filename='images/icons/Afdal Adha Firnansyah.png') }}'">
         </div>
       </div>
-      
+
       <div class="profile-content">
         <div class="profile-main">
           <h2 class="profile-name">{{ admin.nama_lengkap }}</h2>
           <span class="profile-role">{{ admin.role|replace('_', ' ')|title }}</span>
           <p class="profile-bio">Mengelola sistem PublicBook dengan penuh dedikasi</p>
         </div>
-        
+
         <div class="profile-stats">
           <div class="stat-item">
             <span class="stat-value">{{ stats.booking_total|default('0') }}</span>
@@ -86,7 +257,7 @@
             <span class="stat-label">Rating</span>
           </div>
         </div>
-        
+
         <div class="profile-actions">
           <a href="{{ url_for('admin_routes.profil') }}" class="btn-profile btn-primary">
             <i class="fas fa-user"></i> Lihat Profil
@@ -104,7 +275,7 @@
       </div>
       <h3 class="history-title">Riwayat Login</h3>
     </div>
-    
+
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
