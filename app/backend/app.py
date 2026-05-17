@@ -5,7 +5,6 @@ from config import config_by_publicbook
 from database.database import init_db, close_db, get_db
 from sqlalchemy import text
 from datetime import datetime
-import socket
 import os
 
 env = os.getenv('ENV', 'development')
@@ -80,8 +79,8 @@ def inject_current_user():
                     self.nama_lengkap = data.get('nama_lengkap', self.nama)
                     self.email = data.get('email', 'user@email.com')
                     self.foto_profil = data.get('foto_profil')
-                    self.foto_cover = data.get('foto_cover')  # ← TAMBAHAN
-                    self.nomor_telepon = data.get('nomor_telepon', '')
+                    self.foto_cover = data.get('foto_cover')
+                    self.nomor_telepon = data.get('nomor_tengkap', '')
                     self.alamat = data.get('alamat', '')
                     self.status = data.get('status', 'active')
                     self.role = data.get('role', 'user')

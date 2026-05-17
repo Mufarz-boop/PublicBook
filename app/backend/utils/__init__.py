@@ -1,2 +1,2 @@
 # backend/utils/__init__.py
-# File kosong — hanya untuk menandakan folder ini adalah Python package
+# Kosong, cukup buat file ini agar Python mengenali folder sebagai package

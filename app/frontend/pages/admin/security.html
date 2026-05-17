@@ -175,7 +175,7 @@
     cursor: pointer;
     overflow: hidden;
     border-radius: 16px 16px 0 0;
-    height: 180px;  /* ← DARI 120px JADI 180px */
+    height: 180px;
     min-height: 180px;
 }
 
@@ -201,7 +201,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60px;  /* ← DARI 50px JADI 60px */
+    width: 60px;
     height: 60px;
     background: rgba(0,0,0,0.6);
     border-radius: 50%;
@@ -209,10 +209,257 @@
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-size: 24px;  /* ← DARI 20px JADI 24px */
+    font-size: 24px;
     opacity: 0;
     transition: opacity 0.3s;
     z-index: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* RIWAYAT LOGIN - STYLING */
+/* ═══════════════════════════════════════════════════════════════ */
+.history-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.history-header .header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+}
+
+.history-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    flex: 1;
+}
+
+.history-count {
+    font-size: 13px;
+    color: #888;
+    background: #f5f5f5;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.time-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.time-date {
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+}
+
+.time-clock {
+    color: #888;
+    font-size: 12px;
+}
+
+.device-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+}
+
+.device-cell i {
+    color: #FF6B00;
+    font-size: 16px;
+}
+
+.ip-badge {
+    background: #f0f0f0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #666;
+    font-family: 'Courier New', monospace;
+}
+
+.location-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #555;
+    font-size: 13px;
+}
+
+.location-cell i {
+    color: #e74c3c;
+    font-size: 12px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-failed {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.dashboard-empty {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    font-size: 14px;
+}
+
+.dashboard-empty i {
+    display: block;
+    font-size: 32px;
+    margin-bottom: 12px;
+    color: #ccc;
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* PAGINATION STYLING */
+/* ═══════════════════════════════════════════════════════════════ */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 6px;
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: none;
+}
+
+.pagination-nav {
+    background: #f5f5f5;
+    color: #555;
+}
+
+.pagination-nav:hover:not(.disabled) {
+    background: #FF6B00;
+    color: #fff;
+}
+
+.pagination-nav.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-number {
+    background: #f5f5f5;
+    color: #555;
+    min-width: 36px;
+    justify-content: center;
+    padding: 8px 12px;
+}
+
+.pagination-number:hover {
+    background: #FF6B00;
+    color: #fff;
+}
+
+.pagination-number.active {
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(255,107,0,0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* SMOOTH LOADING & TRANSITION */
+/* ═══════════════════════════════════════════════════════════════ */
+.history-content {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.history-content.loading {
+    opacity: 0.5;
+    transform: translateY(5px);
+    pointer-events: none;
+}
+
+.loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    color: #FF6B00;
+}
+
+.loading-spinner.active {
+    display: block;
+}
+
+.loading-spinner i {
+    animation: spin 1s linear infinite;
+    font-size: 24px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .pagination-container {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    
+    .pagination-nav span {
+        display: none;
+    }
+    
+    .pagination-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
 }
 
 @keyframes fadeIn {
@@ -324,32 +571,114 @@
     </div>
   </div>
 
-  <!-- BOTTOM: Login History -->
-  <div class="history-section">
+  <!-- BOTTOM: Login History with AJAX Pagination -->
+  <div class="history-section" id="historySection">
     <div class="history-header">
       <div class="header-icon">
         <i class="fas fa-history"></i>
       </div>
       <h3 class="history-title">Riwayat Login</h3>
+      <span class="history-count" id="historyCount">
+        {{ pagination.total_records }} total · Halaman {{ pagination.page }} dari {{ pagination.total_pages }}
+      </span>
     </div>
 
-    <div class="table-wrapper">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Waktu</th>
-            <th>Perangkat</th>
-            <th>IP Address</th>
-            <th>Lokasi</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="5" class="dashboard-empty">Fitur riwayat login dalam pengembangan</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+      <i class="fas fa-spinner"></i> Memuat...
+    </div>
+
+    <!-- Content Area -->
+    <div class="history-content" id="historyContent">
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Perangkat</th>
+              <th>IP Address</th>
+              <th>Lokasi</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            {% if login_history %}
+              {% for entry in login_history %}
+              <tr>
+                <td>
+                  <div class="time-cell">
+                    <span class="time-date">{{ entry.waktu.strftime('%d %b %Y') }}</span>
+                    <span class="time-clock">{{ entry.waktu.strftime('%H:%M') }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="device-cell">
+                    <i class="fas fa-{{ 'desktop' if 'Desktop' in entry.perangkat else 'mobile-alt' }}"></i>
+                    <span>{{ entry.perangkat }}</span>
+                  </div>
+                </td>
+                <td><code class="ip-badge">{{ entry.ip }}</code></td>
+                <td>
+                  <div class="location-cell">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ entry.lokasi }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-badge status-{{ entry.status }}">
+                    <i class="fas fa-{{ 'check-circle' if entry.status == 'success' else 'times-circle' }}"></i>
+                    {{ entry.status|title }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="5" class="dashboard-empty">
+                  <i class="fas fa-info-circle"></i>
+                  Belum ada riwayat login tercatat
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINATION CONTROLS -->
+      <div class="pagination-container" id="paginationContainer">
+        <!-- Tombol Previous -->
+        {% if pagination.has_prev %}
+          <a href="#" class="pagination-btn pagination-nav" onclick="goToPage({{ pagination.prev_page }}); return false;">
+            <i class="fas fa-chevron-left"></i> <span>Sebelumnya</span>
+          </a>
+        {% else %}
+          <span class="pagination-btn pagination-nav disabled">
+            <i class="fas fa-chevron-left"></i> <span>Sebelumnya</span>
+          </span>
+        {% endif %}
+
+        <!-- Nomor Halaman -->
+        <div class="pagination-numbers" id="paginationNumbers">
+          {% for p in pagination.pages %}
+            {% if p == pagination.page %}
+              <span class="pagination-btn pagination-number active" data-page="{{ p }}">{{ p }}</span>
+            {% else %}
+              <a href="#" class="pagination-btn pagination-number" data-page="{{ p }}" onclick="goToPage({{ p }}); return false;">{{ p }}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <!-- Tombol Next -->
+        {% if pagination.has_next %}
+          <a href="#" class="pagination-btn pagination-nav" onclick="goToPage({{ pagination.next_page }}); return false;">
+            <span>Selanjutnya</span> <i class="fas fa-chevron-right"></i>
+          </a>
+        {% else %}
+          <span class="pagination-btn pagination-nav disabled">
+            <span>Selanjutnya</span> <i class="fas fa-chevron-right"></i>
+          </span>
+        {% endif %}
+      </div>
     </div>
   </div>
 
@@ -391,6 +720,161 @@
   </div>
 
   <script>
+    // ═══════════════════════════════════════════════════════════════
+    // AJAX PAGINATION - SMOOTH TRANSITION
+    // ═══════════════════════════════════════════════════════════════
+    function goToPage(page) {
+      const content = document.getElementById('historyContent');
+      const spinner = document.getElementById('loadingSpinner');
+      const countLabel = document.getElementById('historyCount');
+      
+      // Tampilkan loading, sembunyikan konten dengan animasi
+      content.classList.add('loading');
+      spinner.classList.add('active');
+      
+      // AJAX request
+      fetch(`/admin/security?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Network error');
+        return response.json();
+      })
+      .then(data => {
+        // Update tabel
+        updateTable(data.login_history);
+        
+        // Update pagination
+        updatePagination(data.pagination);
+        
+        // Update counter
+        countLabel.textContent = `${data.pagination.total_records} total · Halaman ${data.pagination.page} dari ${data.pagination.total_pages}`;
+        
+        // Update URL tanpa refresh
+        window.history.pushState({page: page}, '', `/admin/security?page=${page}`);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Fallback: redirect ke halaman jika AJAX gagal
+        window.location.href = `/admin/security?page=${page}`;
+      })
+      .finally(() => {
+        // Sembunyikan loading, tampilkan konten dengan animasi
+        setTimeout(() => {
+          spinner.classList.remove('active');
+          content.classList.remove('loading');
+          
+          // Scroll ke tabel jika di mobile
+          if (window.innerWidth < 768) {
+            document.getElementById('historySection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 200);
+      });
+    }
+    
+    function updateTable(history) {
+      const tbody = document.getElementById('historyTableBody');
+      
+      if (!history || history.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="dashboard-empty">
+              <i class="fas fa-info-circle"></i>
+              Belum ada riwayat login tercatat
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = history.map(entry => {
+        const date = new Date(entry.waktu);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()];
+        const year = date.getFullYear();
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        
+        const deviceIcon = entry.perangkat.includes('Desktop') ? 'desktop' : 'mobile-alt';
+        const statusClass = entry.status === 'success' ? 'status-success' : 'status-failed';
+        const statusIcon = entry.status === 'success' ? 'check-circle' : 'times-circle';
+        
+        return `
+          <tr>
+            <td>
+              <div class="time-cell">
+                <span class="time-date">${day} ${month} ${year}</span>
+                <span class="time-clock">${hours}:${minutes}</span>
+              </div>
+            </td>
+            <td>
+              <div class="device-cell">
+                <i class="fas fa-${deviceIcon}"></i>
+                <span>${entry.perangkat}</span>
+              </div>
+            </td>
+            <td><code class="ip-badge">${entry.ip}</code></td>
+            <td>
+              <div class="location-cell">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${entry.lokasi}</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge ${statusClass}">
+                <i class="fas fa-${statusIcon}"></i>
+                ${entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    function updatePagination(pagination) {
+      const container = document.getElementById('paginationContainer');
+      
+      let html = '';
+      
+      // Previous button
+      if (pagination.has_prev) {
+        html += `<a href="#" class="pagination-btn pagination-nav" onclick="goToPage(${pagination.prev_page}); return false;"><i class="fas fa-chevron-left"></i> <span>Sebelumnya</span></a>`;
+      } else {
+        html += `<span class="pagination-btn pagination-nav disabled"><i class="fas fa-chevron-left"></i> <span>Sebelumnya</span></span>`;
+      }
+      
+      // Page numbers
+      html += `<div class="pagination-numbers">`;
+      for (const p of pagination.pages) {
+        if (p === pagination.page) {
+          html += `<span class="pagination-btn pagination-number active" data-page="${p}">${p}</span>`;
+        } else {
+          html += `<a href="#" class="pagination-btn pagination-number" data-page="${p}" onclick="goToPage(${p}); return false;">${p}</a>`;
+        }
+      }
+      html += `</div>`;
+      
+      // Next button
+      if (pagination.has_next) {
+        html += `<a href="#" class="pagination-btn pagination-nav" onclick="goToPage(${pagination.next_page}); return false;"><span>Selanjutnya</span> <i class="fas fa-chevron-right"></i></a>`;
+      } else {
+        html += `<span class="pagination-btn pagination-nav disabled"><span>Selanjutnya</span> <i class="fas fa-chevron-right"></i></span>`;
+      }
+      
+      container.innerHTML = html;
+    }
+    
+    // Handle browser back/forward
+    window.addEventListener('popstate', function(e) {
+      if (e.state && e.state.page) {
+        goToPage(e.state.page);
+      }
+    });
+    
+    // Modal functions
     function openFotoModal() {
       document.getElementById('fotoModal').classList.add('active');
     }

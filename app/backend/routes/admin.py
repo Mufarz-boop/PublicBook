@@ -7,6 +7,7 @@ from models.admin import Admin
 from utils.password import verify_password, hash_password
 from database.database import get_db
 from sqlalchemy import text
+from datetime import datetime
 
 bp = Blueprint('admin_routes', __name__, url_prefix='/admin')
 
@@ -28,18 +29,13 @@ def admin_required(f):
 @bp.route('/dashboard')
 @admin_required
 def dashboard():
-    # Statistik
     stats = {
         'booking_today': Booking.count_today(),
         'booking_month': Booking.count_this_month(),
         'total_users': User.count_all(),
         'active_services': Service.count_active()
     }
-    
-    # Booking terbaru (10 terakhir)
     recent_bookings = Booking.get_all(limit=10)
-    
-    # Data admin yang login
     admin = Admin.get_by_id(session.get('user_id'))
     
     return render_template('admin/dashboard.html', 
@@ -57,7 +53,6 @@ def layanan():
 @bp.route('/layanan/tambah', methods=['POST'])
 @admin_required
 def tambah_layanan():
-    """Proses tambah layanan baru"""
     nama_layanan = request.form.get('nama_layanan', '').strip()
     instansi = request.form.get('instansi', '').strip()
     jam_operasional = request.form.get('jam_operasional', '').strip()
@@ -94,7 +89,6 @@ def tambah_layanan():
 @bp.route('/layanan/edit', methods=['POST'])
 @admin_required
 def edit_layanan():
-    """Proses edit layanan"""
     service_id = request.form.get('service_id')
     nama_layanan = request.form.get('nama_layanan', '').strip()
     instansi = request.form.get('instansi', '').strip()
@@ -135,7 +129,6 @@ def edit_layanan():
 @bp.route('/layanan/hapus', methods=['POST'])
 @admin_required
 def hapus_layanan():
-    """Proses hapus layanan"""
     service_id = request.form.get('service_id')
     
     if not service_id:
@@ -144,10 +137,7 @@ def hapus_layanan():
     
     db = get_db()
     try:
-        db.execute(
-            text("DELETE FROM layanan WHERE id = :id"),
-            {'id': service_id}
-        )
+        db.execute(text("DELETE FROM layanan WHERE id = :id"), {'id': service_id})
         db.commit()
         flash('Layanan berhasil dihapus', 'success')
     except Exception as e:
@@ -159,7 +149,6 @@ def hapus_layanan():
 @bp.route('/layanan/toggle', methods=['POST'])
 @admin_required
 def toggle_layanan():
-    """Toggle status layanan via AJAX"""
     service_id = request.form.get('service_id')
     
     if not service_id:
@@ -207,7 +196,6 @@ def pengguna():
 @bp.route('/pengguna/tambah', methods=['POST'])
 @admin_required
 def tambah_user():
-    """Proses tambah user baru oleh admin"""
     nama_lengkap = request.form.get('nama_lengkap', '').strip()
     email = request.form.get('email', '').strip()
     nomor_telepon = request.form.get('nomor_telepon', '').strip()
@@ -257,7 +245,6 @@ def tambah_user():
 @bp.route('/pengguna/edit', methods=['POST'])
 @admin_required
 def edit_user():
-    """Proses edit user"""
     user_id = request.form.get('user_id')
     nama_lengkap = request.form.get('nama_lengkap', '').strip()
     email = request.form.get('email', '').strip()
@@ -271,7 +258,6 @@ def edit_user():
     
     db = get_db()
     
-    # Cek email sudah dipakai user lain?
     existing = db.execute(
         text("SELECT id FROM users WHERE email = :email AND id != :id"),
         {'email': email, 'id': user_id}
@@ -329,7 +315,6 @@ def edit_user():
 @bp.route('/pengguna/hapus', methods=['POST'])
 @admin_required
 def hapus_user():
-    """Proses hapus user"""
     user_id = request.form.get('user_id')
     
     if not user_id:
@@ -338,10 +323,7 @@ def hapus_user():
     
     db = get_db()
     try:
-        db.execute(
-            text("DELETE FROM users WHERE id = :id"),
-            {'id': user_id}
-        )
+        db.execute(text("DELETE FROM users WHERE id = :id"), {'id': user_id})
         db.commit()
         flash('User berhasil dihapus', 'success')
     except Exception as e:
@@ -361,18 +343,115 @@ def security():
         'service_total': Service.count_active()
     }
     
-    return render_template('admin/security.html', admin=admin, stats=stats)
+    # ═══════════════════════════════════════════════════════════════
+    # RIWAYAT LOGIN - PAGINATION
+    # ═══════════════════════════════════════════════════════════════
+    db = get_db()
+    
+    # Ambil parameter page dari URL (default halaman 1)
+    try:
+        page = int(request.args.get('page', 1))
+        if page < 1:
+            page = 1
+    except ValueError:
+        page = 1
+    
+    per_page = 5 # Jumlah item per halaman
+    offset = (page - 1) * per_page
+    
+    # Hitung total records
+    total_result = db.execute(
+        text("SELECT COUNT(*) as total FROM login_history WHERE admin_id = :admin_id"),
+        {'admin_id': session.get('user_id')}
+    ).mappings().first()
+    total_records = total_result['total'] if total_result else 0
+    
+    # Hitung total halaman
+    total_pages = (total_records + per_page - 1) // per_page
+    if total_pages < 1:
+        total_pages = 1
+    
+    # Ambil data untuk halaman ini
+    login_history = db.execute(
+        text("""
+            SELECT 
+                id,
+                ip_address,
+                device_info,
+                location,
+                status,
+                created_at as waktu
+            FROM login_history 
+            WHERE admin_id = :admin_id 
+            ORDER BY created_at DESC 
+            LIMIT :limit OFFSET :offset
+        """),
+        {
+            'admin_id': session.get('user_id'),
+            'limit': per_page,
+            'offset': offset
+        }
+    ).mappings().all()
+    
+    # Format data untuk template
+    history_list = []
+    for row in login_history:
+        history_list.append({
+            'waktu': row['waktu'],
+            'perangkat': row['device_info'] or 'Unknown Device',
+            'ip': row['ip_address'] or '-',
+            'lokasi': row['location'] or '-',
+            'status': row['status']
+        })
+    
+    # Data pagination untuk template
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total_records': total_records,
+        'total_pages': total_pages,
+        'has_prev': page > 1,
+        'has_next': page < total_pages,
+        'prev_page': page - 1,
+        'next_page': page + 1,
+        'pages': []
+    }
+    
+    # Generate list halaman yang ditampilkan (max 5 tombol)
+    start_page = max(1, page - 2)
+    end_page = min(total_pages, page + 2)
+    
+    if end_page - start_page < 4 and total_pages > 4:
+        if start_page == 1:
+            end_page = min(5, total_pages)
+        else:
+            start_page = max(1, end_page - 4)
+    
+    pagination['pages'] = list(range(start_page, end_page + 1))
+    
+    # ═══════════════════════════════════════════════════════════════
+    # JIKA AJAX REQUEST, RETURN JSON SAJA
+    # ═══════════════════════════════════════════════════════════════
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({
+            'login_history': history_list,
+            'pagination': pagination
+        })
+    
+    return render_template('admin/security.html', 
+                         admin=admin, 
+                         stats=stats,
+                         login_history=history_list,
+                         pagination=pagination)
 
 @bp.route('/security/ubah-password', methods=['POST'])
 @admin_required
 def ubah_password_post():
-    """Proses ubah password admin"""
     admin_id = session.get('user_id')
     current_password = request.form.get('current_password', '')
     new_password = request.form.get('new_password', '')
     confirm_password = request.form.get('confirm_password', '')
     
-    # Validasi input
     if not all([current_password, new_password, confirm_password]):
         flash('Semua field wajib diisi', 'danger')
         return redirect(url_for('admin_routes.security'))
@@ -385,7 +464,6 @@ def ubah_password_post():
         flash('Password baru dan konfirmasi tidak cocok', 'danger')
         return redirect(url_for('admin_routes.security'))
     
-    # Ambil data admin dari database
     db = get_db()
     admin = db.execute(
         text("SELECT * FROM admins WHERE id = :id"),
@@ -396,7 +474,6 @@ def ubah_password_post():
         flash('Data admin tidak ditemukan', 'danger')
         return redirect(url_for('admin_routes.security'))
     
-    # Verifikasi password saat ini
     admin_dict = dict(admin)
     stored_password = admin_dict.get('password') or admin_dict.get('password_hash', '')
     
@@ -404,7 +481,6 @@ def ubah_password_post():
         flash('Password saat ini salah', 'danger')
         return redirect(url_for('admin_routes.security'))
     
-    # Update password baru
     pw_col = 'password' if 'password' in admin_dict else 'password_hash'
     try:
         db.execute(
