@@ -27,7 +27,7 @@ def login_page():
 def login_post():
     """Proses autentikasi login"""
     email = request.form.get('email', '').strip()
-    password = request.form.get('password', '')
+    password = request.get('password', '')
     
     # Validasi input tidak kosong
     if not email or not password:
@@ -61,6 +61,14 @@ def login_post():
             catat_login_history(admin_id=admin_dict['id'], status='success')
             
             flash(f'Selamat datang, {session["nama_lengkap"]}!', 'success')
+            
+            # ═══════════════════════════════════════════════════════
+            # CEK REDIRECT DARI SCAN QR (JIKA ADA)
+            # ═══════════════════════════════════════════════════════
+            next_scan = session.pop('next_scan_url', None)
+            if next_scan:
+                return redirect(next_scan)
+            
             return redirect(url_for('admin_routes.dashboard'))
         else:
             # Password salah - catat login gagal
@@ -93,6 +101,16 @@ def login_post():
             catat_login_history(user_id=user_dict['id'], status='success')
             
             flash(f'Selamat datang, {session["nama_lengkap"]}!', 'success')
+            
+            # ═══════════════════════════════════════════════════════
+            # CEK REDIRECT DARI SCAN QR (JIKA ADA)
+            # ═══════════════════════════════════════════════════════
+            next_scan = session.pop('next_scan_url', None)
+            if next_scan:
+                # User biasa tidak boleh scan, redirect ke dashboard dengan pesan
+                flash('Akses ditolak. Hanya admin yang dapat scan QR Code.', 'danger')
+                return redirect(url_for('user_routes.dashboard'))
+            
             return redirect(url_for('user_routes.dashboard'))
         else:
             # Password salah - catat login gagal

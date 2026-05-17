@@ -1,0 +1,881 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Scan QR Code - PublicBook{% endblock %}
+{% set active_page = 'scan' %}
+{% set header_title = 'Scan QR Code' %}
+{% set header_icon = 'fa-qrcode' %}
+{% block nav_scan_active %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   SCANNER CAMERA STYLES
+   ═══════════════════════════════════════════════════════════════ */
+.scanner-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ── Camera Section ── */
+.camera-section {
+    background: #fff;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.camera-header {
+    margin-bottom: 25px;
+}
+
+.camera-header h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.camera-header p {
+    color: #888;
+    font-size: 14px;
+}
+
+/* ── Scanner Box ── */
+.scanner-box {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 3px solid #FF6B00;
+    background: #000;
+    aspect-ratio: 1;
+}
+
+#reader {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+}
+
+#reader video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Hide default html5-qrcode elements */
+#reader__dashboard_section_csr span,
+#reader__dashboard_section_swaplink,
+#reader__camera_permission_button,
+#reader__status_span {
+    display: none !important;
+}
+
+#reader__scan_region {
+    background: transparent !important;
+}
+
+/* Custom Scan Overlay */
+.scan-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.scan-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+    border: 3px solid rgba(255,107,0,0.8);
+    border-radius: 20px;
+}
+
+.scan-frame::before,
+.scan-frame::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-color: #FF6B00;
+    border-style: solid;
+}
+
+.scan-frame::before {
+    top: -3px;
+    left: -3px;
+    border-width: 4px 0 0 4px;
+    border-radius: 15px 0 0 0;
+}
+
+.scan-frame::after {
+    bottom: -3px;
+    right: -3px;
+    border-width: 0 4px 4px 0;
+    border-radius: 0 0 15px 0;
+}
+
+.scan-line {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FF6B00, transparent);
+    border-radius: 2px;
+    animation: scanMove 2s ease-in-out infinite;
+    box-shadow: 0 0 10px #FF6B00;
+}
+
+@keyframes scanMove {
+    0%, 100% { top: 20%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    50% { top: 80%; }
+}
+
+.scan-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #fff;
+    font-size: 13px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.4);
+    padding: 8px;
+    margin: 0 20px;
+    border-radius: 10px;
+}
+
+/* ── Camera Controls ── */
+.camera-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-camera {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-camera-start {
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+}
+
+.btn-camera-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,107,0,0.4);
+}
+
+.btn-camera-stop {
+    background: #FFEBEE;
+    color: #D32F2F;
+}
+
+.btn-camera-stop:hover {
+    background: #FFCDD2;
+}
+
+.btn-camera:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ── Status Badge ── */
+.scan-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 15px;
+}
+
+.scan-status.active {
+    background: #E8F5E9;
+    color: #388E3C;
+}
+
+.scan-status.inactive {
+    background: #FFF3E0;
+    color: #FF6B00;
+}
+
+.scan-status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: blink 1s ease infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ── Result Modal ── */
+.result-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.result-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.result-card {
+    background: #fff;
+    border-radius: 30px;
+    padding: 45px 35px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+    transform: scale(0.8) translateY(30px);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.result-overlay.show .result-card {
+    transform: scale(1) translateY(0);
+}
+
+/* Animations */
+.anim-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.anim-circle::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+}
+
+.anim-success {
+    background: #E8F5E9;
+    animation: popIn 0.5s ease;
+}
+
+.anim-success i {
+    font-size: 50px;
+    color: #4CAF50;
+}
+
+.anim-success::before {
+    border-color: #4CAF50;
+    animation: rippleOut 1.5s ease-out infinite;
+}
+
+.anim-error {
+    background: #FFEBEE;
+    animation: shake 0.5s ease;
+}
+
+.anim-error i {
+    font-size: 50px;
+    color: #D32F2F;
+}
+
+.anim-warning {
+    background: #FFF3E0;
+    animation: popIn 0.5s ease;
+}
+
+.anim-warning i {
+    font-size: 50px;
+    color: #FF9800;
+    animation: bounce 0.6s ease infinite alternate;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-10px); }
+    80% { transform: translateX(10px); }
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-8px); }
+}
+
+@keyframes rippleOut {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Confetti */
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    top: -10px;
+    animation: confettiFall 2.5s ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(350px) rotate(720deg); opacity: 0; }
+}
+
+/* Result Content */
+.result-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.result-message {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.booking-detail-scan {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.detail-row-scan {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+
+.detail-row-scan:last-child {
+    border-bottom: none;
+}
+
+.detail-row-scan .label {
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-row-scan .value {
+    font-weight: 600;
+    color: #333;
+}
+
+.status-badge-scan {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-selesai { background: #E8F5E9; color: #388E3C; }
+.status-menunggu { background: #FFF3E0; color: #FF6B00; }
+.status-dikonfirmasi { background: #E3F2FD; color: #1976D2; }
+.status-proses { background: #F3E5F5; color: #7B1FA2; }
+
+.btn-close-result {
+    padding: 12px 35px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-close-result:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,107,0,0.4);
+}
+
+/* ── Manual Input Fallback ── */
+.manual-fallback {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.manual-fallback p {
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.manual-input-group {
+    display: flex;
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.manual-input-group input {
+    flex: 1;
+    padding: 12px 18px;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.manual-input-group input:focus {
+    outline: none;
+    border-color: #FF6B00;
+}
+
+.manual-input-group button {
+    padding: 12px 20px;
+    background: #f0f0f0;
+    color: #666;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.manual-input-group button:hover {
+    background: #FF6B00;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .scanner-container {
+        padding: 10px;
+    }
+    
+    .camera-section {
+        padding: 20px 15px;
+    }
+    
+    .scan-frame {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .result-card {
+        padding: 35px 25px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="scanner-container">
+
+    <div class="camera-section">
+        <div class="camera-header">
+            <h2><i class="fas fa-camera" style="color: #FF6B00; margin-right: 8px;"></i>Scan QR Code</h2>
+            <p>Arahkan kamera ke QR Code booking untuk menyelesaikan layanan</p>
+        </div>
+
+        <!-- Scanner Box -->
+        <div class="scanner-box" id="scannerBox">
+            <div id="reader"></div>
+            
+            <!-- Custom Overlay -->
+            <div class="scan-overlay" id="scanOverlay">
+                <div class="scan-frame">
+                    <div class="scan-line"></div>
+                </div>
+                <div class="scan-hint">
+                    <i class="fas fa-qrcode" style="margin-right: 6px;"></i>
+                    Arahkan QR Code ke area ini
+                </div>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="scan-status inactive" id="scanStatus">
+            <span class="dot"></span>
+            <span id="statusText">Kamera mati</span>
+        </div>
+
+        <!-- Controls -->
+        <div class="camera-controls" style="margin-top: 20px;">
+            <button class="btn-camera btn-camera-start" id="btnStart" onclick="startScanner()">
+                <i class="fas fa-play"></i> Mulai Scan
+            </button>
+            <button class="btn-camera btn-camera-stop" id="btnStop" onclick="stopScanner()" style="display: none;">
+                <i class="fas fa-stop"></i> Berhenti
+            </button>
+        </div>
+
+        <!-- Manual Fallback -->
+        <div class="manual-fallback">
+            <p><i class="fas fa-keyboard" style="margin-right: 5px;"></i>Atau masukkan manual</p>
+            <div class="manual-input-group">
+                <input 
+                    type="text" 
+                    id="manualInput" 
+                    placeholder="PB-XXXXXX"
+                    maxlength="20"
+                    autocomplete="off"
+                    onkeypress="if(event.key==='Enter')processManual()">
+                <button onclick="processManual()">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Result Modal -->
+<div class="result-overlay" id="resultOverlay" onclick="closeResult(event)">
+    <div class="result-card" onclick="event.stopPropagation()">
+        <div class="confetti-container" id="confettiContainer"></div>
+        <div id="resultContent"></div>
+        <button class="btn-close-result" onclick="closeResult()">
+            <i class="fas fa-check"></i> Tutup
+        </button>
+    </div>
+</div>
+
+<!-- Sound Effect -->
+<audio id="beepSound" preload="auto">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+</audio>
+
+<!-- html5-qrcode Library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// QR CAMERA SCANNER
+// ═══════════════════════════════════════════════════════════════
+
+let html5QrCode = null;
+let isScanning = false;
+let lastScan = ''; // Prevent duplicate scans
+let scanCooldown = false;
+
+const scannerBox = document.getElementById('scannerBox');
+const scanOverlay = document.getElementById('scanOverlay');
+const btnStart = document.getElementById('btnStart');
+const btnStop = document.getElementById('btnStop');
+const scanStatus = document.getElementById('scanStatus');
+const statusText = document.getElementById('statusText');
+const beepSound = document.getElementById('beepSound');
+
+function updateStatus(active, text) {
+    scanStatus.className = 'scan-status ' + (active ? 'active' : 'inactive');
+    statusText.textContent = text;
+}
+
+function startScanner() {
+    if (isScanning) return;
+    
+    html5QrCode = new Html5Qrcode("reader");
+    
+    const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0
+    };
+    
+    html5QrCode.start(
+        { facingMode: "environment" }, // Use back camera on mobile
+        config,
+        onScanSuccess,
+        onScanFailure
+    ).then(() => {
+        isScanning = true;
+        btnStart.style.display = 'none';
+        btnStop.style.display = 'inline-flex';
+        updateStatus(true, 'Mencari QR Code...');
+        scanOverlay.style.display = 'block';
+    }).catch(err => {
+        console.error("Start failed:", err);
+        showResult('error', 'Gagal Memulai', 'Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.', null);
+    });
+}
+
+function stopScanner() {
+    if (!html5QrCode || !isScanning) return;
+    
+    html5QrCode.stop().then(() => {
+        isScanning = false;
+        btnStart.style.display = 'inline-flex';
+        btnStop.style.display = 'none';
+        updateStatus(false, 'Kamera mati');
+        scanOverlay.style.display = 'none';
+        html5QrCode.clear();
+        html5QrCode = null;
+    }).catch(err => {
+        console.error("Stop failed:", err);
+    });
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    // Prevent duplicate scans within 3 seconds
+    if (scanCooldown || decodedText === lastScan) return;
+    
+    lastScan = decodedText;
+    scanCooldown = true;
+    
+    // Play beep sound
+    beepSound.currentTime = 0;
+    beepSound.play().catch(() => {});
+    
+    // Extract booking number from URL or text
+    let noBooking = decodedText;
+    
+    // If QR contains full URL like http://.../scan/PB-XXX
+    const match = decodedText.match(/\/scan\/([A-Z0-9-]+)/i);
+    if (match) {
+        noBooking = match[1];
+    }
+    
+    // Clean up
+    noBooking = noBooking.toUpperCase().trim();
+    
+    // Stop scanner temporarily
+    updateStatus(true, 'Memproses...');
+    
+    // Send to server
+    processBooking(noBooking);
+    
+    // Reset cooldown after 3 seconds
+    setTimeout(() => {
+        scanCooldown = false;
+        lastScan = '';
+        if (isScanning) {
+            updateStatus(true, 'Mencari QR Code...');
+        }
+    }, 3000);
+}
+
+function onScanFailure(error) {
+    // Ignore scan failures (normal when no QR in frame)
+}
+
+function processManual() {
+    const input = document.getElementById('manualInput');
+    const noBooking = input.value.trim().toUpperCase();
+    
+    if (!noBooking) {
+        showResult('error', 'Kosong', 'Masukkan nomor booking', null);
+        return;
+    }
+    
+    input.value = '';
+    processBooking(noBooking);
+}
+
+function processBooking(noBooking) {
+    fetch('/scan/api/scan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ no_booking: noBooking })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showResult('success', 'Berhasil!', data.message, data.booking);
+        } else if (data.status === 'already_done') {
+            showResult('warning', 'Sudah Selesai', data.message, data.booking);
+        } else if (data.status === 'not_found') {
+            showResult('error', 'Tidak Ditemukan', data.message, null);
+        } else if (data.status === 'cannot_process') {
+            showResult('error', 'Tidak Dapat Diproses', data.message, data.booking);
+        } else {
+            showResult('error', 'Error', data.message || 'Terjadi kesalahan', null);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        showResult('error', 'Error', 'Gagal terhubung ke server', null);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESULT MODAL
+// ═══════════════════════════════════════════════════════════════
+
+function showResult(type, title, message, booking) {
+    const overlay = document.getElementById('resultOverlay');
+    const content = document.getElementById('resultContent');
+    const confettiContainer = document.getElementById('confettiContainer');
+    
+    let iconHtml = '';
+    let animClass = '';
+    
+    switch(type) {
+        case 'success':
+            animClass = 'anim-success';
+            iconHtml = '<i class="fas fa-check"></i>';
+            createConfetti();
+            break;
+        case 'error':
+            animClass = 'anim-error';
+            iconHtml = '<i class="fas fa-times"></i>';
+            break;
+        case 'warning':
+            animClass = 'anim-warning';
+            iconHtml = '<i class="fas fa-exclamation"></i>';
+            break;
+        default:
+            animClass = 'anim-info';
+            iconHtml = '<i class="fas fa-info"></i>';
+    }
+    
+    let bookingHtml = '';
+    if (booking) {
+        bookingHtml = `
+            <div class="booking-detail-scan">
+                <div class="detail-row-scan">
+                    <span class="label"><i class="fas fa-hashtag" style="color: #FF6B00;"></i>No. Booking</span>
+                    <span class="value">${booking.no_booking}</span>
+                </div>
+                <div class="detail-row-scan">
+                    <span class="label"><i class="fas fa-concierge-bell" style="color: #FF6B00;"></i>Layanan</span>
+                    <span class="value">${booking.nama_layanan || '-'}</span>
+                </div>
+                <div class="detail-row-scan">
+                    <span class="label"><i class="fas fa-user" style="color: #FF6B00;"></i>Nama</span>
+                    <span class="value">${booking.nama_pendaftar || '-'}</span>
+                </div>
+                <div class="detail-row-scan">
+                    <span class="label"><i class="fas fa-info-circle" style="color: #FF6B00;"></i>Status</span>
+                    <span class="value"><span class="status-badge-scan status-${booking.status}">${booking.status}</span></span>
+                </div>
+                ${booking.nomor_antrian ? `
+                <div class="detail-row-scan">
+                    <span class="label"><i class="fas fa-list-ol" style="color: #FF6B00;"></i>Antrean</span>
+                    <span class="value" style="color: #FF6B00;">#${booking.nomor_antrian}</span>
+                </div>` : ''}
+            </div>
+        `;
+    }
+    
+    content.innerHTML = `
+        <div class="anim-circle ${animClass}">${iconHtml}</div>
+        <h3 class="result-title">${title}</h3>
+        <p class="result-message">${message}</p>
+        ${bookingHtml}
+    `;
+    
+    overlay.classList.add('show');
+    
+    // Auto close success after 2.5s
+    if (type === 'success') {
+        setTimeout(() => closeResult(), 2500);
+    }
+}
+
+function closeResult(e) {
+    if (e && e.target !== e.currentTarget) return;
+    document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('confettiContainer').innerHTML = '';
+}
+
+function createConfetti() {
+    const container = document.getElementById('confettiContainer');
+    const colors = ['#FF6B00', '#FF8C00', '#4CAF50', '#FFB347', '#FFD700', '#FF5722', '#2196F3'];
+    
+    for (let i = 0; i < 25; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 1.5 + 's';
+        confetti.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        confetti.style.width = (Math.random() * 6 + 5) + 'px';
+        confetti.style.height = (Math.random() * 6 + 5) + 'px';
+        container.appendChild(confetti);
+    }
+}
+
+// Cleanup on page leave
+window.addEventListener('beforeunload', () => {
+    if (html5QrCode && isScanning) {
+        html5QrCode.stop().catch(() => {});
+    }
+});
+</script>
+{% endblock %}

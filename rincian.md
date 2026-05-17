@@ -58,6 +58,7 @@ app/
         pages/
             admin/
                 base.html
+                scan.html
                 booking-list.html
                 dashboard.html
                 layanan.html

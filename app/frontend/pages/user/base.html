@@ -19,6 +19,43 @@
             overflow-x: hidden;
         }
 
+        /* ========== PAGE TRANSITION OVERLAY ========== */
+        .page-transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FF6B00, #FF8C00);
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .page-transition-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+
+        .transition-loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spinLoader 0.8s linear infinite;
+        }
+
+        @keyframes spinLoader {
+            to { transform: rotate(360deg); }
+        }
+
         /* ========== SIDEBAR ========== */
         .sidebar {
             position: fixed;
@@ -31,7 +68,7 @@
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar-logo {
@@ -42,6 +79,7 @@
             justify-content: center;
             gap: 8px;
             border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
         }
 
         .logo-icon {
@@ -55,12 +93,19 @@
             color: #fff;
             font-size: 24px;
             box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 25px rgba(255, 107, 0, 0.5);
         }
 
         .logo-text {
             font-size: 16px;
             font-weight: 700;
             color: #333;
+            transition: color 0.3s ease;
         }
 
         .sidebar-nav {
@@ -76,36 +121,94 @@
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             color: #555;
             font-size: 14px;
             font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(135deg, #FF8C42, #FFB347);
+            border-radius: 12px;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        .nav-item:hover::before,
+        .nav-item.active::before {
+            width: 100%;
         }
 
         .nav-item:hover {
-            background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
             color: #FF6B00;
-            transform: translateX(5px);
+            transform: translateX(8px);
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.15);
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, #FF8C42, #FFB347);
             color: #fff;
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.35);
+        }
+
+        .nav-item i,
+        .nav-item span {
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover i {
+            transform: scale(1.2);
         }
 
         .nav-item i {
             width: 22px;
             text-align: center;
             font-size: 16px;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .nav-item.active i {
+            transform: scale(1.15);
+        }
+
+        /* Active indicator dot */
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255,255,255,0.6);
+            animation: pulseDot 2s ease infinite;
+            z-index: 1;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.6; transform: translateY(-50%) scale(1.3); }
         }
 
         .sidebar-footer {
             padding: 15px;
             border-top: 1px solid #eee;
+            transition: all 0.3s ease;
         }
 
         .logout-btn {
@@ -118,18 +221,39 @@
             background: linear-gradient(135deg, #E74C3C, #C0392B);
             color: #fff;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Poppins', sans-serif;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logout-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .logout-btn:hover::before {
+            left: 100%;
         }
 
         .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .logout-btn:active {
+            transform: translateY(-1px);
         }
 
         /* ========== MAIN CONTENT ========== */
@@ -137,6 +261,7 @@
             margin-left: 220px;
             min-height: 100vh;
             padding: 0;
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ========== TOP HEADER ========== */
@@ -150,6 +275,12 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .top-header.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 12px 30px;
         }
 
         .header-left {
@@ -165,6 +296,15 @@
             font-size: 22px;
             color: #333;
             cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .menu-toggle:hover {
+            background: #f0f0f0;
+            color: #FF6B00;
+            transform: scale(1.1);
         }
 
         .header-title {
@@ -174,10 +314,16 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s ease;
         }
 
         .header-title i {
             color: #FF6B00;
+            transition: transform 0.3s ease;
+        }
+
+        .header-title:hover i {
+            transform: rotate(15deg) scale(1.2);
         }
 
         .header-right {
@@ -191,6 +337,7 @@
             align-items: center;
             gap: 12px;
             text-align: right;
+            transition: all 0.3s ease;
         }
 
         .user-details h4 {
@@ -198,11 +345,13 @@
             font-weight: 600;
             color: #333;
             margin-bottom: 2px;
+            transition: color 0.3s ease;
         }
 
         .user-details p {
             font-size: 12px;
             color: #888;
+            transition: color 0.3s ease;
         }
 
         .user-avatar {
@@ -213,18 +362,32 @@
             border: 3px solid #fff;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             background: #f0f0f0;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
+            border-color: #FF6B00;
         }
 
         /* ========== CONTENT AREA ========== */
         .content-area {
             padding: 25px 30px;
+            animation: fadeInContent 0.5s ease forwards;
+        }
+
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
+            .sidebar { transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
             .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; }
+            .main-content { margin-left: 0; transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
             .menu-toggle { display: block; }
             .top-header { padding: 12px 15px; }
             .user-details { display: none; }
@@ -238,18 +401,34 @@
             inset: 0;
             background: rgba(0,0,0,0.5);
             z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .overlay.show { display: block; }
+        .overlay.show { 
+            display: block; 
+            opacity: 1;
+        }
 
-        /* Animation */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection color */
+        ::selection {
+            background: rgba(255, 107, 0, 0.3);
+            color: #333;
         }
     </style>
+<base target="_blank">
 </head>
 <body>
+    <!-- Page Transition Overlay -->
+    <div class="page-transition-overlay" id="pageTransition">
+        <div class="transition-loader"></div>
+    </div>
+
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar" id="sidebar">
@@ -282,7 +461,7 @@
         </nav>
 
         <div class="sidebar-footer">
-            <a href="{{ url_for('auth_routes.logout') }}" class="logout-btn">
+            <a href="{{ url_for('auth_routes.logout') }}" class="logout-btn" onclick="return confirmLogout(event)">
                 <span>Logout</span>
                 <i class="fas fa-sign-out-alt"></i>
             </a>
@@ -290,7 +469,7 @@
     </aside>
 
     <main class="main-content">
-        <header class="top-header">
+        <header class="top-header" id="topHeader">
             <div class="header-left">
                 <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
@@ -307,9 +486,6 @@
                         <h4>{{ current_user.nama_lengkap or current_user.nama or session.get('user_nama', 'User') }}</h4>
                         <p>{{ current_user.email or session.get('user_email', 'user@email.com') }}</p>
                     </div>
-                    <!-- ═══════════════════════════════════════════════════════════ -->
-                    <!-- PERBAIKAN: Foto profil header pakai current_user.foto_profil -->
-                    <!-- ═══════════════════════════════════════════════════════════ -->
                     <img src="{{ url_for('static', filename=current_user.foto_profil or 'images/icons/Afdal Adha Firnansyah.png') }}" 
                          alt="Avatar" 
                          class="user-avatar"
@@ -325,12 +501,92 @@
     </main>
 
     <script>
+        // ═══════════════════════════════════════════════════════════════
+        // SMOOTH NAVIGATION & TRANSITIONS
+        // ═══════════════════════════════════════════════════════════════
+
+        // Page transition overlay
+        const pageTransition = document.getElementById('pageTransition');
+
+        function showTransition() {
+            pageTransition.classList.add('active');
+        }
+
+        function hideTransition() {
+            setTimeout(() => {
+                pageTransition.classList.remove('active');
+            }, 300);
+        }
+
+        // Smooth navigation for all internal links
+        document.querySelectorAll('a[href^="/"], a[href^="{{ url_for"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                // Skip logout confirmation
+                if (this.classList.contains('logout-btn')) return;
+                // Skip external links
+                if (href.startsWith('http')) return;
+
+                e.preventDefault();
+                showTransition();
+
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 300);
+            });
+        });
+
+        // Hide transition on page load
+        window.addEventListener('load', hideTransition);
+        window.addEventListener('pageshow', hideTransition);
+
+        // Header scroll effect
+        const topHeader = document.getElementById('topHeader');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 10) {
+                topHeader.classList.add('scrolled');
+            } else {
+                topHeader.classList.remove('scrolled');
+            }
+            lastScroll = currentScroll;
+        });
+
+        // Sidebar toggle with smooth animation
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             sidebar.classList.toggle('open');
             overlay.classList.toggle('show');
         }
+
+        // Logout confirmation with smooth transition
+        function confirmLogout(e) {
+            e.preventDefault();
+            if (confirm('Yakin ingin logout?')) {
+                showTransition();
+                setTimeout(() => {
+                    window.location.href = e.currentTarget.href;
+                }, 300);
+            }
+            return false;
+        }
+
+        // Active nav item animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeNav = document.querySelector('.nav-item.active');
+            if (activeNav) {
+                activeNav.style.opacity = '0';
+                activeNav.style.transform = 'translateX(-20px)';
+                setTimeout(() => {
+                    activeNav.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    activeNav.style.opacity = '1';
+                    activeNav.style.transform = 'translateX(5px)';
+                }, 100);
+            }
+        });
 
         {% block extra_js %}{% endblock %}
     </script>

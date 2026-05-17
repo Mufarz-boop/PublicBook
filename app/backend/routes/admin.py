@@ -495,6 +495,19 @@ def ubah_password_post():
     
     return redirect(url_for('admin_routes.security'))
 
+# ═══════════════════════════════════════════════════════════════════
+# ROUTE: HALAMAN SCANNER QR (ADMIN)
+# ═══════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════
+# ROUTE: HALAMAN SCANNER QR (ADMIN)
+# ═══════════════════════════════════════════════════════════════════
+@bp.route('/scan')
+@admin_required
+def scan_page():
+    """Halaman scanner QR code untuk admin"""
+    admin = Admin.get_by_id(session.get('user_id'))
+    return render_template('admin/scan.html', admin=admin)
+
 @bp.route('/profil')
 @admin_required
 def profil():

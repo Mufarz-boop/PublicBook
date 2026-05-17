@@ -22,48 +22,120 @@
             background: #fff;
             border-radius: 24px;
             padding: 40px;
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .error-icon {
             width: 100px;
             height: 100px;
-            background: #FFEBEE;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 25px;
             font-size: 48px;
-            color: #D32F2F;
         }
-        .error-card h2 { color: #333; margin-bottom: 10px; }
-        .error-card p { color: #666; margin-bottom: 25px; }
-        .btn-back {
+        .error-icon.danger { background: #FFEBEE; color: #D32F2F; }
+        .error-icon.warning { background: #FFF3E0; color: #FF9800; }
+        .error-icon.lock { background: #F3E5F5; color: #7B1FA2; }
+        
+        .error-card h2 { color: #333; margin-bottom: 10px; font-size: 22px; }
+        .error-card p { color: #666; margin-bottom: 25px; font-size: 14px; line-height: 1.6; }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             padding: 14px 28px;
-            background: linear-gradient(135deg, #FF6B00, #FF8C00);
-            color: #fff;
-            text-decoration: none;
             border-radius: 12px;
             font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B00, #FF8C00);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,107,0,0.4);
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .security-notice {
+            margin-top: 20px;
+            padding: 12px;
+            background: #FFF5EB;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #FF6B00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
     <div class="error-card">
-        <div class="error-icon">
-            <i class="fas fa-times-circle"></i>
-        </div>
-        <h2>Oops!</h2>
-        <p>{{ message }}</p>
-        <a href="{{ url_for('user_routes.dashboard') }}" class="btn-back">
-            <i class="fas fa-home"></i> Kembali
-        </a>
+        {% if show_login %}
+            <div class="error-icon lock">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>Akses Terbatas</h2>
+            <p>{{ message }}</p>
+            
+            <div class="security-notice">
+                <i class="fas fa-shield-alt"></i>
+                <span>QR Code ini hanya dapat di-scan oleh Admin yang terdaftar</span>
+            </div>
+            
+            <div class="action-buttons" style="margin-top: 20px;">
+                <a href="{{ url_for('auth_routes.login_page') }}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login sebagai Admin
+                </a>
+                <a href="{{ url_for('static_routes.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Kembali ke Beranda
+                </a>
+            </div>
+            
+        {% else %}
+            <div class="error-icon danger">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <h2>Oops!</h2>
+            <p>{{ message }}</p>
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('admin_routes.booking_list') if is_admin else url_for('user_routes.dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

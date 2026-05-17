@@ -500,14 +500,20 @@
 <div class="booking-container">
 
     {% if active_booking %}
-    <!-- QR CODE SECTION -->
+   <!-- QR CODE SECTION -->
     <div class="qr-section animate-in">
         <div class="qr-card-main">
             <div class="qr-left">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=http:/10.49.141.241:5000/scan/{{ active_booking.no_booking }}&color=333333&bgcolor=ffffff" 
+                <!-- URL QR Code mengarah ke /scan/ yang sudah diproteksi admin -->
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data={{ request.host_url.rstrip('/') }}/scan/{{ active_booking.no_booking }}&color=333333&bgcolor=ffffff" 
                     alt="QR Code Booking" 
                     class="qr-code-img">
-                <div class="qr-scan-label">Scan untuk Selesaikan</div>
+                <div class="qr-scan-label">
+                    <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>Scan oleh Admin
+                </div>
+                <p style="font-size: 11px; color: #999; margin-top: 8px;">
+                    Hanya admin yang dapat memindai kode ini
+                </p>
             </div>
 
             <div class="qr-right">
