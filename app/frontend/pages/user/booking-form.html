@@ -16,6 +16,7 @@
     bottom: 0;
     background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 30%, #FFA500 70%, #FFB347 100%);
     z-index: -1;
+    min-height: 100vh;
 }
 
 .booking-page-bg::before {
@@ -58,6 +59,7 @@
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    padding: 40px 20px;
 }
 
 /* ========== SERVICE CARD (PREVIEW) ========== */
@@ -679,6 +681,28 @@ input[type="time"].form-control {
 .animate-in-1 { animation: fadeInUp 0.6s ease forwards; }
 .animate-in-2 { animation: fadeInUp 0.6s ease 0.15s forwards; opacity: 0; }
 .animate-in-3 { animation: fadeInUp 0.6s ease 0.3s forwards; opacity: 0; }
+
+/* ========== SCROLL FIX ========== */
+html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100%;
+}
+
+body {
+    position: relative;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+body {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
 </style>
 {% endblock %}
 

@@ -7,9 +7,237 @@
 
 {% block extra_css %}
 <style>
+/* ═══════════════════════════════════════════════════════════════
+   LAYANAN PAGE STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Page Title */
+.user-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* ========== SEARCH SECTION ========== */
+.layanan-search-section {
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.layanan-search-box {
+    position: relative;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.layanan-search-box:focus-within {
+    box-shadow: 0 4px 30px rgba(255, 107, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.layanan-search-box i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.layanan-search-box:focus-within i {
+    color: #FF6B00;
+}
+
+.layanan-search-box input {
+    width: 100%;
+    padding: 16px 20px 16px 52px;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    background: transparent;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.layanan-search-box input:focus {
+    border-color: rgba(255, 107, 0, 0.3);
+}
+
+.layanan-search-box input::placeholder {
+    color: #bbb;
+}
+
+.layanan-search-count {
+    margin-top: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+    display: none;
+    padding-left: 8px;
+}
+
+/* ========== SERVICES CARD ========== */
+.layanan-services-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* ========== SERVICE ITEM ========== */
+.layanan-service-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.layanan-service-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #FF6B00, #FF8C00);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.layanan-service-item:hover {
+    background: #FFF8F0;
+    border-color: rgba(255, 107, 0, 0.1);
+    transform: translateX(4px);
+}
+
+.layanan-service-item:hover::before {
+    opacity: 1;
+}
+
+.layanan-service-item + .layanan-service-item {
+    border-top: 1px solid #f5f5f5;
+}
+
 .layanan-service-item.js-hidden {
     display: none !important;
 }
+
+/* Service Info */
+.layanan-service-info {
+    flex: 1;
+    min-width: 0;
+    margin-right: 16px;
+}
+
+.layanan-service-name {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.layanan-service-instansi {
+    display: block;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.layanan-service-jam {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #FF6B00;
+    background: #FFF5EB;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+.layanan-service-jam i {
+    font-size: 10px;
+}
+
+/* ========== BOOKING BUTTON ========== */
+.layanan-btn-booking {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.layanan-btn-booking::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.layanan-btn-booking:hover::before {
+    left: 100%;
+}
+
+.layanan-btn-booking:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 0, 0.35);
+}
+
+.layanan-btn-booking:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* ========== EMPTY STATE ========== */
+.layanan-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+}
+
+.layanan-empty p {
+    font-size: 15px;
+}
+
+/* ========== NO RESULTS ========== */
 .layanan-no-results {
     display: none;
     flex-direction: column;
@@ -17,24 +245,122 @@
     justify-content: center;
     padding: 60px 20px;
     background: #fff;
-    border-radius: 16px;
+    border-radius: 24px;
     margin-top: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
 }
-.layanan-search-count {
-    margin-top: 8px;
-    font-size: 12px;
+
+.layanan-no-results i {
+    font-size: 48px;
+    color: #ddd;
+    margin-bottom: 16px;
+}
+
+.layanan-no-results p {
     color: #888;
-    display: none;
+    font-size: 14px;
+    text-align: center;
 }
 
-/* Tambahin di style yang udah ada atau di CSS file */
-.layanan-btn-booking {
-    display: inline-block;
-    text-decoration: none;
-    /* ... keep existing button styles ... */
+.layanan-no-results button {
+    margin-top: 16px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
 }
 
+.layanan-no-results button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
+}
 
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .user-page-title {
+        font-size: 22px;
+        margin-bottom: 16px;
+        padding: 0 4px;
+    }
+
+    .layanan-search-box input {
+        padding: 14px 16px 14px 48px;
+        font-size: 14px;
+    }
+
+    .layanan-search-box i {
+        left: 16px;
+        font-size: 14px;
+    }
+
+    .layanan-services-card {
+        border-radius: 20px;
+        padding: 4px;
+    }
+
+    .layanan-service-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+
+    .layanan-service-item:hover {
+        transform: translateX(0);
+    }
+
+    .layanan-service-info {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .layanan-service-name {
+        font-size: 15px;
+        white-space: normal;
+        line-height: 1.4;
+    }
+
+    .layanan-service-instansi {
+        font-size: 12px;
+        white-space: normal;
+    }
+
+    .layanan-btn-booking {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+
+    .layanan-no-results {
+        border-radius: 20px;
+        padding: 40px 20px;
+    }
+}
+
+@media (max-width: 380px) {
+    .user-page-title {
+        font-size: 20px;
+    }
+
+    .layanan-service-item {
+        padding: 14px 16px;
+    }
+
+    .layanan-btn-booking {
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+}
 </style>
 {% endblock %}
 
@@ -65,7 +391,9 @@
                 <span class="layanan-service-jam"><i class="fas fa-clock"></i> {{ service.jam_operasional }}</span>
                 {% endif %}
             </div>
-            <a href="{{ url_for('user_routes.booking_new', layanan_id=service.id) }}" class="layanan-btn-booking">Booking</a>
+            <a href="{{ url_for('user_routes.booking_new', layanan_id=service.id) }}" class="layanan-btn-booking">
+                <i class="fas fa-calendar-plus"></i> Booking
+            </a>
         </div>
         {% endfor %}
     {% else %}
@@ -76,85 +404,143 @@
 </div>
 
 <div class="layanan-no-results" id="noResults">
-    <i class="fas fa-search" style="font-size: 48px; color: #ddd; margin-bottom: 16px;"></i>
-    <p style="color: #888; font-size: 14px;">Tidak ada layanan yang cocok dengan pencarian Anda.</p>
-    <button onclick="clearSearch()" style="margin-top: 12px; padding: 10px 20px; background: linear-gradient(135deg, #FF6B00, #FF8C00); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600;">Tampilkan Semua</button>
+    <i class="fas fa-search"></i>
+    <p>Tidak ada layanan yang cocok dengan pencarian Anda.</p>
+    <button onclick="clearSearch()">Tampilkan Semua</button>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Attach event listener directly to input
-document.getElementById('searchLayanan').addEventListener('input', filterLayanan);
+(function() {
+    'use strict';
 
-function filterLayanan() {
-    const inputEl = document.getElementById('searchLayanan');
-    const input = inputEl.value.toLowerCase().trim();
-    const items = document.querySelectorAll('#layananList .layanan-service-item');
-    const noResults = document.getElementById('noResults');
+    // ═══════════════════════════════════════════════════════════════
+    // SEARCH FUNCTIONALITY
+    // ═══════════════════════════════════════════════════════════════
+    
+    const searchInput = document.getElementById('searchLayanan');
     const searchCount = document.getElementById('searchCount');
-    let visibleCount = 0;
-    
-    console.log('Filter running, input:', input); // DEBUG
-    console.log('Items found:', items.length); // DEBUG
-    
-    items.forEach(function(item) {
-        const nama = item.getAttribute('data-nama') || '';
-        const instansi = item.getAttribute('data-instansi') || '';
-        const jam = item.getAttribute('data-jam') || '';
-        
-        console.log('Checking:', nama, instansi, jam); // DEBUG
-        
-        // Kalau input kosong, tampilkan semua
-        if (!input) {
-            item.classList.remove('js-hidden');
-            visibleCount++;
-            return;
-        }
-        
-        // Cek apakah input ada di salah satu field
-        const isMatch = nama.indexOf(input) !== -1 || 
-                       instansi.indexOf(input) !== -1 || 
-                       jam.indexOf(input) !== -1;
-        
-        console.log('Match:', isMatch); // DEBUG
-        
-        if (isMatch) {
-            item.classList.remove('js-hidden');
-            visibleCount++;
-        } else {
-            item.classList.add('js-hidden');
-        }
-    });
-    
-    console.log('Visible:', visibleCount); // DEBUG
-    
-    // Handle empty state / no results
-    if (input && visibleCount === 0) {
-        noResults.style.display = 'flex';
-        searchCount.style.display = 'none';
-    } else {
-        noResults.style.display = 'none';
-        if (input) {
-            searchCount.textContent = visibleCount + ' hasil ditemukan';
-            searchCount.style.display = 'block';
-        } else {
+    const noResults = document.getElementById('noResults');
+    const layananList = document.getElementById('layananList');
+
+    function filterLayanan() {
+        const input = searchInput.value.toLowerCase().trim();
+        const items = layananList.querySelectorAll('.layanan-service-item');
+        let visibleCount = 0;
+
+        items.forEach(function(item) {
+            const nama = item.getAttribute('data-nama') || '';
+            const instansi = item.getAttribute('data-instansi') || '';
+            const jam = item.getAttribute('data-jam') || '';
+
+            // Kalau input kosong, tampilkan semua
+            if (!input) {
+                item.classList.remove('js-hidden');
+                visibleCount++;
+                return;
+            }
+
+            // Cek apakah input ada di salah satu field
+            const isMatch = nama.indexOf(input) !== -1 || 
+                           instansi.indexOf(input) !== -1 || 
+                           jam.indexOf(input) !== -1;
+
+            if (isMatch) {
+                item.classList.remove('js-hidden');
+                visibleCount++;
+            } else {
+                item.classList.add('js-hidden');
+            }
+        });
+
+        // Handle empty state / no results
+        if (input && visibleCount === 0) {
+            noResults.style.display = 'flex';
             searchCount.style.display = 'none';
+        } else {
+            noResults.style.display = 'none';
+            if (input) {
+                searchCount.textContent = visibleCount + ' hasil ditemukan';
+                searchCount.style.display = 'block';
+            } else {
+                searchCount.style.display = 'none';
+            }
         }
     }
-}
 
-function clearSearch() {
-    document.getElementById('searchLayanan').value = '';
-    filterLayanan();
-}
+    function clearSearch() {
+        searchInput.value = '';
+        // Trigger input event biar filter jalan
+        searchInput.dispatchEvent(new Event('input'));
+        searchInput.focus();
+    }
 
-// Ganti fungsi bookingLayanan jadi:
-function bookingLayanan(serviceId) {
-    window.location.href = '/user/booking/new?layanan_id=' + encodeURIComponent(serviceId);
-}
+    // Attach event listener
+    if (searchInput) {
+        searchInput.addEventListener('input', filterLayanan);
+        // Run once on load
+        filterLayanan();
+    }
 
-// Run once on load
-filterLayanan();
+    // ═══════════════════════════════════════════════════════════════
+    // MOBILE SWIPE GESTURE SUPPORT (Tambahan untuk hamburger)
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Cek apakah base template udah punya swipe logic
+    if (typeof window.sidebarSwipeInitialized === 'undefined') {
+        window.sidebarSwipeInitialized = true;
+        
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let isScrolling = false;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            isScrolling = false;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            const touchY = e.changedTouches[0].screenY;
+            const touchX = e.changedTouches[0].screenX;
+            
+            // Detect scrolling vs horizontal swipe
+            if (Math.abs(touchY - touchStartY) > Math.abs(touchX - touchStartX)) {
+                isScrolling = true;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchend', function(e) {
+            if (isScrolling) return;
+            
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchEndX - touchStartX;
+            const swipeThreshold = 80;
+            
+            // Swipe right from left edge to open sidebar (hamburger)
+            if (diff > swipeThreshold && touchStartX < 30) {
+                // Trigger sidebar open dari base template
+                if (typeof openSidebar === 'function') {
+                    openSidebar();
+                }
+            }
+        }, { passive: true });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // SEARCH INPUT FOCUS HANDLING (Mobile keyboard fix)
+    // ═══════════════════════════════════════════════════════════════
+    
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            // Scroll ke search input biar nggak ketutupan keyboard
+            setTimeout(function() {
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+    }
+})();
 </script>
 {% endblock %}

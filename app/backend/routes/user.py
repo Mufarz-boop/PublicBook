@@ -121,7 +121,7 @@ def booking_new():
 @bp.route('/booking/create', methods=['POST'])
 @user_required
 def booking_create():
-    """API to create booking dengan nomor antrean otomatis"""
+    """Create booking dengan nomor antrean otomatis lalu redirect"""
     user_id = session.get('user_id')
     
     try:
@@ -133,12 +133,14 @@ def booking_create():
         
         # Validation
         if not all([layanan_id, nama_pendaftar, tanggal_booking, jam_booking]):
-            return jsonify({'success': False, 'message': 'Semua field wajib diisi'}), 400
+            flash('Semua field wajib diisi!', 'danger')
+            return redirect(url_for('user_routes.booking_new', layanan_id=layanan_id))
         
         # Validate service exists
         service = Service.get_by_id(layanan_id)
         if not service:
-            return jsonify({'success': False, 'message': 'Layanan tidak ditemukan'}), 404
+            flash('Layanan tidak ditemukan', 'danger')
+            return redirect(url_for('user_routes.layanan'))
         
         # Create booking (nomor antrean otomatis dari model)
         booking = Booking.create(
@@ -152,20 +154,21 @@ def booking_create():
         
         # Get queue info
         queue_info = Booking.get_queue_position(booking.id)
+        orang_di_depan = queue_info['orang_di_depan'] if queue_info else 0
         
-        return jsonify({
-            'success': True,
-            'message': f'Booking berhasil! Nomor antrean Anda: #{booking.nomor_antrian}',
-            'data': {
-                'no_booking': booking.no_booking,
-                'nomor_antrian': booking.nomor_antrian,
-                'orang_di_depan': queue_info['orang_di_depan'] if queue_info else 0,
-                'redirect_url': url_for('user_routes.booking')
-            }
-        })
+        # Flash pesan sukses dengan detail booking
+        flash(
+            f'Booking berhasil! Nomor antrean Anda: #{booking.nomor_antrian}. '
+            f'Ada {orang_di_depan} orang di depan Anda.', 
+            'success'
+        )
+        
+        # Redirect ke halaman detail booking (lebih bagus daripada ke list)
+        return redirect(url_for('user_routes.booking_detail', booking_id=booking.id))
         
     except Exception as e:
-        return jsonify({'success': False, 'message': f'Terjadi kesalahan: {str(e)}'}), 500
+        flash(f'Terjadi kesalahan: {str(e)}', 'danger')
+        return redirect(url_for('user_routes.layanan'))
     
 @bp.route('/layanan')
 @user_required
