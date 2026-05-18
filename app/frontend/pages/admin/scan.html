@@ -9,7 +9,7 @@
 {% block extra_css %}
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   SCANNER CAMERA STYLES
+   SCANNER CAMERA STYLES - FINAL OPTIMIZED
    ═══════════════════════════════════════════════════════════════ */
 .scanner-container {
     max-width: 700px;
@@ -49,33 +49,54 @@
     margin: 0 auto 20px;
     border-radius: 20px;
     overflow: hidden;
-    border: 3px solid #FF6B00;
-    background: #000;
+    border: 3px solid #e0e0e0;
+    background: #1a1a1a;
     aspect-ratio: 1;
+    min-height: 300px;
+    transition: border-color 0.3s ease;
 }
 
+.scanner-box.active {
+    border-color: #FF6B00;
+}
+
+/* Container html5-qrcode */
 #reader {
     width: 100% !important;
     height: 100% !important;
     border: none !important;
+    position: relative;
 }
 
 #reader video {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
+    display: block !important;
 }
 
-/* Hide default html5-qrcode elements */
-#reader__dashboard_section_csr span,
+/* Hide ALL default html5-qrcode UI elements */
+#reader * [id*="dashboard"],
+#reader * [class*="dashboard"],
+#reader__dashboard_section_csr,
 #reader__dashboard_section_swaplink,
 #reader__camera_permission_button,
-#reader__status_span {
+#reader__status_span,
+#reader__header_message,
+#reader__scan_region > img,
+#reader__scan_region > div:first-child:not(video) {
     display: none !important;
 }
 
 #reader__scan_region {
     background: transparent !important;
+    min-height: 100% !important;
+}
+
+#reader__scan_region video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
 }
 
 /* Custom Scan Overlay */
@@ -87,6 +108,12 @@
     bottom: 0;
     pointer-events: none;
     z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.scan-overlay.show {
+    opacity: 1;
 }
 
 .scan-frame {
@@ -158,51 +185,30 @@
     border-radius: 10px;
 }
 
-/* ── Camera Controls ── */
-.camera-controls {
+/* ── Camera OFF State ── */
+.camera-off-state {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.btn-camera {
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    display: inline-flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    color: #666;
+    z-index: 5;
 }
 
-.btn-camera-start {
-    background: linear-gradient(135deg, #FF6B00, #FF8C00);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(255,107,0,0.3);
+.camera-off-state i {
+    font-size: 64px;
+    color: #444;
+    margin-bottom: 15px;
 }
 
-.btn-camera-start:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255,107,0,0.4);
-}
-
-.btn-camera-stop {
-    background: #FFEBEE;
-    color: #D32F2F;
-}
-
-.btn-camera-stop:hover {
-    background: #FFCDD2;
-}
-
-.btn-camera:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none !important;
+.camera-off-state p {
+    font-size: 14px;
+    color: #888;
 }
 
 /* ── Status Badge ── */
@@ -215,6 +221,7 @@
     font-size: 13px;
     font-weight: 500;
     margin-top: 15px;
+    transition: all 0.3s ease;
 }
 
 .scan-status.active {
@@ -227,6 +234,11 @@
     color: #FF6B00;
 }
 
+.scan-status.error {
+    background: #FFEBEE;
+    color: #D32F2F;
+}
+
 .scan-status .dot {
     width: 8px;
     height: 8px;
@@ -235,9 +247,111 @@
     animation: blink 1s ease infinite;
 }
 
+.scan-status.active .dot {
+    animation: blink 1s ease infinite;
+}
+
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
+}
+
+/* ── TOGGLE SWITCH (Tombol On/Off) ── */
+.camera-toggle-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.camera-toggle-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.camera-toggle-label.on {
+    color: #FF6B00;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 70px;
+    height: 36px;
+    background: #e0e0e0;
+    border-radius: 36px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border: none;
+    outline: none;
+    padding: 0;
+}
+
+.toggle-switch.on {
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.on::after {
+    transform: translateX(34px);
+}
+
+.toggle-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #fff;
+    pointer-events: none;
+}
+
+.toggle-icon.off {
+    left: 10px;
+    opacity: 1;
+    transition: opacity 0.2s;
+}
+
+.toggle-icon.on {
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.toggle-switch.on .toggle-icon.off {
+    opacity: 0;
+}
+
+.toggle-switch.on .toggle-icon.on {
+    opacity: 1;
+}
+
+/* Loading spinner */
+.toggle-switch.loading {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.toggle-switch.loading::after {
+    animation: togglePulse 1s ease infinite;
+}
+
+@keyframes togglePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(0.9); }
 }
 
 /* ── Result Modal ── */
@@ -536,6 +650,10 @@
     .result-card {
         padding: 35px 25px;
     }
+    
+    .camera-toggle-label {
+        font-size: 13px;
+    }
 }
 </style>
 {% endblock %}
@@ -545,7 +663,7 @@
 
     <div class="camera-section">
         <div class="camera-header">
-            <h2><i class="fas fa-camera" style="color: #FF6B00; margin-right: 8px;"></i>Scan QR Code</h2>
+            <h2><i class="fas fa-qrcode" style="color: #FF6B00; margin-right: 8px;"></i>Scan QR Code</h2>
             <p>Arahkan kamera ke QR Code booking untuk menyelesaikan layanan</p>
         </div>
 
@@ -553,7 +671,13 @@
         <div class="scanner-box" id="scannerBox">
             <div id="reader"></div>
             
-            <!-- Custom Overlay -->
+            <!-- Camera OFF State -->
+            <div class="camera-off-state" id="cameraOffState">
+                <i class="fas fa-video-slash"></i>
+                <p>Kamera dimatikan</p>
+            </div>
+            
+            <!-- Custom Overlay (hanya muncul saat aktif) -->
             <div class="scan-overlay" id="scanOverlay">
                 <div class="scan-frame">
                     <div class="scan-line"></div>
@@ -571,14 +695,14 @@
             <span id="statusText">Kamera mati</span>
         </div>
 
-        <!-- Controls -->
-        <div class="camera-controls" style="margin-top: 20px;">
-            <button class="btn-camera btn-camera-start" id="btnStart" onclick="startScanner()">
-                <i class="fas fa-play"></i> Mulai Scan
+        <!-- TOGGLE SWITCH (Tombol On/Off) -->
+        <div class="camera-toggle-container">
+            <span class="camera-toggle-label" id="toggleLabelOff">OFF</span>
+            <button class="toggle-switch" id="cameraToggle" onclick="toggleCamera()">
+                <span class="toggle-icon off"><i class="fas fa-power-off"></i></span>
+                <span class="toggle-icon on"><i class="fas fa-video"></i></span>
             </button>
-            <button class="btn-camera btn-camera-stop" id="btnStop" onclick="stopScanner()" style="display: none;">
-                <i class="fas fa-stop"></i> Berhenti
-            </button>
+            <span class="camera-toggle-label on" id="toggleLabelOn" style="opacity: 0.3;">ON</span>
         </div>
 
         <!-- Manual Fallback -->
@@ -622,112 +746,194 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-// QR CAMERA SCANNER
+// QR CAMERA SCANNER - AUTO START BACK CAMERA + TOGGLE SWITCH
 // ═══════════════════════════════════════════════════════════════
 
 let html5QrCode = null;
 let isScanning = false;
-let lastScan = ''; // Prevent duplicate scans
+let lastScan = '';
 let scanCooldown = false;
+let isToggling = false;
 
 const scannerBox = document.getElementById('scannerBox');
+const cameraOffState = document.getElementById('cameraOffState');
 const scanOverlay = document.getElementById('scanOverlay');
-const btnStart = document.getElementById('btnStart');
-const btnStop = document.getElementById('btnStop');
+const cameraToggle = document.getElementById('cameraToggle');
+const toggleLabelOff = document.getElementById('toggleLabelOff');
+const toggleLabelOn = document.getElementById('toggleLabelOn');
 const scanStatus = document.getElementById('scanStatus');
 const statusText = document.getElementById('statusText');
 const beepSound = document.getElementById('beepSound');
 
-function updateStatus(active, text) {
-    scanStatus.className = 'scan-status ' + (active ? 'active' : 'inactive');
+function updateStatus(state, text) {
+    scanStatus.className = 'scan-status ' + state;
     statusText.textContent = text;
 }
 
-function startScanner() {
-    if (isScanning) return;
-    
-    html5QrCode = new Html5Qrcode("reader");
-    
-    const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
-    };
-    
-    html5QrCode.start(
-        { facingMode: "environment" }, // Use back camera on mobile
-        config,
-        onScanSuccess,
-        onScanFailure
-    ).then(() => {
-        isScanning = true;
-        btnStart.style.display = 'none';
-        btnStop.style.display = 'inline-flex';
-        updateStatus(true, 'Mencari QR Code...');
-        scanOverlay.style.display = 'block';
-    }).catch(err => {
-        console.error("Start failed:", err);
-        showResult('error', 'Gagal Memulai', 'Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.', null);
-    });
+function updateToggleUI(isOn) {
+    if (isOn) {
+        cameraToggle.classList.add('on');
+        toggleLabelOff.style.opacity = '0.3';
+        toggleLabelOn.style.opacity = '1';
+        scannerBox.classList.add('active');
+        cameraOffState.style.display = 'none';
+        scanOverlay.classList.add('show');
+    } else {
+        cameraToggle.classList.remove('on');
+        toggleLabelOff.style.opacity = '1';
+        toggleLabelOn.style.opacity = '0.3';
+        scannerBox.classList.remove('active');
+        cameraOffState.style.display = 'flex';
+        scanOverlay.classList.remove('show');
+    }
 }
 
-function stopScanner() {
+// Dapatkan kamera belakang
+async function getBackCamera() {
+    try {
+        const devices = await Html5Qrcode.getCameras();
+        if (devices && devices.length) {
+            // Cari kamera belakang
+            const backCamera = devices.find(d => 
+                d.label.toLowerCase().includes('back') || 
+                d.label.toLowerCase().includes('belakang') ||
+                d.label.toLowerCase().includes('environment') ||
+                d.label.toLowerCase().includes('rear')
+            );
+            return backCamera ? backCamera.id : devices[devices.length - 1].id;
+        }
+    } catch (err) {
+        console.warn('Gagal mendapatkan daftar kamera:', err);
+    }
+    return null;
+}
+
+async function startScanner() {
+    if (isScanning || isToggling) return;
+    
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showResult('error', 'Tidak Didukung', 'Browser tidak mendukung akses kamera.', null);
+        return;
+    }
+    
+    isToggling = true;
+    cameraToggle.classList.add('loading');
+    updateStatus('inactive', 'Memulai kamera...');
+    
+    try {
+        const cameraId = await getBackCamera();
+        
+        html5QrCode = new Html5Qrcode("reader");
+        
+        const config = {
+            fps: 15,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            disableFlip: false,
+            videoConstraints: {
+                width: { min: 640, ideal: 1280 },
+                height: { min: 480, ideal: 720 },
+                facingMode: cameraId ? undefined : "environment"
+            }
+        };
+        
+        const cameraConfig = cameraId ? { deviceId: { exact: cameraId } } : { facingMode: "environment" };
+        
+        await html5QrCode.start(
+            cameraConfig,
+            config,
+            onScanSuccess,
+            onScanFailure
+        );
+        
+        isScanning = true;
+        updateToggleUI(true);
+        updateStatus('active', 'Mencari QR Code...');
+        
+    } catch (err) {
+        console.error("Start failed:", err);
+        
+        let errorMsg = 'Tidak dapat mengakses kamera.';
+        let errorTitle = 'Gagal Memulai';
+        
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            errorMsg = 'Izin kamera ditolak. Izinkan akses kamera di pengaturan browser.';
+            errorTitle = 'Izin Ditolak';
+        } else if (err.name === 'NotFoundError') {
+            errorMsg = 'Tidak ada kamera yang terdeteksi.';
+            errorTitle = 'Kamera Tidak Ditemukan';
+        } else if (err.name === 'NotReadableError') {
+            errorMsg = 'Kamera sedang digunakan aplikasi lain.';
+            errorTitle = 'Kamera Sibuk';
+        }
+        
+        showResult('error', errorTitle, errorMsg, null);
+        updateStatus('error', 'Gagal memulai');
+        updateToggleUI(false);
+    } finally {
+        isToggling = false;
+        cameraToggle.classList.remove('loading');
+    }
+}
+
+async function stopScanner() {
     if (!html5QrCode || !isScanning) return;
     
-    html5QrCode.stop().then(() => {
-        isScanning = false;
-        btnStart.style.display = 'inline-flex';
-        btnStop.style.display = 'none';
-        updateStatus(false, 'Kamera mati');
-        scanOverlay.style.display = 'none';
-        html5QrCode.clear();
+    isToggling = true;
+    cameraToggle.classList.add('loading');
+    
+    try {
+        await html5QrCode.stop();
+        await html5QrCode.clear();
         html5QrCode = null;
-    }).catch(err => {
+        isScanning = false;
+        updateToggleUI(false);
+        updateStatus('inactive', 'Kamera mati');
+    } catch (err) {
         console.error("Stop failed:", err);
-    });
+    } finally {
+        isToggling = false;
+        cameraToggle.classList.remove('loading');
+    }
+}
+
+function toggleCamera() {
+    if (isToggling) return;
+    
+    if (isScanning) {
+        stopScanner();
+    } else {
+        startScanner();
+    }
 }
 
 function onScanSuccess(decodedText, decodedResult) {
-    // Prevent duplicate scans within 3 seconds
     if (scanCooldown || decodedText === lastScan) return;
     
     lastScan = decodedText;
     scanCooldown = true;
     
-    // Play beep sound
     beepSound.currentTime = 0;
     beepSound.play().catch(() => {});
     
-    // Extract booking number from URL or text
     let noBooking = decodedText;
-    
-    // If QR contains full URL like http://.../scan/PB-XXX
     const match = decodedText.match(/\/scan\/([A-Z0-9-]+)/i);
-    if (match) {
-        noBooking = match[1];
-    }
+    if (match) noBooking = match[1];
     
-    // Clean up
     noBooking = noBooking.toUpperCase().trim();
     
-    // Stop scanner temporarily
-    updateStatus(true, 'Memproses...');
-    
-    // Send to server
+    updateStatus('active', 'Memproses...');
     processBooking(noBooking);
     
-    // Reset cooldown after 3 seconds
     setTimeout(() => {
         scanCooldown = false;
         lastScan = '';
-        if (isScanning) {
-            updateStatus(true, 'Mencari QR Code...');
-        }
+        if (isScanning) updateStatus('active', 'Mencari QR Code...');
     }, 3000);
 }
 
 function onScanFailure(error) {
-    // Ignore scan failures (normal when no QR in frame)
+    // Normal - QR tidak terdeteksi dalam frame
 }
 
 function processManual() {
@@ -841,7 +1047,6 @@ function showResult(type, title, message, booking) {
     
     overlay.classList.add('show');
     
-    // Auto close success after 2.5s
     if (type === 'success') {
         setTimeout(() => closeResult(), 2500);
     }
@@ -871,7 +1076,19 @@ function createConfetti() {
     }
 }
 
-// Cleanup on page leave
+// ═══════════════════════════════════════════════════════════════
+// AUTO START BACK CAMERA ON PAGE LOAD
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Delay sedikit agar halaman selesai render
+    setTimeout(() => {
+        // Coba auto-start kamera belakang
+        startScanner();
+    }, 800);
+});
+
+// Cleanup saat meninggalkan halaman
 window.addEventListener('beforeunload', () => {
     if (html5QrCode && isScanning) {
         html5QrCode.stop().catch(() => {});

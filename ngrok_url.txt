@@ -1,0 +1,1 @@
+NgrokTunnel: "https://sterile-outbreak-ecology.ngrok-free.dev" -> "http://localhost:5000"/scan
