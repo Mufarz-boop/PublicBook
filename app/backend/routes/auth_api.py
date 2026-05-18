@@ -62,36 +62,36 @@ def api_register():
     email = (payload.get('email') or '').strip().lower()
     telepon = (payload.get('nomor_telepon') or payload.get('telepon') or '').strip()
     password = payload.get('password') or ''
-    
+
     if not all([nama, email, telepon, password]):
         return jsonify({'ok': False, 'message': 'Data tidak lengkap'}), 400
-    
+
     if len(password) < 6:
         return jsonify({'ok': False, 'message': 'Password minimal 6 karakter'}), 400
-    
+
     db_session = get_db()
     user, colset, _ = _get_user_by_email(db_session, email)
-    
+
     if user:
         return jsonify({'ok': False, 'message': 'Email sudah terdaftar'}), 409
-    
+
     actual = {}
     if 'email' in colset: actual['email'] = email
     if 'nama_lengkap' in colset: actual['nama_lengkap'] = nama
     elif 'nama' in colset: actual['nama'] = nama
     if 'nomor_telepon' in colset: actual['nomor_telepon'] = telepon
     elif 'telepon' in colset: actual['telepon'] = telepon
-    
+
     pw_col = 'password' if 'password' in colset else ('password_hash' if 'password_hash' in colset else None)
     if not pw_col:
         return jsonify({'ok': False, 'message': 'Kolom password tidak ditemukan'}), 500
-    
+
     actual[pw_col] = hash_password(password)
     if 'status' in colset: actual['status'] = 'active'
-    
+
     keys = ', '.join(actual.keys())
     placeholders = ', '.join([f':{k}' for k in actual.keys()])
-    
+
     try:
         db_session.execute(text(f"INSERT INTO users ({keys}) VALUES ({placeholders})"), actual)
         db_session.commit()
@@ -105,12 +105,12 @@ def api_login():
     payload = request.get_json(silent=True) or {}
     email = (payload.get('email') or '').strip().lower()
     password = payload.get('password') or ''
-    
+
     if not email or not password:
         return jsonify({'ok': False, 'message': 'Email dan password wajib diisi'}), 400
-    
+
     db_session = get_db()
-    
+
     # ─────────────────────────────────────────────────────────────
     # CEK ADMIN LOGIN
     # ─────────────────────────────────────────────────────────────
@@ -126,12 +126,12 @@ def api_login():
             session['user_nama'] = admin.get('nama', 'Admin')
             session['user_email'] = admin.get('email', email)
             session['user_avatar'] = admin.get('avatar')
-            
+
             # ═══════════════════════════════════════════════════════
             # CATAT RIWAYAT LOGIN ADMIN BERHASIL
             # ═══════════════════════════════════════════════════════
             catat_login_history(admin_id=admin['id'], status='success')
-            
+
             return jsonify({
                 'ok': True,
                 'message': 'Login berhasil',
@@ -142,7 +142,7 @@ def api_login():
             # Password salah - catat login gagal
             catat_login_history(admin_id=admin['id'], status='failed')
             return jsonify({'ok': False, 'message': 'Email atau password salah'}), 401
-    
+
     # ─────────────────────────────────────────────────────────────
     # CEK USER LOGIN
     # ─────────────────────────────────────────────────────────────
@@ -157,12 +157,12 @@ def api_login():
             session['user_nama'] = user.get('nama') or user.get('nama_lengkap', 'User')
             session['user_email'] = user.get('email', email)
             session['user_avatar'] = user.get('avatar')
-            
+
             # ═══════════════════════════════════════════════════════
             # CATAT RIWAYAT LOGIN USER BERHASIL
             # ═══════════════════════════════════════════════════════
             catat_login_history(user_id=user['id'], status='success')
-            
+
             return jsonify({
                 'ok': True,
                 'message': 'Login berhasil',
@@ -173,7 +173,7 @@ def api_login():
             # Password salah - catat login gagal
             catat_login_history(user_id=user['id'], status='failed')
             return jsonify({'ok': False, 'message': 'Email atau password salah'}), 401
-    
+
     # Email tidak ditemukan
     return jsonify({'ok': False, 'message': 'Email atau password salah'}), 401
 
@@ -182,42 +182,45 @@ def api_logout():
     session.clear()
     return jsonify({'ok': True, 'message': 'Logout berhasil'}), 200
 
-@bp.route('/forgot-password', methods=['POST'])
-def api_forgot_password():
+# ═══════════════════════════════════════════════════════════════════
+# CHECK EMAIL — untuk forgot password (tanpa OTP)
+# ═══════════════════════════════════════════════════════════════════
+@bp.route('/check-email', methods=['POST'])
+def api_check_email():
     payload = request.get_json(silent=True) or {}
     email = (payload.get('email') or '').strip().lower()
-    
+
     if not email:
         return jsonify({'ok': False, 'message': 'Email wajib diisi'}), 400
-    
+
     db_session = get_db()
     user, _, _ = _get_user_by_email(db_session, email)
     admin = _get_admin_by_email(db_session, email)
-    
-    if not user and not admin:
-        return jsonify({'ok': False, 'message': 'Email tidak ditemukan'}), 404
-    
-    return jsonify({'ok': True, 'message': 'Kode verifikasi terkirim (demo: 123456)', 'demo_code': '123456'}), 200
 
+    if not user and not admin:
+        return jsonify({'ok': False, 'message': 'Email tidak terdaftar'}), 404
+
+    return jsonify({'ok': True, 'exists': True, 'message': 'Email ditemukan'}), 200
+
+# ═══════════════════════════════════════════════════════════════════
+# RESET PASSWORD — tanpa OTP
+# ═══════════════════════════════════════════════════════════════════
 @bp.route('/reset-password', methods=['POST'])
 def api_reset_password():
     payload = request.get_json(silent=True) or {}
     email = (payload.get('email') or '').strip().lower()
-    otp = (payload.get('otp') or '').strip()
     new_password = payload.get('new_password') or ''
-    
-    if not email or not otp or not new_password:
-        return jsonify({'ok': False, 'message': 'Data tidak lengkap'}), 400
-    
+
+    if not email or not new_password:
+        return jsonify({'ok': False, 'message': 'Email dan password baru wajib diisi'}), 400
+
     if len(new_password) < 6:
         return jsonify({'ok': False, 'message': 'Password minimal 6 karakter'}), 400
-    
-    if otp != '123456':
-        return jsonify({'ok': False, 'message': 'Kode verifikasi salah'}), 400
-    
+
     db_session = get_db()
+
+    # Cek di tabel users dulu
     user, colset, pw_col = _get_user_by_email(db_session, email)
-    
     if user and pw_col:
         db_session.execute(
             text(f"UPDATE users SET {pw_col} = :pw WHERE email = :email"),
@@ -225,7 +228,8 @@ def api_reset_password():
         )
         db_session.commit()
         return jsonify({'ok': True, 'message': 'Password berhasil direset'}), 200
-    
+
+    # Cek di tabel admins
     admin = _get_admin_by_email(db_session, email)
     if admin:
         pw_col = 'password' if 'password' in admin else 'password_hash'
@@ -235,5 +239,5 @@ def api_reset_password():
         )
         db_session.commit()
         return jsonify({'ok': True, 'message': 'Password berhasil direset'}), 200
-    
+
     return jsonify({'ok': False, 'message': 'Email tidak ditemukan'}), 404
