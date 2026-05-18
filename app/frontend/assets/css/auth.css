@@ -464,3 +464,135 @@
         height: 72px;
       }
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+   HOME LINK — di bawah register row
+   ═══════════════════════════════════════════════════════════════ */
+
+.home-row {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #9ca3af;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.25s ease;
+  background: #ffffff;
+}
+
+.home-link i {
+  font-size: 13px;
+  color: #ea580c;
+  transition: transform 0.25s ease;
+}
+
+.home-link:hover {
+  color: #ea580c;
+  background: #fff7ed;
+  border-color: #fed7aa;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
+}
+
+.home-link:hover i {
+  transform: scale(1.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE: Mobile
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .home-link {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOTTOM LINKS — Register + Home (compact layout)
+   ═══════════════════════════════════════════════════════════════ */
+
+.bottom-links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Register text */
+.register-row {
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.register-row a {
+  color: #ea580c;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.register-row a:hover {
+  color: #c2410c;
+  text-decoration: underline;
+}
+
+/* Home link button */
+.home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.25s ease;
+  background: #ffffff;
+}
+
+.home-link i {
+  font-size: 12px;
+  color: #ea580c;
+  transition: transform 0.25s ease;
+}
+
+.home-link:hover {
+  color: #ea580c;
+  background: #fff7ed;
+  border-color: #fed7aa;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.08);
+}
+
+.home-link:hover i {
+  transform: scale(1.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE: Mobile
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .bottom-links {
+    margin-top: 16px;
+    gap: 8px;
+  }
+
+  .home-link {
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+}

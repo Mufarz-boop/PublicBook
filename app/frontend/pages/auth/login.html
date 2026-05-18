@@ -72,16 +72,15 @@
 
       </form>
 
-      <!-- Divider -->
-      <div class="divider">
-        <div class="divider-line"></div>
-        <span class="divider-text">atau</span>
-        <div class="divider-line"></div>
-      </div>
-
-      <!-- Register -->
-      <div class="register-row">
-        Belum punya akun? <a href="{{ url_for('auth_routes.register_page')}}">Daftar sekarang</a>
+      <!-- Bottom Links -->
+      <div class="bottom-links">
+        <div class="register-row">
+          Belum punya akun? <a href="{{ url_for('auth_routes.register_page')}}">Daftar sekarang</a>
+        </div>
+        <a href="{{ url_for('static_routes.index') }}" class="home-link">
+          <i class="fas fa-home"></i>
+          Kembali ke Beranda
+        </a>
       </div>
     </div>
   </div>
