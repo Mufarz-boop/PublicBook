@@ -462,6 +462,123 @@
             background: rgba(255, 107, 0, 0.2);
             border-radius: 4px;
         }
+
+        /* ========== CUSTOM LOGOUT MODAL ========== */
+        .logout-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+        }
+
+        .logout-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .logout-modal {
+            background: #fff;
+            border-radius: 24px;
+            padding: 35px 30px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .logout-modal-overlay.show .logout-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .logout-modal-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: pulseIcon 2s ease infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logout-modal-icon i {
+            font-size: 28px;
+            color: #FF6B00;
+        }
+
+        .logout-modal h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .logout-modal p {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .logout-modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .logout-modal-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            outline: none;
+        }
+
+        .logout-modal-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .logout-modal-btn.cancel:hover {
+            background: #eeeeee;
+            transform: translateY(-2px);
+        }
+
+        .logout-modal-btn.confirm {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .logout-modal-btn.confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .logout-modal-btn:active {
+            transform: scale(0.96);
+        }
     </style>
 </head>
 <body>
@@ -651,6 +768,9 @@
                 if (e.key === 'Escape' && isSidebarOpen) {
                     closeSidebar();
                 }
+                if (e.key === 'Escape' && document.getElementById('logoutModal')) {
+                    closeLogoutModal();
+                }
             });
             
             // Resize handler
@@ -724,15 +844,54 @@
             
             window.addEventListener('load', hideTransition);
             
+            // ========== CUSTOM LOGOUT MODAL ==========
+            let logoutHref = '';
+            
             window.confirmLogout = function(e) {
                 e.preventDefault();
-                if (confirm('Yakin mau logout?')) {
-                    showTransition();
-                    setTimeout(function() {
-                        window.location.href = e.target.closest('a').href;
-                    }, 300);
+                logoutHref = e.target.closest('a').href;
+                
+                // Buat modal kalau belum ada
+                if (!document.getElementById('logoutModal')) {
+                    const modalHTML = `
+                        <div class="logout-modal-overlay" id="logoutModal">
+                            <div class="logout-modal">
+                                <div class="logout-modal-icon">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </div>
+                                <h3>Mau Keluar Nih?</h3>
+                                <p>Yakin mau logout dari PublicBook? Nanti harus login lagi loh buat balik~</p>
+                                <div class="logout-modal-actions">
+                                    <button class="logout-modal-btn cancel" onclick="closeLogoutModal()">Ehh, Gajadi</button>
+                                    <button class="logout-modal-btn confirm" onclick="proceedLogout()">Iya, Logout</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.body.insertAdjacentHTML('beforeend', modalHTML);
                 }
+                
+                // Show modal dengan delay kecil biar animasi smooth
+                requestAnimationFrame(function() {
+                    document.getElementById('logoutModal').classList.add('show');
+                });
+                
                 return false;
+            };
+            
+            window.closeLogoutModal = function() {
+                const modal = document.getElementById('logoutModal');
+                if (modal) {
+                    modal.classList.remove('show');
+                }
+            };
+            
+            window.proceedLogout = function() {
+                closeLogoutModal();
+                showTransition();
+                setTimeout(function() {
+                    window.location.href = logoutHref;
+                }, 300);
             };
         })();
     </script>

@@ -6,6 +6,8 @@ from database.database import init_db, close_db, get_db
 from sqlalchemy import text
 from datetime import datetime
 import os
+import ssl
+import subprocess
 
 env = os.getenv('ENV', 'development')
 
@@ -15,6 +17,45 @@ app = Flask(
     static_folder='../frontend/assets'
 )
 app.config.from_object(config_by_publicbook[env])
+
+# ═══════════════════════════════════════════════════════════════════
+# SSL CERTIFICATE GENERATOR (Auto HTTPS)
+# ═══════════════════════════════════════════════════════════════════
+CERT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'certs')
+CERT_FILE = os.path.join(CERT_DIR, 'cert.pem')
+KEY_FILE = os.path.join(CERT_DIR, 'key.pem')
+
+def generate_ssl_cert():
+    """Generate self-signed SSL certificate kalau belum ada"""
+    if os.path.exists(CERT_FILE) and os.path.exists(KEY_FILE):
+        print("✅ SSL Certificate sudah ada!")
+        return True
+    
+    print("🔐 Generating SSL Certificate...")
+    os.makedirs(CERT_DIR, exist_ok=True)
+    
+    try:
+        # Generate dengan OpenSSL
+        subprocess.run([
+            'openssl', 'req', '-x509', '-newkey', 'rsa:4096',
+            '-nodes', '-out', CERT_FILE, '-keyout', KEY_FILE,
+            '-days', '365',
+            '-subj', '/CN=localhost/O=PublicBook/C=ID',
+            '-addext', 'subjectAltName=DNS:localhost,IP:192.168.1.21,IP:127.0.0.1'
+        ], check=True, capture_output=True)
+        
+        print(f"✅ SSL Certificate generated!")
+        print(f"   📄 Cert: {CERT_FILE}")
+        print(f"   🔑 Key:  {KEY_FILE}")
+        return True
+        
+    except FileNotFoundError:
+        print("❌ OpenSSL tidak ditemukan di PATH!")
+        print("   Install OpenSSL: https://slproweb.com/products/Win32OpenSSL.html")
+        return False
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Gagal generate certificate: {e}")
+        return False
 
 # ═══════════════════════════════════════════════════════════════════
 # KONFIGURASI UPLOAD FOTO
