@@ -5,7 +5,6 @@ from models.admin import Admin
 from database.database import get_db
 from sqlalchemy import text
 from datetime import datetime
-import re  # 🔥 TAMBAHIN INI
 
 bp = Blueprint('scan_routes', __name__, url_prefix='/scan')
 
@@ -37,41 +36,27 @@ def scan_admin_required(f):
 @bp.route('/api/scan', methods=['POST'])
 @scan_admin_required
 def api_scan_qr():
-    """
-    API endpoint untuk scan QR via AJAX.
-    Hanya menerima format PB-XXXXXX (6 karakter alphanumeric).
-    """
+    """API endpoint untuk scan QR via AJAX"""
     data = request.get_json()
+    no_booking = data.get('no_booking', '').strip().upper()
     
-    if not data:
+    if not no_booking:
         return jsonify({
             'success': False,
             'status': 'invalid',
-            'message': 'Request body tidak valid',
+            'message': 'Nomor booking tidak valid',
             'booking': None
-        }), 400
+        })
     
-    no_booking = data.get('no_booking', '').strip().upper()
-    
-    # 🔥 VALIDASI FORMAT: Harus PB- + 6 karakter alphanumeric
-    if not re.match(r'^PB-[A-Z0-9]{6}$', no_booking):
-        return jsonify({
-            'success': False,
-            'status': 'invalid_format',
-            'message': f'Format nomor booking tidak valid. Harus PB-XXXXXX (6 karakter). Yang diterima: {no_booking}',
-            'booking': None
-        }), 400
-    
-    # Cari booking di database
     booking = Booking.get_by_booking_number(no_booking)
     
     if not booking:
         return jsonify({
             'success': False,
             'status': 'not_found',
-            'message': f'Booking "{no_booking}" tidak ditemukan dalam database. Pastikan QR Code berasal dari aplikasi PublicBook.',
+            'message': f'Booking "{no_booking}" tidak ditemukan',
             'booking': None
-        }), 404
+        })
     
     # Cek apakah sudah selesai
     if booking.status == 'selesai':
@@ -135,32 +120,23 @@ def api_scan_qr():
             'status': 'error',
             'message': 'Gagal mengupdate status booking',
             'booking': None
-        }), 500
+        })
 
 # ═══════════════════════════════════════════════════════════════════
 # ROUTE: Scan QR Langsung via URL (untuk scan dari HP/external)
 # ═══════════════════════════════════════════════════════════════════
-@bp.route('/<<no_booking>')
+@bp.route('/<no_booking>')
 @scan_admin_required
 def scan_qr(no_booking):
     """
     Endpoint untuk scan QR Code via URL langsung.
-    Format: /scan/PB-XXXXXX
+    Hanya bisa diakses oleh admin yang sudah login.
     """
-    no_booking = no_booking.strip().upper()
-    
-    # 🔥 VALIDASI FORMAT di URL juga
-    if not re.match(r'^PB-[A-Z0-9]{6}$', no_booking):
-        return render_template('scan/result.html', 
-                             message=f'Format nomor booking tidak valid: {no_booking}',
-                             status='invalid_format',
-                             is_admin=True), 400
-    
     booking = Booking.get_by_booking_number(no_booking)
     
     if not booking:
         return render_template('scan/result.html', 
-                             message=f'Booking "{no_booking}" tidak ditemukan',
+                             message='Booking tidak ditemukan',
                              status='not_found',
                              is_admin=True), 404
     
