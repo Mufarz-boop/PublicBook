@@ -1,6 +1,7 @@
 app/
     backend/
         database/
+            __init__.py
             database.py
         models/
             admin.py
@@ -22,6 +23,7 @@ app/
             python test.py
         utils/
             __init__.py
+            login_history.py
             password.py
         app.py
         config.py
@@ -31,23 +33,20 @@ app/
             css/
                 admin.css
                 auth.css
-                components.css
-                global.css
-                user.css
+                forgot_password.css
+                register.css
             images/
-                avatars/
                 bg/
                     Background PublicBook.jpg
                     background1.jpeg
+                    background2.jpg
                     login side.jpg
+                    nomor1.jpg
                 icons/
                     Afdal Adha Firnansyah.png
                     Icon PublicBook.jpg
                     PublicBook Icon2.png
                     PublicBook.png
-                uploads/
-                    cover/
-                    profil/
             js/
                 api.js
                 auth.js
@@ -55,6 +54,9 @@ app/
                 dashboard.js
                 main.js
                 queue.js
+            uploads/
+                cover/
+                profil/
         pages/
             admin/
                 base.html
@@ -86,6 +88,7 @@ app/
                 dashboard.html
                 layanan.html
                 profil.html
+                receipt.html
             index.html
 publicbook/ <-env
 .env

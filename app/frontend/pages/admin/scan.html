@@ -9,21 +9,6 @@
 {% block extra_css %}
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   GLOBAL SCROLLBAR HIDE (tetep bisa scroll)
-   ═══════════════════════════════════════════════════════════════ */
-html, body {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    overflow: auto;
-}
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-}
-
-/* ═══════════════════════════════════════════════════════════════
    SCANNER STYLES - MODERN REDESIGN (NO MIRROR FIX)
    ═══════════════════════════════════════════════════════════════ */
 
@@ -107,6 +92,7 @@ body::-webkit-scrollbar {
     height: 100% !important;
     object-fit: cover !important;
     display: block !important;
+    /* 🔥 PENTING: Hapus mirror effect */
     transform: scaleX(1) !important;
     -webkit-transform: scaleX(1) !important;
 }
@@ -555,7 +541,6 @@ video {
     inset: 0;
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -564,15 +549,6 @@ video {
     visibility: hidden;
     transition: all 0.35s ease;
     padding: 20px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    overflow-y: auto;
-}
-
-.result-backdrop::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
 }
 
 .result-backdrop.show {
@@ -815,14 +791,7 @@ video {
 .debug-box .dbg-logs {
     max-height: 100px;
     overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.debug-box .dbg-logs::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
+    line-height: 1.6;
 }
 
 /* ── Responsive ── */
@@ -1027,113 +996,6 @@ function debug(msg, type = 'info') {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// QR VALIDATION SYSTEM - HANYA TERIMA QR DARI APLIKASI PUBLICBOOK
-// ═══════════════════════════════════════════════════════════════
-
-// Format yang valid: PB-XXXXXX (6 karakter alphanumeric)
-const VALID_BOOKING_PATTERN = /^PB-[A-Z0-9]{6}$/i;
-
-// Signature aplikasi untuk verifikasi QR asli
-const APP_SIGNATURE = 'PUBLICBOOK';
-
-// Daftar pattern QR dari aplikasi lain yang harus ditolak
-const SUSPICIOUS_PATTERNS = [
-    /^(http|https):\/\//i,       // URL random
-    /^WIFI:/i,                    // WiFi QR
-    /^BEGIN:VCARD/i,              // Contact QR
-    /^MATMSG:/i,                  // Email QR
-    /^SMSTO:/i,                   // SMS QR
-    /^tel:/i,                     // Phone QR
-    /^geo:/i,                     // Location QR
-    /^BEGIN:VCALENDAR/i,          // Calendar QR
-    /^bitcoin:/i,                 // Bitcoin QR
-    /^upi:\/\//i,                 // UPI Payment QR
-    /^market:\/\//i,             // Play Store QR
-    /^itms-apps:\/\//i,          // App Store QR
-    /^fb:\/\//i,                  // Facebook QR
-    /^instagram:\/\//i,           // Instagram QR
-    /^whatsapp:\/\//i,            // WhatsApp QR
-    /^weixin:\/\//i,              // WeChat QR
-    /^line:\/\//i,                // LINE QR
-    /^twitter:\/\//i,             // Twitter QR
-    /^linkedin:\/\//i,            // LinkedIn QR
-    /^spotify:\/\//i,             // Spotify QR
-    /^youtube:\/\//i,             // YouTube QR
-    /^tiktok:\/\//i,              // TikTok QR
-    /^shopee:\/\//i,              // Shopee QR
-    /^tokopedia:\/\//i,           // Tokopedia QR
-    /^gojek:\/\//i,               // Gojek QR
-    /^grab:\/\//i,                // Grab QR
-    /^dana:\/\//i,                // DANA QR
-    /^ovo:\/\//i,                 // OVO QR
-    /^gopay:\/\//i,               // GoPay QR
-    /^linkaja:\/\//i,             // LinkAja QR
-    /^shopeepay:\/\//i,           // ShopeePay QR
-    /^bca:\/\//i,                 // BCA QR
-    /^bni:\/\//i,                 // BNI QR
-    /^bri:\/\//i,                 // BRI QR
-    /^mandiri:\/\//i,             // Mandiri QR
-    /^jenius:\/\//i,              // Jenius QR
-    /^livin:\/\//i,               // Livin QR
-    /^blu:\/\//i,                 // Blu QR
-    /^sakuku:\/\//i,              // Sakuku QR
-    /^tcash:\/\//i,               // TCash QR
-    /^flip:\/\//i,                // Flip QR
-    /^payfazz:\/\//i,             // Payfazz QR
-    /^kredivo:\/\//i,             // Kredivo QR
-    /^akulaku:\/\//i,             // Akulaku QR
-    /^indodana:\/\//i,            // Indodana QR
-    /^homecredit:\/\//i,          // Home Credit QR
-    /^traveloka:\/\//i,           // Traveloka QR
-    /^tiket:\/\//i,               // Tiket.com QR
-    /^booking:\/\//i,             // Booking.com QR
-    /^agoda:\/\//i,               // Agoda QR
-    /^airbnb:\/\//i,              // Airbnb QR
-    /^netflix:\/\//i,             // Netflix QR
-    /^disneyplus:\/\//i,          // Disney+ QR
-    /^primevideo:\/\//i,          // Prime Video QR
-    /^hbo:\/\//i,                 // HBO QR
-    /^applemusic:\/\//i,          // Apple Music QR
-    /^joox:\/\//i,                // JOOX QR
-    /^resso:\/\//i,               // Resso QR
-    /^deezer:\/\//i,              // Deezer QR
-    /^tidal:\/\//i,               // Tidal QR
-    /^soundcloud:\/\//i,          // SoundCloud QR
-    /^bandcamp:\/\//i,            // Bandcamp QR
-    /^mixcloud:\/\//i,            // Mixcloud QR
-    /^audiomack:\/\//i,           // Audiomack QR
-    /^anghami:\/\//i,             // Anghami QR
-    /^gaana:\/\//i,               // Gaana QR
-    /^wynk:\/\//i,                // Wynk QR
-    /^jiosaavn:\/\//i,            // JioSaavn QR
-    /^hungama:\/\//i,             // Hungama QR
-    /^amazonmusic:\/\//i,         // Amazon Music QR
-    /^youtubemusic:\/\//i,        // YouTube Music QR
-    /^pandora:\/\//i,             // Pandora QR
-    /^iheartradio:\/\//i,         // iHeartRadio QR
-    /^tunein:\/\//i,              // TuneIn QR
-    /^siriusxm:\/\//i,            // SiriusXM QR
-    /^lastfm:\/\//i,              // Last.fm QR
-    /^discogs:\/\//i,             // Discogs QR
-    /^musicbrainz:\/\//i,         // MusicBrainz QR
-    /^allmusic:\/\//i,            // AllMusic QR
-    /^rateyourmusic:\/\//i,       // RateYourMusic QR
-    /^genius:\/\//i,              // Genius QR
-    /^musixmatch:\/\//i,          // Musixmatch QR
-    /^azlyrics:\/\//i,            // AZLyrics QR
-    /^lyrics:\/\//i,              // Lyrics QR
-    /^songlyrics:\/\//i,          // SongLyrics QR
-    /^metrolyrics:\/\//i,         // MetroLyrics QR
-    /^elyrics:\/\//i,             // ELyrics QR
-    /^lyricsmode:\/\//i,          // LyricsMode QR
-    /^lyricsfreak:\/\//i,         // LyricsFreak QR
-    /^lyricsmania:\/\//i,         // LyricsMania QR
-    /^lyricsontop:\/\//i,         // LyricsOnTop QR
-    /^lyricswikia:\/\//i,         // LyricsWikia QR
-    /^lyricstranslate:\/\//i,     // LyricsTranslate QR
-];
-
-// ═══════════════════════════════════════════════════════════════
 // QR CAMERA SCANNER (NO MIRROR FIX)
 // ═══════════════════════════════════════════════════════════════
 let html5QrCode = null;
@@ -1212,6 +1074,9 @@ async function startScanner() {
     try {
         const cameraId = await getBackCamera();
 
+        // ═══════════════════════════════════════════════════════════════
+        // 🔥 FIX: Set mirror = false di config html5-qrcode
+        // ═══════════════════════════════════════════════════════════════
         html5QrCode = new Html5Qrcode("reader", false);
 
         const config = {
@@ -1219,6 +1084,7 @@ async function startScanner() {
             qrbox: { width: 250, height: 250 },
             aspectRatio: 1.0,
             disableFlip: false,
+            // 🔥 mirror: false — jangan mirror video
             videoConstraints: {
                 width: { min: 640, ideal: 1280 },
                 height: { min: 480, ideal: 720 },
@@ -1235,7 +1101,9 @@ async function startScanner() {
             onScanFailure
         );
 
-        // Force video element to NOT mirror via JS
+        // ═══════════════════════════════════════════════════════════════
+        // 🔥 FIX: Force video element to NOT mirror via JS
+        // ═══════════════════════════════════════════════════════════════
         setTimeout(() => {
             const videos = document.querySelectorAll('#reader video, #reader__scan_region video');
             videos.forEach(v => {
@@ -1307,70 +1175,6 @@ function toggleCamera() {
     }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// 🔥 VALIDASI QR CODE - Multi-layer security
-// ═══════════════════════════════════════════════════════════════
-function validateQRCode(rawText) {
-    let noBooking = rawText.trim().toUpperCase();
-    
-    // Coba extract dari URL format: /scan/PB-XXXXXX atau ?booking=PB-XXXXXX
-    const urlMatch = rawText.match(/\/scan\/([A-Z0-9-]+)/i);
-    const paramMatch = rawText.match(/[?&]booking=([A-Z0-9-]+)/i);
-    const genericMatch = rawText.match(/(PB-[A-Z0-9]{6})/i);
-    
-    if (urlMatch) noBooking = urlMatch[1].toUpperCase();
-    else if (paramMatch) noBooking = paramMatch[1].toUpperCase();
-    else if (genericMatch) noBooking = genericMatch[1].toUpperCase();
-    
-    // 🔒 Layer 1: Cek panjang minimum
-    if (noBooking.length < 3) {
-        return {
-            valid: false,
-            message: 'QR Code terlalu pendek atau tidak terbaca dengan baik. Coba scan ulang.'
-        };
-    }
-    
-    // 🔒 Layer 2: Cek apakah mengandung signature aplikasi
-    if (rawText.includes('SIGNATURE=')) {
-        const sigMatch = rawText.match(/SIGNATURE=([A-Z0-9]+)/i);
-        if (!sigMatch || sigMatch[1] !== APP_SIGNATURE) {
-            return {
-                valid: false,
-                message: 'QR Code ini bukan dari aplikasi PublicBook. Pastikan Anda memindai QR Code yang benar.'
-            };
-        }
-    }
-    
-    // 🔒 Layer 3: Cek format booking ID
-    if (!VALID_BOOKING_PATTERN.test(noBooking)) {
-        // Cek apakah mungkin cuma nomor tanpa prefix PB-
-        const justNumber = noBooking.replace(/[^A-Z0-9]/g, '');
-        if (/^[A-Z0-9]{6}$/i.test(justNumber)) {
-            noBooking = 'PB-' + justNumber;
-        } else {
-            return {
-                valid: false,
-                message: 'Format QR Code tidak dikenali. QR Code harus dari aplikasi PublicBook dengan format nomor booking yang valid (PB-XXXXXX).'
-            };
-        }
-    }
-    
-    // 🔒 Layer 4: Cek karakter aneh (mungkin QR dari aplikasi lain)
-    for (const pattern of SUSPICIOUS_PATTERNS) {
-        if (pattern.test(rawText)) {
-            return {
-                valid: false,
-                message: 'QR Code ini terdeteksi berasal dari aplikasi lain (WiFi, kontak, maps, dll). Harap scan QR Code PublicBook yang valid.'
-            };
-        }
-    }
-    
-    return {
-        valid: true,
-        noBooking: noBooking
-    };
-}
-
 function onScanSuccess(decodedText, decodedResult) {
     if (scanCooldown || decodedText === lastScan) return;
 
@@ -1380,21 +1184,12 @@ function onScanSuccess(decodedText, decodedResult) {
     beepSound.currentTime = 0;
     beepSound.play().catch(() => {});
 
-    // 🔥 STEP 1: Validasi format & signature
-    const validation = validateQRCode(decodedText);
-    
-    if (!validation.valid) {
-        showResult('error', 'QR Code Tidak Valid', validation.message, null);
-        
-        setTimeout(() => {
-            scanCooldown = false;
-            lastScan = '';
-            if (isScanning) updateStatus('active', 'Mencari QR Code...');
-        }, 3000);
-        return;
-    }
+    let noBooking = decodedText;
+    const match = decodedText.match(/\/scan\/([A-Z0-9-]+)/i);
+    if (match) noBooking = match[1];
 
-    const noBooking = validation.noBooking;
+    noBooking = noBooking.toUpperCase().trim();
+
     updateStatus('active', 'Memproses...');
     processBooking(noBooking);
 
@@ -1418,19 +1213,14 @@ function processManual() {
     const loading = document.getElementById('manualLoading');
     const errorDiv = document.getElementById('manualError');
 
-    let rawInput = input.value.trim();
-    
-    if (!rawInput) {
-        showManualError('Masukkan nomor booking dulu!');
-        shakeInput();
-        return;
+    let noBooking = input.value.trim().toUpperCase();
+
+    if (noBooking && !noBooking.startsWith('PB-')) {
+        noBooking = 'PB-' + noBooking;
     }
 
-    // 🔥 Validasi format sebelum kirim ke server
-    const validation = validateQRCode(rawInput);
-    
-    if (!validation.valid) {
-        showManualError(validation.message);
+    if (!noBooking || noBooking === 'PB-') {
+        showManualError('Masukkan nomor booking dulu!');
         shakeInput();
         return;
     }
@@ -1438,7 +1228,7 @@ function processManual() {
     hideManualError();
     setManualLoading(true);
 
-    processBooking(validation.noBooking);
+    processBooking(noBooking);
 }
 
 function processBooking(noBooking) {
@@ -1454,7 +1244,6 @@ function processBooking(noBooking) {
     .then(data => {
         setManualLoading(false);
 
-        // 🔥 STEP 2: Validasi response dari server
         if (data.status === 'success') {
             document.getElementById('manualInput').value = '';
             showResult('success', 'Berhasil!', data.message, data.booking);
@@ -1462,23 +1251,18 @@ function processBooking(noBooking) {
             document.getElementById('manualInput').value = '';
             showResult('warning', 'Sudah Selesai', data.message, data.booking);
         } else if (data.status === 'not_found') {
-            showResult('error', 'Booking Tidak Ditemukan', 
-                `Nomor booking <strong>${noBooking}</strong> tidak terdaftar dalam sistem. Pastikan QR Code berasal dari aplikasi PublicBook dan booking sudah dibuat dengan benar.`, 
-                null);
+            showManualError(data.message || 'Booking tidak ditemukan');
+            shakeInput();
         } else if (data.status === 'cannot_process') {
             showResult('error', 'Tidak Dapat Diproses', data.message, data.booking);
         } else {
-            showResult('error', 'Terjadi Kesalahan', 
-                'Sistem tidak dapat memproses QR Code ini. Silakan coba lagi atau hubungi admin.', 
-                null);
+            showManualError(data.message || 'Terjadi kesalahan');
         }
     })
     .catch(err => {
         console.error(err);
         setManualLoading(false);
-        showResult('error', 'Koneksi Gagal', 
-            'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.', 
-            null);
+        showManualError('Gagal terhubung ke server');
     });
 }
 
