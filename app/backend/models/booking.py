@@ -200,27 +200,79 @@ class Booking:
     @staticmethod
     def create(user_id, layanan_id, nama_pendaftar, tanggal_booking, jam_booking, catatan=None):
         db = get_db()
+        
+        # ═══════════════════════════════════════════════════════════════
+        # CEK DUPLIKAT: User sudah booking layanan + tanggal + jam yang sama
+        # ═══════════════════════════════════════════════════════════════
+        existing = db.execute(
+            text("""
+                SELECT id FROM bookings 
+                WHERE user_id = :user_id 
+                AND layanan_id = :layanan_id 
+                AND tanggal_booking = :tanggal 
+                AND jam_booking = :jam
+                AND status != 'dibatalkan'
+            """),
+            {
+                'user_id': user_id,
+                'layanan_id': layanan_id,
+                'tanggal': tanggal_booking,
+                'jam': jam_booking
+            }
+        ).mappings().first()
+        
+        if existing:
+            raise ValueError("Anda sudah membooking layanan ini pada tanggal dan jam yang sama!")
+        
+        # ═══════════════════════════════════════════════════════════════
+        # CEK KUOTA: Berapa slot tersedia per jam
+        # ═══════════════════════════════════════════════════════════════
+        # Ambil kuota per jam dari layanan (default 5 kalau nggak ada)
+        kuota_result = db.execute(
+            text("SELECT kuota_per_jam FROM layanan WHERE id = :id"),
+            {'id': layanan_id}
+        ).mappings().first()
+        
+        kuota = kuota_result['kuota_per_jam'] if kuota_result and kuota_result['kuota_per_jam'] else 5
+        
+        # Hitung berapa booking aktif di jam ini
+        booked_count = db.execute(
+            text("""
+                SELECT COUNT(*) as total 
+                FROM bookings 
+                WHERE layanan_id = :layanan_id 
+                AND tanggal_booking = :tanggal 
+                AND jam_booking = :jam
+                AND status IN ('menunggu', 'dikonfirmasi', 'proses')
+            """),
+            {
+                'layanan_id': layanan_id,
+                'tanggal': tanggal_booking,
+                'jam': jam_booking
+            }
+        ).mappings().first()
+        
+        if booked_count and booked_count['total'] >= kuota:
+            raise ValueError(f"Kuota untuk jam {jam_booking} sudah penuh! Silakan pilih jam lain.")
+        
+        # Lanjutkan create booking (kode yang udah ada)
         no_booking = Booking.generate_booking_number()
         
-        # Get admin_id from layanan
         service = db.execute(
             text("SELECT admin_id FROM layanan WHERE id = :id"),
             {'id': layanan_id}
         ).mappings().first()
         admin_id = service['admin_id'] if service else None
         
-        # ═══════════════════════════════════════════════════════════════
-        # BARU: Generate nomor antrean otomatis
-        # ═══════════════════════════════════════════════════════════════
         nomor_antrian = Booking.generate_nomor_antrian(layanan_id, tanggal_booking)
         
         sql = """
             INSERT INTO bookings 
             (user_id, layanan_id, admin_id, no_booking, nama_pendaftar, 
-             tanggal_booking, jam_booking, status, nomor_antrian, catatan, created_at, updated_at)
+            tanggal_booking, jam_booking, status, nomor_antrian, catatan, created_at, updated_at)
             VALUES 
             (:user_id, :layanan_id, :admin_id, :no_booking, :nama_pendaftar,
-             :tanggal_booking, :jam_booking, 'menunggu', :nomor_antrian, :catatan, NOW(), NOW())
+            :tanggal_booking, :jam_booking, 'menunggu', :nomor_antrian, :catatan, NOW(), NOW())
         """
         
         result = db.execute(text(sql), {
@@ -231,7 +283,7 @@ class Booking:
             'nama_pendaftar': nama_pendaftar,
             'tanggal_booking': tanggal_booking,
             'jam_booking': jam_booking,
-            'nomor_antrian': nomor_antrian,  # ← BARU
+            'nomor_antrian': nomor_antrian,
             'catatan': catatan or ''
         })
         
@@ -239,7 +291,7 @@ class Booking:
         booking_id = result.lastrowid
         
         return Booking.get_by_id(booking_id)
-    
+
     @staticmethod
     def update_status(booking_id, status_baru, admin_id=None, keterangan=None):
         """Update status booking dan catat riwayat"""

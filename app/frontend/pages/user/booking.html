@@ -612,7 +612,7 @@
                         </button>
                     </form>
                     {% elif booking.status == 'selesai' %}
-                    <button onclick="event.stopPropagation(); downloadReceipt({{ booking.id }})" 
+                    <button onclick="event.stopPropagation(); downloadImage({{ booking.id }})" 
                             class="btn-card-action btn-secondary">
                         <i class="fas fa-download"></i> Bukti
                     </button>
@@ -658,5 +658,18 @@ document.addEventListener('keydown', function(event) {
         });
     }
 });
+
+function downloadImage(id) {
+    // Buka URL download di iframe hidden (nggak redirect halaman)
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = `/user/booking/receipt/${id}/image`;
+    document.body.appendChild(iframe);
+    
+    // Hapus iframe setelah beberapa detik
+    setTimeout(() => {
+        document.body.removeChild(iframe);
+    }, 5000);
+}
 </script>
 {% endblock %}
