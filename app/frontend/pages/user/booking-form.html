@@ -7,13 +7,9 @@
 
 {% block extra_css %}
 <style>
-/* ========== PAGE BACKGROUND ANIMATION ========== */
 .booking-page-bg {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 30%, #FFA500 70%, #FFB347 100%);
     z-index: -1;
     min-height: 100vh;
@@ -22,10 +18,8 @@
 .booking-page-bg::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
     background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
     background-size: 50px 50px;
     animation: bgMove 20s linear infinite;
@@ -36,7 +30,6 @@
     100% { transform: translate(50px, 50px); }
 }
 
-/* ========== FLOATING PARTICLES ========== */
 .particle {
     position: fixed;
     background: rgba(255,255,255,0.3);
@@ -53,7 +46,6 @@
     100% { transform: translateY(-100px) scale(1); opacity: 0; }
 }
 
-/* ========== MAIN CONTAINER ========== */
 .booking-form-wrapper {
     max-width: 700px;
     margin: 0 auto;
@@ -62,7 +54,6 @@
     padding: 40px 20px;
 }
 
-/* ========== SERVICE CARD (PREVIEW) ========== */
 .service-preview-card {
     background: rgba(255,255,255,0.95);
     backdrop-filter: blur(20px);
@@ -84,9 +75,7 @@
 .service-preview-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 5px;
     background: linear-gradient(90deg, #FF6B00, #FF8C00, #FFB347, #FF6B00);
     background-size: 300% 100%;
@@ -99,8 +88,7 @@
 }
 
 .service-icon-wrap {
-    width: 70px;
-    height: 70px;
+    width: 70px; height: 70px;
     background: linear-gradient(135deg, #FF6B00, #FF8C00);
     border-radius: 20px;
     display: flex;
@@ -156,7 +144,6 @@
     border-top: 1px dashed #e0e0e0;
 }
 
-/* ========== FORM CARD ========== */
 .form-card {
     background: rgba(255,255,255,0.95);
     backdrop-filter: blur(20px);
@@ -171,9 +158,7 @@
 .form-card::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     height: 5px;
     background: linear-gradient(90deg, #FF6B00, #FF8C00, #FFB347);
 }
@@ -195,7 +180,6 @@
     font-size: 14px;
 }
 
-/* ========== FORM STEPS INDICATOR ========== */
 .steps-indicator {
     display: flex;
     justify-content: center;
@@ -212,8 +196,7 @@
 }
 
 .step-circle {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     background: #f0f0f0;
     display: flex;
@@ -251,8 +234,7 @@
 }
 
 .step-connector {
-    width: 60px;
-    height: 3px;
+    width: 60px; height: 3px;
     background: #f0f0f0;
     margin: 0 10px;
     margin-bottom: 25px;
@@ -264,10 +246,8 @@
 .step-connector.active::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: linear-gradient(90deg, #FF6B00, #FF8C00);
     animation: fillLine 0.5s ease forwards;
 }
@@ -277,7 +257,6 @@
     to { width: 100%; }
 }
 
-/* ========== FORM FIELDS ========== */
 .form-group {
     margin-bottom: 25px;
     position: relative;
@@ -360,14 +339,12 @@ textarea.form-control + .input-icon {
     gap: 20px;
 }
 
-/* ========== DATE PICKER CUSTOM ========== */
 input[type="date"].form-control,
 input[type="time"].form-control {
     padding-left: 16px;
     cursor: pointer;
 }
 
-/* ========== SUMMARY BOX ========== */
 .booking-summary {
     background: linear-gradient(135deg, #FFF8F0, #FFF0E0);
     border-radius: 16px;
@@ -406,7 +383,6 @@ input[type="time"].form-control {
     color: #333;
 }
 
-/* ========== SUBMIT BUTTON ========== */
 .btn-submit {
     width: 100%;
     padding: 16px;
@@ -430,10 +406,8 @@ input[type="time"].form-control {
 .btn-submit::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     transition: left 0.5s;
 }
@@ -457,17 +431,11 @@ input[type="time"].form-control {
     transform: none;
 }
 
-.btn-submit.success {
-    background: linear-gradient(135deg, #4CAF50, #66BB6A);
-}
-
-/* ========== ALERTS ========== */
 .alert {
     padding: 16px 20px;
     border-radius: 14px;
     margin-bottom: 25px;
     font-size: 14px;
-    display: none;
     animation: slideIn 0.4s ease;
     border: 2px solid transparent;
 }
@@ -493,7 +461,6 @@ input[type="time"].form-control {
     margin-right: 8px;
 }
 
-/* ========== BACK BUTTON ========== */
 .btn-back-float {
     display: inline-flex;
     align-items: center;
@@ -517,11 +484,9 @@ input[type="time"].form-control {
     color: #fff;
 }
 
-/* ========== LOADING SPINNER ========== */
 .spinner {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border: 3px solid rgba(255,255,255,0.3);
     border-radius: 50%;
     border-top-color: #fff;
@@ -532,122 +497,6 @@ input[type="time"].form-control {
     to { transform: rotate(360deg); }
 }
 
-/* ========== SUCCESS ANIMATION ========== */
-.success-checkmark {
-    display: none;
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 20px;
-}
-
-.success-checkmark .check-icon {
-    width: 80px;
-    height: 80px;
-    position: relative;
-    border-radius: 50%;
-    box-sizing: content-box;
-    border: 4px solid #4CAF50;
-}
-
-.success-checkmark .check-icon::before {
-    top: 3px;
-    left: -2px;
-    width: 30px;
-    transform-origin: 100% 50%;
-    border-radius: 100px 0 0 100px;
-}
-
-.success-checkmark .check-icon::after {
-    top: 0;
-    left: 30px;
-    width: 60px;
-    transform-origin: 0 50%;
-    border-radius: 0 100px 100px 0;
-    animation: rotate-circle 4.25s ease-in;
-}
-
-.success-checkmark .icon-line {
-    height: 5px;
-    background-color: #4CAF50;
-    display: block;
-    border-radius: 2px;
-    position: absolute;
-    z-index: 10;
-}
-
-.success-checkmark .icon-line.line-tip {
-    top: 46px;
-    left: 14px;
-    width: 25px;
-    transform: rotate(45deg);
-    animation: icon-line-tip 0.75s;
-}
-
-.success-checkmark .icon-line.line-long {
-    top: 38px;
-    right: 8px;
-    width: 47px;
-    transform: rotate(-45deg);
-    animation: icon-line-long 0.75s;
-}
-
-.success-checkmark .icon-circle {
-    top: -4px;
-    left: -4px;
-    z-index: 10;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    position: absolute;
-    box-sizing: content-box;
-    border: 4px solid rgba(76, 175, 80, 0.5);
-}
-
-.success-checkmark .icon-fix {
-    top: 8px;
-    width: 5px;
-    left: 26px;
-    z-index: 1;
-    height: 85px;
-    position: absolute;
-    transform: rotate(-45deg);
-    background-color: #fff;
-}
-
-/* Toast notification styles */
-#bookingToast {
-    font-family: 'Poppins', sans-serif;
-}
-
-#bookingToast strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 15px;
-}
-
-@keyframes rotate-circle {
-    0% { transform: rotate(-45deg); }
-    5% { transform: rotate(-45deg); }
-    12% { transform: rotate(-405deg); }
-    100% { transform: rotate(-405deg); }
-}
-
-@keyframes icon-line-tip {
-    0% { width: 0; left: 1px; top: 19px; }
-    54% { width: 0; left: 1px; top: 19px; }
-    70% { width: 50px; left: -8px; top: 37px; }
-    84% { width: 17px; left: 21px; top: 48px; }
-    100% { width: 25px; left: 14px; top: 46px; }
-}
-
-@keyframes icon-line-long {
-    0% { width: 0; right: 46px; top: 54px; }
-    65% { width: 0; right: 46px; top: 54px; }
-    84% { width: 55px; right: 0px; top: 35px; }
-    100% { width: 47px; right: 8px; top: 38px; }
-}
-
-/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .booking-form-wrapper {
         padding: 0 15px;
@@ -672,7 +521,6 @@ input[type="time"].form-control {
     }
 }
 
-/* ========== ENTRANCE ANIMATIONS ========== */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(40px); }
     to { opacity: 1; transform: translateY(0); }
@@ -682,7 +530,6 @@ input[type="time"].form-control {
 .animate-in-2 { animation: fadeInUp 0.6s ease 0.15s forwards; opacity: 0; }
 .animate-in-3 { animation: fadeInUp 0.6s ease 0.3s forwards; opacity: 0; }
 
-/* ========== SCROLL FIX ========== */
 html, body {
     overflow-x: hidden;
     overflow-y: auto;
@@ -693,21 +540,18 @@ body {
     position: relative;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
 body::-webkit-scrollbar {
     display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
 body {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Background Effects -->
 <div class="booking-page-bg"></div>
 <div class="particle" style="width: 10px; height: 10px; left: 10%; animation-delay: 0s;"></div>
 <div class="particle" style="width: 15px; height: 15px; left: 30%; animation-delay: 3s;"></div>
@@ -716,12 +560,10 @@ body {
 <div class="particle" style="width: 6px; height: 6px; left: 90%; animation-delay: 2s;"></div>
 
 <div class="booking-form-wrapper">
-    <!-- Back Button -->
     <a href="{{ url_for('user_routes.layanan') }}" class="btn-back-float animate-in-1">
         <i class="fas fa-arrow-left"></i> Kembali ke Layanan
     </a>
 
-    <!-- Service Preview Card -->
     <div class="service-preview-card animate-in-1">
         <div class="service-icon-wrap">
             <i class="fas fa-concierge-bell"></i>
@@ -743,9 +585,7 @@ body {
         {% endif %}
     </div>
 
-    <!-- Form Card -->
     <div class="form-card animate-in-2">
-        <!-- Steps -->
         <div class="steps-indicator">
             <div class="step active" id="step1">
                 <div class="step-circle">1</div>
@@ -768,28 +608,22 @@ body {
             <p>Lengkapi informasi berikut untuk melanjutkan</p>
         </div>
 
-        <!-- Success Checkmark (hidden by default) -->
-        <div class="success-checkmark" id="successCheckmark">
-            <div class="check-icon">
-                <span class="icon-line line-tip"></span>
-                <span class="icon-line line-long"></span>
-                <div class="icon-circle"></div>
-                <div class="icon-fix"></div>
-            </div>
-        </div>
+        <!-- Flash Messages (kalau ada error dari redirect) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" style="display: block;">
+                        <i class="fas fa-{{ 'exclamation-circle' if category == 'danger' else 'check-circle' }}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-        <!-- Alerts -->
-        <div class="alert alert-danger" id="errorAlert">
-            <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
-        </div>
-        <div class="alert alert-success" id="successAlert">
-            <i class="fas fa-check-circle"></i> <span id="successText"></span>
-        </div>
-
-        <form id="bookingForm" action="{{ url_for('user_routes.booking_create') }}" method="POST">
+        <!-- FORM BIASA — action ke route POST, method POST, NO AJAX -->
+        <form action="{{ url_for('user_routes.booking_create') }}" method="POST">
             <input type="hidden" name="layanan_id" value="{{ service.id }}">
             
-            <!-- Nama -->
             <div class="form-group">
                 <label>
                     <i class="fas fa-user"></i> Nama Pendaftar <span class="required">*</span>
@@ -801,7 +635,6 @@ body {
                 </div>
             </div>
 
-            <!-- Tanggal & Jam -->
             <div class="form-row">
                 <div class="form-group">
                     <label>
@@ -822,7 +655,6 @@ body {
                 </div>
             </div>
 
-            <!-- Catatan -->
             <div class="form-group">
                 <label>
                     <i class="fas fa-sticky-note"></i> Catatan (Opsional)
@@ -834,7 +666,6 @@ body {
                 </div>
             </div>
 
-            <!-- Live Summary -->
             <div class="booking-summary" id="bookingSummary">
                 <h4><i class="fas fa-clipboard-list"></i> Ringkasan Booking</h4>
                 <div class="summary-item">
@@ -844,6 +675,14 @@ body {
                 <div class="summary-item">
                     <span class="summary-label">Nama</span>
                     <span class="summary-value" id="summaryNama">{{ user.nama_lengkap }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Tanggal</span>
+                    <span class="summary-value" id="summaryTanggal">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Jam</span>
+                    <span class="summary-value" id="summaryJam">-</span>
                 </div>
             </div>
 
@@ -857,280 +696,41 @@ body {
 
 {% block extra_js %}
 <script>
-// PENTING: Wrap dalam IIFE biar nggak bentrok sama script lain
 (function() {
     'use strict';
+
+    // Live Summary Update
+    const form = document.querySelector('form[action*="booking/create"]');
+    const summaryNama = document.getElementById('summaryNama');
+    const summaryTanggal = document.getElementById('summaryTanggal');
+    const summaryJam = document.getElementById('summaryJam');
     
-    // Tunggu DOM fully loaded
-    function initBookingForm() {
-        const form = document.getElementById('bookingForm');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (!form) {
-            console.error('❌ Form bookingForm tidak ditemukan!');
-            return;
-        }
-        if (!submitBtn) {
-            console.error('❌ Tombol submitBtn tidak ditemukan!');
-            return;
-        }
-        
-        console.log('✅ Booking form initialized'); // DEBUG
-        
-        // ═══════════════════════════════════════════════════════════════
-        // PENTING: Hapus attribute action & method untuk mencegah submit normal
-        // ═══════════════════════════════════════════════════════════════
-        form.removeAttribute('action');
-        form.removeAttribute('method');
-        
-        // ═══════════════════════════════════════════════════════════════
-        // LIVE SUMMARY UPDATE
-        // ═══════════════════════════════════════════════════════════════
-        const summaryNama = document.getElementById('summaryNama');
-        const summaryTanggal = document.getElementById('summaryTanggal');
-        const summaryJam = document.getElementById('summaryJam');
-        
-        const namaInput = form.querySelector('[name="nama_pendaftar"]');
-        const tanggalInput = form.querySelector('[name="tanggal_booking"]');
-        const jamInput = form.querySelector('[name="jam_booking"]');
-        
-        if (namaInput) {
-            namaInput.addEventListener('input', function() {
-                if (summaryNama) summaryNama.textContent = this.value || '-';
-            });
-        }
-        if (tanggalInput) {
-            tanggalInput.addEventListener('change', function() {
-                if (summaryTanggal) summaryTanggal.textContent = this.value || '-';
-            });
-        }
-        if (jamInput) {
-            jamInput.addEventListener('change', function() {
-                if (summaryJam) summaryJam.textContent = this.value || '-';
-            });
-        }
-        
-        // ═══════════════════════════════════════════════════════════════
-        // FORM SUBMIT HANDLER - AJAX ONLY
-        // ═══════════════════════════════════════════════════════════════
-        form.addEventListener('submit', function(e) {
-            // PENTING: Prevent default form submission
-            e.preventDefault();
-            e.stopPropagation();
-            
-            console.log('🚀 Form submit intercepted!'); // DEBUG
-            
-            const errorAlert = document.getElementById('errorAlert');
-            const successAlert = document.getElementById('successAlert');
-            const errorText = document.getElementById('errorText');
-            const successText = document.getElementById('successText');
-            const successCheckmark = document.getElementById('successCheckmark');
-            const step3 = document.getElementById('step3');
-            
-            // Reset alerts
-            if (errorAlert) errorAlert.style.display = 'none';
-            if (successAlert) successAlert.style.display = 'none';
-            
-            // Validasi
-            const layananId = form.querySelector('[name="layanan_id"]')?.value;
-            const nama = namaInput?.value.trim();
-            const tanggal = tanggalInput?.value;
-            const jam = jamInput?.value;
-            
-            if (!layananId || !nama || !tanggal || !jam) {
-                if (errorText) errorText.textContent = 'Semua field wajib diisi!';
-                if (errorAlert) {
-                    errorAlert.style.display = 'block';
-                    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                return false;
-            }
-            
-            // Disable button & show loading
-            submitBtn.disabled = true;
-            const originalHTML = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
-            
-            // ═══════════════════════════════════════════════════════════════
-            // Kirim data via fetch AJAX
-            // ═══════════════════════════════════════════════════════════════
-            const formData = new FormData(form);
-            
-            // Debug: log form data
-            console.log('📦 FormData:');
-            for (let [key, value] of formData.entries()) {
-                console.log(`  ${key}: ${value}`);
-            }
-            
-            fetch('/user/booking/create', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(function(response) {
-                console.log('📡 Response status:', response.status); // DEBUG
-                
-                if (!response.ok) {
-                    throw new Error('Server error: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(function(result) {
-                console.log('📦 Response data:', result); // DEBUG
-                
-                if (result.success) {
-                    // Update step indicator
-                    if (step3) step3.classList.add('active');
-                    const connectors = document.querySelectorAll('.step-connector');
-                    if (connectors[1]) connectors[1].classList.add('active');
-                    
-                    // Show success checkmark animation
-                    if (successCheckmark) successCheckmark.style.display = 'block';
-                    
-                    // Show success notification
-                    if (successText) {
-                        successText.innerHTML = 
-                            '<strong>' + result.message + '</strong><br>' +
-                            'No. Booking: <span style="font-size:18px;color:#FF6B00;">' + result.data.no_booking + '</span><br>' +
-                            (result.data.nomor_antrian ? 'Nomor Antrean: <span style="font-size:18px;color:#FF6B00;">#' + result.data.nomor_antrian + '</span>' : '');
-                    }
-                    if (successAlert) {
-                        successAlert.style.display = 'block';
-                        successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                    
-                    // Change button to success state
-                    submitBtn.classList.add('success');
-                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Booking Berhasil!';
-                    
-                    // Toast notification
-                    showToast('🎉 ' + result.message, 'success');
-                    
-                    // ═══════════════════════════════════════════════════════
-                    // REDIRECT LANGSUNG KE HALAMAN BOOKING
-                    // ═══════════════════════════════════════════════════════
-                    window.location.href = '/user/booking';
-                    
-                } else {
-                    // Show error
-                    if (errorText) errorText.textContent = result.message || 'Terjadi kesalahan';
-                    if (errorAlert) {
-                        errorAlert.style.display = 'block';
-                        errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                    
-                    // Re-enable button
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalHTML;
-                    
-                    showToast('❌ ' + (result.message || 'Gagal membuat booking'), 'error');
-                }
-            })
-            .catch(function(error) {
-                console.error('❌ Error:', error);
-                
-                if (errorText) errorText.textContent = 'Gagal mengirim data. Cek koneksi atau refresh halaman.';
-                if (errorAlert) {
-                    errorAlert.style.display = 'block';
-                    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalHTML;
-                
-                showToast('❌ Koneksi error. Coba lagi!', 'error');
-            });
-            
-            // PENTING: Return false biar form nggak submit normal
-            return false;
+    const namaInput = form.querySelector('input[name="nama_pendaftar"]');
+    const tanggalInput = form.querySelector('input[name="tanggal_booking"]');
+    const jamInput = form.querySelector('input[name="jam_booking"]');
+    
+    if (namaInput && summaryNama) {
+        namaInput.addEventListener('input', function() {
+            summaryNama.textContent = this.value || '-';
         });
-        
-        // ═══════════════════════════════════════════════════════════════
-        // DOUBLE SAFETY: Tangkap click event juga
-        // ═══════════════════════════════════════════════════════════════
-        submitBtn.addEventListener('click', function(e) {
-            // Cek kalau form sudah di-handle oleh submit event
-            // Ini sebagai backup safety
-            if (!submitBtn.disabled) {
-                e.preventDefault();
-                form.dispatchEvent(new Event('submit', { cancelable: true }));
-            }
+    }
+    if (tanggalInput && summaryTanggal) {
+        tanggalInput.addEventListener('change', function() {
+            summaryTanggal.textContent = this.value || '-';
+        });
+    }
+    if (jamInput && summaryJam) {
+        jamInput.addEventListener('change', function() {
+            summaryJam.textContent = this.value || '-';
         });
     }
     
-    // ═══════════════════════════════════════════════════════════════════
-    // TOAST NOTIFICATION
-    // ═══════════════════════════════════════════════════════════════════
-    function showToast(message, type) {
-        // Hapus toast lama kalau ada
-        const oldToast = document.getElementById('bookingToast');
-        if (oldToast) oldToast.remove();
-        
-        const toast = document.createElement('div');
-        toast.id = 'bookingToast';
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 600;
-            z-index: 9999;
-            animation: toastSlide 0.4s ease;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            max-width: 350px;
-            line-height: 1.5;
-        `;
-        
-        if (type === 'success') {
-            toast.style.background = 'linear-gradient(135deg, #4CAF50, #66BB6A)';
-            toast.style.color = '#fff';
-        } else {
-            toast.style.background = 'linear-gradient(135deg, #f44336, #ef5350)';
-            toast.style.color = '#fff';
-        }
-        
-        toast.innerHTML = message;
-        
-        // Tambah style animasi kalau belom ada
-        if (!document.getElementById('toastStyle')) {
-            const style = document.createElement('style');
-            style.id = 'toastStyle';
-            style.textContent = `
-                @keyframes toastSlide {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes toastFade {
-                    from { opacity: 1; }
-                    to { opacity: 0; transform: translateX(100%); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-        
-        document.body.appendChild(toast);
-        
-        // Auto remove after 5 detik
-        setTimeout(function() {
-            toast.style.animation = 'toastFade 0.4s ease forwards';
-            setTimeout(function() {
-                toast.remove();
-            }, 400);
-        }, 5000);
-    }
-    
-    // ═══════════════════════════════════════════════════════════════════
-    // INIT
-    // ═══════════════════════════════════════════════════════════════════
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBookingForm);
-    } else {
-        initBookingForm();
-    }
+    // Loading state pas submit
+    const submitBtn = document.getElementById('submitBtn');
+    form.addEventListener('submit', function() {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span> Memproses...';
+    });
 })();
 </script>
 {% endblock %}

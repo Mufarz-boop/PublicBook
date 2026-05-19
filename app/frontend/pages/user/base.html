@@ -16,6 +16,7 @@
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 50%, #FFA500 100%);
             min-height: 100vh;
+            min-height: 100dvh;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
@@ -23,10 +24,8 @@
         /* ========== PAGE TRANSITION OVERLAY ========== */
         .page-transition-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: linear-gradient(135deg, #FF6B00, #FF8C00);
             z-index: 99999;
             opacity: 0;
@@ -45,8 +44,7 @@
         }
 
         .transition-loader {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             border: 4px solid rgba(255,255,255,0.2);
             border-top-color: #fff;
             border-radius: 50%;
@@ -60,8 +58,7 @@
         /* ========== SIDEBAR ========== */
         .sidebar {
             position: fixed;
-            left: 0;
-            top: 0;
+            left: 0; top: 0;
             width: 280px;
             height: 100vh;
             height: 100dvh;
@@ -74,7 +71,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            transform: translateX(0); /* Default visible on desktop */
+            transform: translateX(0);
         }
 
         .sidebar-logo {
@@ -88,8 +85,7 @@
         }
 
         .logo-icon {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             background: linear-gradient(135deg, #FF6B00, #FF8C00);
             border-radius: 16px;
             display: flex;
@@ -216,11 +212,10 @@
 
         /* ========== HAMBURGER MENU BUTTON ========== */
         .menu-toggle {
-            display: none; /* Hidden on desktop */
+            display: none;
             background: none;
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 44px; height: 44px;
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -241,11 +236,9 @@
             transform: scale(0.95);
         }
 
-        /* Hamburger icon lines */
         .hamburger-line {
             display: block;
-            width: 22px;
-            height: 2.5px;
+            width: 22px; height: 2.5px;
             background: #333;
             border-radius: 2px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -304,8 +297,7 @@
         }
 
         .user-avatar {
-            width: 42px;
-            height: 42px;
+            width: 42px; height: 42px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #fff;
@@ -386,11 +378,8 @@
             border: 1px solid #90CAF9;
         }
 
-        /* ═══════════════════════════════════════════════════════════════
-           MOBILE RESPONSIVE - INI YANG PENTING!
-           ═══════════════════════════════════════════════════════════════ */
+        /* ========== MOBILE RESPONSIVE ========== */
         @media (max-width: 768px) {
-            /* Sidebar hidden by default on mobile */
             .sidebar {
                 transform: translateX(-105%);
                 width: 85vw;
@@ -398,18 +387,15 @@
                 box-shadow: none;
             }
 
-            /* Sidebar visible when open */
             .sidebar.open {
                 transform: translateX(0);
                 box-shadow: 4px 0 40px rgba(0,0,0,0.2);
             }
 
-            /* Main content full width on mobile */
             .main-content {
                 margin-left: 0;
             }
 
-            /* Show hamburger button */
             .menu-toggle {
                 display: flex;
             }
@@ -453,7 +439,6 @@
             }
         }
 
-        /* Safe Area Support */
         @supports (padding-top: env(safe-area-inset-top)) {
             .sidebar {
                 padding-top: env(safe-area-inset-top);
@@ -530,7 +515,6 @@
     <main class="main-content" id="mainContent">
         <header class="top-header" id="topHeader">
             <div class="header-left">
-                <!-- HAMBURGER BUTTON -->
                 <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle menu">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
@@ -558,7 +542,7 @@
         </header>
 
         <div class="content-area">
-            <!-- Flash Messages -->
+            <!-- Flash Messages Global -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="flash-messages">
@@ -577,60 +561,37 @@
     </main>
 
     <script>
-        // ═══════════════════════════════════════════════════════════════
-        // SIDEBAR & HAMBURGER MENU - VERSI FIX
-        // ═══════════════════════════════════════════════════════════════
-        
         (function() {
             'use strict';
             
-            // Get elements
             const sidebar = document.getElementById('sidebar');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
             const menuToggle = document.getElementById('menuToggle');
-            const mainContent = document.getElementById('mainContent');
             
-            // Check if mobile
             const isMobile = function() {
                 return window.innerWidth <= 768;
             };
             
             let isSidebarOpen = false;
             
-            // ═══════════════════════════════════════════════════════════════
-            // OPEN SIDEBAR
-            // ═══════════════════════════════════════════════════════════════
             window.openSidebar = function() {
                 if (!isMobile()) return;
-                
                 isSidebarOpen = true;
                 sidebar.classList.add('open');
                 sidebarOverlay.classList.add('show');
                 menuToggle.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                
-                console.log('✅ Sidebar opened'); // Debug
             };
             
-            // ═══════════════════════════════════════════════════════════════
-            // CLOSE SIDEBAR
-            // ═══════════════════════════════════════════════════════════════
             window.closeSidebar = function() {
                 isSidebarOpen = false;
                 sidebar.classList.remove('open');
                 sidebarOverlay.classList.remove('show');
                 menuToggle.classList.remove('active');
                 document.body.style.overflow = '';
-                
-                console.log('✅ Sidebar closed'); // Debug
             };
             
-            // ═══════════════════════════════════════════════════════════════
-            // TOGGLE SIDEBAR
-            // ═══════════════════════════════════════════════════════════════
             window.toggleSidebar = function() {
-                console.log('🍔 Toggle clicked, current state:', isSidebarOpen); // Debug
-                
                 if (isSidebarOpen) {
                     closeSidebar();
                 } else {
@@ -638,9 +599,6 @@
                 }
             };
             
-            // ═══════════════════════════════════════════════════════════════
-            // HAMBURGER CLICK EVENT
-            // ═══════════════════════════════════════════════════════════════
             if (menuToggle) {
                 menuToggle.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -649,21 +607,15 @@
                 });
             }
             
-            // ═══════════════════════════════════════════════════════════════
-            // OVERLAY CLICK EVENT
-            // ═══════════════════════════════════════════════════════════════
             if (sidebarOverlay) {
                 sidebarOverlay.addEventListener('click', function() {
                     closeSidebar();
                 });
             }
             
-            // ═══════════════════════════════════════════════════════════════
-            // SWIPE GESTURE SUPPORT
-            // ═══════════════════════════════════════════════════════════════
+            // Swipe Gesture
             let touchStartX = 0;
             let touchStartY = 0;
-            let touchEndX = 0;
             let isScrolling = false;
             
             document.addEventListener('touchstart', function(e) {
@@ -675,7 +627,6 @@
             document.addEventListener('touchmove', function(e) {
                 const touchY = e.changedTouches[0].screenY;
                 const touchX = e.changedTouches[0].screenX;
-                
                 if (Math.abs(touchY - touchStartY) > Math.abs(touchX - touchStartX)) {
                     isScrolling = true;
                 }
@@ -683,45 +634,34 @@
             
             document.addEventListener('touchend', function(e) {
                 if (isScrolling) return;
-                
-                touchEndX = e.changedTouches[0].screenX;
+                const touchEndX = e.changedTouches[0].screenX;
                 const diff = touchEndX - touchStartX;
                 const swipeThreshold = 80;
                 
-                // Swipe right from left edge to open
                 if (diff > swipeThreshold && touchStartX < 30 && !isSidebarOpen) {
                     openSidebar();
                 }
-                
-                // Swipe left to close
                 if (diff < -swipeThreshold && isSidebarOpen) {
                     closeSidebar();
                 }
             }, { passive: true });
             
-            // ═══════════════════════════════════════════════════════════════
-            // KEYBOARD SUPPORT (Escape to close)
-            // ═══════════════════════════════════════════════════════════════
+            // Escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && isSidebarOpen) {
                     closeSidebar();
                 }
             });
             
-            // ═══════════════════════════════════════════════════════════════
-            // HANDLE RESIZE
-            // ═══════════════════════════════════════════════════════════════
+            // Resize handler
             window.addEventListener('resize', function() {
                 if (!isMobile() && isSidebarOpen) {
                     closeSidebar();
                 }
             });
             
-            // ═══════════════════════════════════════════════════════════════
-            // HEADER SCROLL EFFECT
-            // ═══════════════════════════════════════════════════════════════
+            // Header scroll effect
             const topHeader = document.getElementById('topHeader');
-            
             window.addEventListener('scroll', function() {
                 if (window.pageYOffset > 10) {
                     topHeader.classList.add('scrolled');
@@ -730,9 +670,7 @@
                 }
             }, { passive: true });
             
-            // ═══════════════════════════════════════════════════════════════
-            // PAGE TRANSITION
-            // ═══════════════════════════════════════════════════════════════
+            // Page transition
             const pageTransition = document.getElementById('pageTransition');
             
             window.showTransition = function() {
@@ -745,15 +683,13 @@
                 }, 300);
             };
             
-            // ═══════════════════════════════════════════════════════════════
-            // SMOOTH NAVIGATION FOR INTERNAL LINKS
-            // ═══════════════════════════════════════════════════════════════
+            // Smooth navigation
             document.querySelectorAll('a').forEach(function(link) {
                 const href = link.getAttribute('href');
                 if (!href || href.startsWith('http') || href.startsWith('#') || href.startsWith('javascript')) return;
                 if (link.classList.contains('logout-btn')) return;
+                
                 if (link.closest('.sidebar-nav')) {
-                    // Sidebar nav links - close sidebar first then navigate
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
                         closeSidebar();
@@ -774,9 +710,7 @@
                 });
             });
             
-            // ═══════════════════════════════════════════════════════════════
-            // AUTO-HIDE FLASH MESSAGES
-            // ═══════════════════════════════════════════════════════════════
+            // Auto-hide flash messages
             document.querySelectorAll('.flash-message').forEach(function(msg) {
                 setTimeout(function() {
                     msg.style.transition = 'all 0.5s ease';
@@ -788,10 +722,8 @@
                 }, 5000);
             });
             
-            // Hide transition on load
             window.addEventListener('load', hideTransition);
             
-            // Logout confirmation
             window.confirmLogout = function(e) {
                 e.preventDefault();
                 if (confirm('Yakin mau logout?')) {
@@ -802,8 +734,6 @@
                 }
                 return false;
             };
-            
-            console.log('✅ Base template initialized'); // Debug
         })();
     </script>
     

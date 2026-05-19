@@ -25,9 +25,7 @@
 .detail-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 4px;
     background: linear-gradient(90deg, #FF6B00, #FF8C00, #FFB347);
 }
@@ -86,8 +84,7 @@
 }
 
 .detail-icon {
-    width: 44px;
-    height: 44px;
+    width: 44px; height: 44px;
     background: linear-gradient(135deg, #FF6B00, #FF8C00);
     border-radius: 12px;
     display: flex;
@@ -157,7 +154,6 @@
     box-shadow: 0 4px 15px rgba(239,68,68,0.3);
 }
 
-/* QR Section */
 .qr-detail {
     text-align: center;
     margin: 30px 0;
@@ -167,8 +163,7 @@
 }
 
 .qr-detail img {
-    width: 200px;
-    height: 200px;
+    width: 200px; height: 200px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
@@ -266,7 +261,7 @@
 
         {% if booking.status in ['menunggu', 'dikonfirmasi', 'proses'] %}
         <div class="qr-detail">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=http:/10.137.12.241:5000/scan/{{ booking.no_booking }}&color=333333&bgcolor=ffffff" 
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data={{ request.host_url.rstrip('/') }}/scan/{{ booking.no_booking }}&color=333333&bgcolor=ffffff" 
                  alt="QR Code Booking">
             <p>Scan QR code ini di lokasi layanan</p>
         </div>
@@ -277,105 +272,13 @@
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
             {% if booking.status == 'menunggu' %}
-            <button onclick="cancelBooking({{ booking.id }})" class="btn-detail btn-cancel">
-                <i class="fas fa-times"></i> Batalkan Booking
-            </button>
+            <form action="{{ url_for('user_routes.booking_cancel', id=booking.id) }}" method="POST" style="flex: 1;">
+                <button type="submit" class="btn-detail btn-cancel" onclick="return confirm('Yakin ingin membatalkan booking ini?')">
+                    <i class="fas fa-times"></i> Batalkan Booking
+                </button>
+            </form>
             {% endif %}
         </div>
     </div>
 </div>
-
-<script>
-function cancelBooking(id) {
-    if (confirm('Yakin ingin membatalkan booking ini?')) {
-        fetch(`/user/booking/cancel/${id}`, { 
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(r => {
-            if (!r.ok) throw new Error('Network response was not ok');
-            return r.json();
-        })
-        .then(data => {
-            if (data.success) {
-                showToast(data.message || 'Booking berhasil dibatalkan', 'success');
-                setTimeout(() => {
-                    window.location.href = "{{ url_for('user_routes.booking') }}";
-                }, 1500);
-            } else {
-                showToast(data.message || 'Gagal membatalkan booking', 'danger');
-            }
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            showToast('Terjadi kesalahan saat membatalkan booking', 'danger');
-        });
-    }
-}
-
-function showToast(message, type) {
-    const container = document.getElementById('toast-container') || createToastContainer();
-    const icons = {
-        success: 'fa-check-circle',
-        danger: 'fa-exclamation-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
-    const colors = {
-        success: { bg: '#D1FAE5', color: '#065F46' },
-        danger: { bg: '#FEE2E2', color: '#991B1B' },
-        warning: { bg: '#FEF3C7', color: '#92400E' },
-        info: { bg: '#DBEAFE', color: '#1E40AF' }
-    };
-
-    const toast = document.createElement('div');
-    const style = colors[type] || colors.info;
-    toast.style.cssText = `
-        background: ${style.bg};
-        color: ${style.color};
-        padding: 14px 20px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        animation: slideInRight 0.3s ease;
-        min-width: 280px;
-        margin-bottom: 10px;
-    `;
-    toast.innerHTML = `
-        <i class="fas ${icons[type] || icons.info}" style="font-size: 16px;"></i>
-        ${message}
-    `;
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.style.transition = 'all 0.5s ease';
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000);
-}
-
-function createToastContainer() {
-    const container = document.createElement('div');
-    container.id = 'toast-container';
-    container.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    `;
-    document.body.appendChild(container);
-    return container;
-}
-</script>
 {% endblock %}
