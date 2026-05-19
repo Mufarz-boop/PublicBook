@@ -9,63 +9,82 @@
 {% block extra_css %}
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   SCANNER CAMERA STYLES - FINAL OPTIMIZED
+   SCANNER STYLES - MODERN REDESIGN (NO MIRROR FIX)
    ═══════════════════════════════════════════════════════════════ */
-.scanner-container {
-    max-width: 700px;
+
+/* ── Container & Layout ── */
+.scanner-wrapper {
+    max-width: 720px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 24px;
 }
 
-/* ── Camera Section ── */
-.camera-section {
+/* ── Main Card ── */
+.scan-card {
     background: #fff;
     border-radius: 24px;
-    padding: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+}
+
+.scan-card-header {
+    padding: 28px 28px 0;
     text-align: center;
 }
 
-.camera-header {
-    margin-bottom: 25px;
+.scan-card-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-.camera-header h2 {
+.scan-card-header h2 i {
+    color: #FF6B00;
     font-size: 22px;
-    color: #333;
-    margin-bottom: 8px;
 }
 
-.camera-header p {
+.scan-card-header p {
     color: #888;
-    font-size: 14px;
+    font-size: 13px;
+    margin: 0;
 }
 
-/* ── Scanner Box ── */
-.scanner-box {
+/* ── Camera Section ── */
+.camera-area {
+    padding: 24px 28px;
+}
+
+/* Scanner Box */
+.scanner-viewport {
     position: relative;
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto 20px;
+    aspect-ratio: 1;
+    max-height: 420px;
     border-radius: 20px;
     overflow: hidden;
-    border: 3px solid #e0e0e0;
-    background: #1a1a1a;
-    aspect-ratio: 1;
-    min-height: 300px;
-    transition: border-color 0.3s ease;
+    background: #0f0f0f;
+    border: 2px solid #e8e8e8;
+    transition: all 0.3s ease;
 }
 
-.scanner-box.active {
+.scanner-viewport.active {
     border-color: #FF6B00;
+    box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.15);
 }
 
-/* Container html5-qrcode */
+/* ═══════════════════════════════════════════════════════════════
+   🔥 FIX NO MIRROR - VIDEO TIDAK DI-MIRROR
+   ═══════════════════════════════════════════════════════════════ */
 #reader {
     width: 100% !important;
     height: 100% !important;
     border: none !important;
-    position: relative;
 }
 
 #reader video {
@@ -73,9 +92,22 @@
     height: 100% !important;
     object-fit: cover !important;
     display: block !important;
+    /* 🔥 PENTING: Hapus mirror effect */
+    transform: scaleX(1) !important;
+    -webkit-transform: scaleX(1) !important;
 }
 
-/* Hide ALL default html5-qrcode UI elements */
+/* Override mirror dari html5-qrcode library */
+#reader__scan_region video,
+#reader video,
+video {
+    transform: scaleX(1) !important;
+    -webkit-transform: scaleX(1) !important;
+    -moz-transform: scaleX(1) !important;
+    -ms-transform: scaleX(1) !important;
+}
+
+/* Hide default UI */
 #reader * [id*="dashboard"],
 #reader * [class*="dashboard"],
 #reader__dashboard_section_csr,
@@ -99,306 +131,453 @@
     object-fit: cover !important;
 }
 
-/* Custom Scan Overlay */
+/* ── Scan Overlay ── */
 .scan-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     pointer-events: none;
     z-index: 10;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
 }
 
 .scan-overlay.show {
     opacity: 1;
 }
 
-.scan-frame {
+/* Corner Brackets */
+.corner-bracket {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 250px;
-    height: 250px;
-    border: 3px solid rgba(255,107,0,0.8);
-    border-radius: 20px;
-}
-
-.scan-frame::before,
-.scan-frame::after {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-color: #FF6B00;
     border-style: solid;
+    border-width: 0;
 }
 
-.scan-frame::before {
-    top: -3px;
-    left: -3px;
-    border-width: 4px 0 0 4px;
-    border-radius: 15px 0 0 0;
+.corner-bracket.tl {
+    top: 20px;
+    left: 20px;
+    border-top-width: 4px;
+    border-left-width: 4px;
+    border-top-left-radius: 16px;
 }
 
-.scan-frame::after {
-    bottom: -3px;
-    right: -3px;
-    border-width: 0 4px 4px 0;
-    border-radius: 0 0 15px 0;
+.corner-bracket.tr {
+    top: 20px;
+    right: 20px;
+    border-top-width: 4px;
+    border-right-width: 4px;
+    border-top-right-radius: 16px;
 }
 
-.scan-line {
+.corner-bracket.bl {
+    bottom: 20px;
+    left: 20px;
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+    border-bottom-left-radius: 16px;
+}
+
+.corner-bracket.br {
+    bottom: 20px;
+    right: 20px;
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+    border-bottom-right-radius: 16px;
+}
+
+/* Scan Line */
+.scan-laser {
     position: absolute;
-    top: 20%;
-    left: 10%;
-    right: 10%;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #FF6B00, transparent);
+    top: 25%;
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #FF6B00, #FF8C00, #FF6B00, transparent);
     border-radius: 2px;
-    animation: scanMove 2s ease-in-out infinite;
-    box-shadow: 0 0 10px #FF6B00;
+    box-shadow: 0 0 8px rgba(255, 107, 0, 0.6), 0 0 20px rgba(255, 107, 0, 0.3);
+    animation: laserScan 2.5s ease-in-out infinite;
 }
 
-@keyframes scanMove {
-    0%, 100% { top: 20%; opacity: 0; }
+@keyframes laserScan {
+    0%, 100% { top: 25%; opacity: 0; }
     10% { opacity: 1; }
     90% { opacity: 1; }
-    50% { top: 80%; }
+    50% { top: 75%; }
 }
 
-.scan-hint {
+/* Scan Hint */
+.scan-hint-box {
     position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    text-align: center;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 8px 20px;
+    border-radius: 50px;
     color: #fff;
-    font-size: 13px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    background: rgba(0,0,0,0.4);
-    padding: 8px;
-    margin: 0 20px;
-    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
 }
 
-/* ── Camera OFF State ── */
-.camera-off-state {
+/* ── Camera Off State ── */
+.camera-off-layer {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #666;
+    background: #1a1a1a;
     z-index: 5;
+    gap: 12px;
 }
 
-.camera-off-state i {
-    font-size: 64px;
+.camera-off-layer i {
+    font-size: 48px;
     color: #444;
-    margin-bottom: 15px;
 }
 
-.camera-off-state p {
+.camera-off-layer p {
     font-size: 14px;
-    color: #888;
+    color: #666;
+    margin: 0;
 }
 
-/* ── Status Badge ── */
-.scan-status {
+/* ── Status & Controls Row ── */
+.controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 0 4px;
+}
+
+/* Status Badge */
+.status-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 20px;
+    padding: 8px 16px;
     border-radius: 50px;
-    font-size: 13px;
-    font-weight: 500;
-    margin-top: 15px;
+    font-size: 12px;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
-.scan-status.active {
+.status-pill.active {
     background: #E8F5E9;
-    color: #388E3C;
+    color: #2E7D32;
 }
 
-.scan-status.inactive {
+.status-pill.inactive {
     background: #FFF3E0;
-    color: #FF6B00;
+    color: #E65100;
 }
 
-.scan-status.error {
+.status-pill.error {
     background: #FFEBEE;
-    color: #D32F2F;
+    color: #C62828;
 }
 
-.scan-status .dot {
-    width: 8px;
-    height: 8px;
+.status-pill .pulse-dot {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: currentColor;
-    animation: blink 1s ease infinite;
+    animation: pulseDot 1.4s ease infinite;
 }
 
-.scan-status.active .dot {
-    animation: blink 1s ease infinite;
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-/* ── TOGGLE SWITCH (Tombol On/Off) ── */
-.camera-toggle-container {
-    margin-top: 20px;
+/* ── Toggle Switch ── */
+.toggle-control {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
-.camera-toggle-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
+.toggle-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #bbb;
     transition: color 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.camera-toggle-label.on {
+.toggle-label.active {
     color: #FF6B00;
 }
 
-.toggle-switch {
+.switch-btn {
     position: relative;
-    width: 70px;
-    height: 36px;
+    width: 56px;
+    height: 32px;
     background: #e0e0e0;
-    border-radius: 36px;
+    border-radius: 32px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     outline: none;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.toggle-switch.on {
+.switch-btn.on {
     background: linear-gradient(135deg, #FF6B00, #FF8C00);
 }
 
-.toggle-switch::after {
+.switch-btn::after {
     content: '';
     position: absolute;
     top: 3px;
     left: 3px;
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     background: #fff;
     border-radius: 50%;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.toggle-switch.on::after {
-    transform: translateX(34px);
+.switch-btn.on::after {
+    transform: translateX(24px);
 }
 
-.toggle-icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 12px;
-    color: #fff;
-    pointer-events: none;
-}
-
-.toggle-icon.off {
-    left: 10px;
-    opacity: 1;
-    transition: opacity 0.2s;
-}
-
-.toggle-icon.on {
-    right: 10px;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.toggle-switch.on .toggle-icon.off {
-    opacity: 0;
-}
-
-.toggle-switch.on .toggle-icon.on {
-    opacity: 1;
-}
-
-/* Loading spinner */
-.toggle-switch.loading {
+.switch-btn:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
-    opacity: 0.7;
 }
 
-.toggle-switch.loading::after {
-    animation: togglePulse 1s ease infinite;
+/* ── Manual Input Section ── */
+.manual-section {
+    padding: 24px 28px 28px;
+    border-top: 1px solid #f5f5f5;
+    background: #fafafa;
 }
 
-@keyframes togglePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(0.9); }
+.manual-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.manual-header i {
+    color: #FF6B00;
+    font-size: 18px;
+}
+
+.manual-header span {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+}
+
+.manual-desc {
+    color: #999;
+    font-size: 12px;
+    margin: 4px 0 16px 28px;
+}
+
+/* Input Group */
+.manual-form {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.input-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #e8e8e8;
+    border-radius: 14px;
+    padding: 0 14px;
+    transition: all 0.25s ease;
+}
+
+.input-field:focus-within {
+    border-color: #FF6B00;
+    box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.08);
+}
+
+.input-prefix {
+    font-weight: 800;
+    color: #FF6B00;
+    font-size: 15px;
+    margin-right: 2px;
+    user-select: none;
+}
+
+.input-field input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 13px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 1px;
+    outline: none;
+    min-width: 0;
+}
+
+.input-field input::placeholder {
+    color: #ccc;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+/* Submit Button */
+.btn-verify {
+    padding: 0 22px;
+    background: linear-gradient(135deg, #FF6B00, #FF8C00);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
+}
+
+.btn-verify:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 107, 0, 0.35);
+}
+
+.btn-verify:active {
+    transform: scale(0.97);
+}
+
+.btn-verify:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Loading & Error */
+.feedback-area {
+    margin-top: 12px;
+    min-height: 36px;
+}
+
+.manual-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #FF6B00;
+    font-size: 13px;
+    font-weight: 600;
+    animation: fadeIn 0.3s ease;
+}
+
+.manual-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #FFEBEE;
+    color: #C62828;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    animation: shakeSoft 0.4s ease;
+}
+
+.manual-error i {
+    font-size: 14px;
+}
+
+@keyframes shakeSoft {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,107,0,0.2);
+    border-top-color: #FF6B00;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* ── Result Modal ── */
-.result-overlay {
+.result-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(10px);
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.4s ease;
+    transition: all 0.35s ease;
+    padding: 20px;
 }
 
-.result-overlay.show {
+.result-backdrop.show {
     opacity: 1;
     visibility: visible;
 }
 
-.result-card {
+.result-box {
     background: #fff;
-    border-radius: 30px;
-    padding: 45px 35px;
-    max-width: 420px;
-    width: 90%;
+    border-radius: 24px;
+    padding: 40px 32px 32px;
+    max-width: 400px;
+    width: 100%;
     text-align: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-    transform: scale(0.8) translateY(30px);
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
     overflow: hidden;
 }
 
-.result-overlay.show .result-card {
+.result-backdrop.show .result-box {
     transform: scale(1) translateY(0);
 }
 
-/* Animations */
-.anim-circle {
-    width: 110px;
-    height: 110px;
+/* Icon Circle */
+.icon-circle {
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     margin: 0 auto 20px;
     display: flex;
@@ -407,390 +586,281 @@
     position: relative;
 }
 
-.anim-circle::before {
+.icon-circle.success {
+    background: #E8F5E9;
+    animation: popScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.icon-circle.success::before {
     content: '';
     position: absolute;
-    inset: -8px;
+    inset: -6px;
     border-radius: 50%;
-    border: 3px solid transparent;
+    border: 3px solid #4CAF50;
+    animation: rippleRing 1.5s ease-out infinite;
 }
 
-.anim-success {
-    background: #E8F5E9;
-    animation: popIn 0.5s ease;
-}
-
-.anim-success i {
-    font-size: 50px;
+.icon-circle.success i {
+    font-size: 40px;
     color: #4CAF50;
 }
 
-.anim-success::before {
-    border-color: #4CAF50;
-    animation: rippleOut 1.5s ease-out infinite;
-}
-
-.anim-error {
+.icon-circle.error {
     background: #FFEBEE;
-    animation: shake 0.5s ease;
+    animation: shakeHard 0.5s ease;
 }
 
-.anim-error i {
-    font-size: 50px;
+.icon-circle.error i {
+    font-size: 40px;
     color: #D32F2F;
 }
 
-.anim-warning {
+.icon-circle.warning {
     background: #FFF3E0;
-    animation: popIn 0.5s ease;
+    animation: popScale 0.5s ease;
 }
 
-.anim-warning i {
-    font-size: 50px;
+.icon-circle.warning i {
+    font-size: 40px;
     color: #FF9800;
-    animation: bounce 0.6s ease infinite alternate;
+    animation: bounceIcon 0.6s ease infinite alternate;
 }
 
-@keyframes popIn {
+@keyframes popScale {
     0% { transform: scale(0); }
-    80% { transform: scale(1.1); }
+    70% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
-@keyframes shake {
+@keyframes shakeHard {
     0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-10px); }
-    40% { transform: translateX(10px); }
-    60% { transform: translateX(-10px); }
-    80% { transform: translateX(10px); }
+    20% { transform: translateX(-12px); }
+    40% { transform: translateX(12px); }
+    60% { transform: translateX(-12px); }
+    80% { transform: translateX(12px); }
 }
 
-@keyframes bounce {
+@keyframes bounceIcon {
     from { transform: translateY(0); }
-    to { transform: translateY(-8px); }
+    to { transform: translateY(-6px); }
 }
 
-@keyframes rippleOut {
+@keyframes rippleRing {
     0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(1.4); opacity: 0; }
+    100% { transform: scale(1.35); opacity: 0; }
 }
 
-/* Confetti */
-.confetti-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.confetti {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    top: -10px;
-    animation: confettiFall 2.5s ease-out forwards;
-}
-
-@keyframes confettiFall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(350px) rotate(720deg); opacity: 0; }
-}
-
-/* Result Content */
+/* Result Text */
 .result-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 6px;
 }
 
-.result-message {
-    color: #666;
-    font-size: 14px;
+.result-desc {
+    color: #777;
+    font-size: 13px;
     margin-bottom: 20px;
     line-height: 1.5;
 }
 
-.booking-detail-scan {
+/* Booking Detail */
+.detail-card {
     background: #f8f9fa;
     border-radius: 16px;
-    padding: 18px;
+    padding: 16px;
     margin-bottom: 20px;
     text-align: left;
 }
 
-.detail-row-scan {
+.detail-row {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    align-items: center;
+    padding: 7px 0;
     border-bottom: 1px solid #eee;
     font-size: 13px;
 }
 
-.detail-row-scan:last-child {
+.detail-row:last-child {
     border-bottom: none;
 }
 
-.detail-row-scan .label {
+.detail-row .lbl {
     color: #888;
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.detail-row-scan .value {
-    font-weight: 600;
+.detail-row .lbl i {
+    color: #FF6B00;
+    font-size: 12px;
+    width: 16px;
+    text-align: center;
+}
+
+.detail-row .val {
+    font-weight: 700;
     color: #333;
 }
 
-.status-badge-scan {
+.status-chip {
     display: inline-block;
     padding: 3px 12px;
     border-radius: 50px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: capitalize;
 }
 
-.status-selesai { background: #E8F5E9; color: #388E3C; }
-.status-menunggu { background: #FFF3E0; color: #FF6B00; }
-.status-dikonfirmasi { background: #E3F2FD; color: #1976D2; }
-.status-proses { background: #F3E5F5; color: #7B1FA2; }
+.status-selesai { background: #E8F5E9; color: #2E7D32; }
+.status-menunggu { background: #FFF3E0; color: #E65100; }
+.status-dikonfirmasi { background: #E3F2FD; color: #1565C0; }
+.status-proses { background: #F3E5F5; color: #6A1B9A; }
 
-.btn-close-result {
-    padding: 12px 35px;
-    background: linear-gradient(135deg, #FF6B00, #FF8C00);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/* Close Button */
+.btn-close-modal {
     width: 100%;
-}
-
-.btn-close-result:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255,107,0,0.4);
-}
-
-/* ── Manual Input Fallback ── */
-.manual-fallback {
-    margin-top: 25px;
-    padding-top: 25px;
-    border-top: 2px dashed #f0f0f0;
-}
-
-.manual-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    justify-content: center;
-}
-
-.manual-header span {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-}
-
-.manual-desc {
-    color: #aaa;
-    font-size: 13px;
-    margin-bottom: 15px;
-}
-
-.manual-input-group {
-    display: flex;
-    gap: 10px;
-    max-width: 400px;
-    margin: 0 auto;
-    align-items: stretch;
-}
-
-.input-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    background: #f8f9fa;
-    border: 2px solid #f0f0f0;
-    border-radius: 14px;
-    padding: 0 15px;
-    transition: all 0.3s ease;
-}
-
-.input-wrapper:focus-within {
-    border-color: #FF6B00;
-    background: #fff;
-    box-shadow: 0 4px 15px rgba(255,107,0,0.1);
-}
-
-.input-prefix {
-    font-weight: 700;
-    color: #FF6B00;
-    font-size: 15px;
-    margin-right: 2px;
-}
-
-.input-wrapper input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 14px 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    font-family: 'Poppins', sans-serif;
-    letter-spacing: 1px;
-    outline: none;
-}
-
-.input-wrapper input::placeholder {
-    color: #ccc;
-    font-weight: 400;
-}
-
-.btn-submit-manual {
-    padding: 0 24px;
+    padding: 14px;
     background: linear-gradient(135deg, #FF6B00, #FF8C00);
     color: #fff;
     border: none;
     border-radius: 14px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.btn-submit-manual:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255,107,0,0.3);
-}
-
-.btn-submit-manual:active {
-    transform: scale(0.96);
-}
-
-.btn-submit-manual:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.btn-submit-manual i {
-    font-size: 13px;
-}
-
-/* Loading */
-.manual-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-    color: #FF6B00;
-    font-size: 13px;
-    font-weight: 500;
-    animation: fadeIn 0.3s ease;
-}
-
-.spinner-small {
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(255,107,0,0.2);
-    border-top-color: #FF6B00;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Error */
-.manual-error {
+    transition: all 0.25s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-top: 12px;
-    padding: 10px 15px;
-    background: #FFEBEE;
-    color: #C62828;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    animation: shake 0.4s ease;
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
 }
 
-.manual-error i {
-    font-size: 14px;
+.btn-close-modal:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 107, 0, 0.35);
 }
 
-/* Debug Panel */
-.debug-panel {
+/* Confetti */
+.confetti-box {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    top: -10px;
+    animation: confettiDrop 2.5s ease-out forwards;
+}
+
+@keyframes confettiDrop {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(320px) rotate(720deg); opacity: 0; }
+}
+
+/* ── Debug Panel ── */
+.debug-box {
     background: #fff;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
-    color: #333;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+    font-size: 11px;
+    font-family: 'SF Mono', 'Courier New', monospace;
+    color: #444;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border: 1px solid #f0f0f0;
 }
 
-.debug-header {
-    font-weight: 600;
+.debug-box .dbg-title {
+    font-weight: 700;
     color: #FF6B00;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 6px;
+    font-size: 12px;
 }
 
-.debug-log {
-    max-height: 120px;
+.debug-box .dbg-logs {
+    max-height: 100px;
     overflow-y: auto;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-    .scanner-container {
-        padding: 10px;
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .scanner-wrapper {
+        padding: 12px;
     }
-    
-    .camera-section {
-        padding: 20px 15px;
+
+    .scan-card-header {
+        padding: 20px 20px 0;
     }
-    
-    .scan-frame {
-        width: 200px;
-        height: 200px;
+
+    .camera-area {
+        padding: 16px 20px;
     }
-    
-    .result-card {
-        padding: 35px 25px;
+
+    .manual-section {
+        padding: 20px;
     }
-    
-    .camera-toggle-label {
-        font-size: 13px;
+
+    .controls-row {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
     }
-    
-    .debug-panel {
-        margin: 10px;
-        border-radius: 10px;
+
+    .toggle-control {
+        justify-content: center;
+    }
+
+    .status-pill {
+        justify-content: center;
+    }
+
+    .manual-form {
+        flex-direction: column;
+    }
+
+    .btn-verify {
+        justify-content: center;
+        padding: 14px;
+    }
+
+    .result-box {
+        padding: 32px 24px 24px;
+    }
+}
+
+@media (max-width: 380px) {
+    .scan-card-header h2 {
+        font-size: 18px;
+    }
+
+    .scanner-viewport {
+        border-radius: 16px;
+    }
+
+    .corner-bracket {
+        width: 30px;
+        height: 30px;
+    }
+
+    .icon-circle {
+        width: 72px;
+        height: 72px;
+    }
+
+    .icon-circle i {
+        font-size: 32px !important;
     }
 }
 </style>
@@ -798,65 +868,72 @@
 
 {% block content %}
 <!-- Debug Panel -->
-<div class="debug-panel" id="debugPanel">
-    <div class="debug-header">
-        <i class="fas fa-bug"></i>
-        Debug Panel
+<div class="scanner-wrapper">
+    <div class="debug-box" id="debugPanel">
+        <div class="dbg-title">
+            <i class="fas fa-bug"></i>
+            Debug Panel
+        </div>
+        <div class="dbg-logs" id="debugLog"></div>
     </div>
-    <div class="debug-log" id="debugLog"></div>
-</div>
 
-<div class="scanner-container">
-    <div class="camera-section">
-        <div class="camera-header">
-            <h2><i class="fas fa-qrcode" style="color: #FF6B00; margin-right: 8px;"></i>Scan QR Code</h2>
-            <p>Arahkan kamera ke QR Code booking untuk menyelesaikan layanan</p>
+    <div class="scan-card">
+        <!-- Header -->
+        <div class="scan-card-header">
+            <h2><i class="fas fa-qrcode"></i>Scan QR Code</h2>
+            <p>Arahkan kamera ke QR Code booking untuk verifikasi</p>
         </div>
 
-        <!-- Scanner Box -->
-        <div class="scanner-box" id="scannerBox">
-            <div id="reader"></div>
-            
-            <div class="camera-off-state" id="cameraOffState">
-                <i class="fas fa-video-slash"></i>
-                <p>Kamera dimatikan</p>
-            </div>
-            
-            <div class="scan-overlay" id="scanOverlay">
-                <div class="scan-frame">
-                    <div class="scan-line"></div>
+        <!-- Camera Area -->
+        <div class="camera-area">
+            <div class="scanner-viewport" id="scannerBox">
+                <div id="reader"></div>
+
+                <!-- Off State -->
+                <div class="camera-off-layer" id="cameraOffState">
+                    <i class="fas fa-video-slash"></i>
+                    <p>Kamera dimatikan</p>
                 </div>
-                <div class="scan-hint">
-                    <i class="fas fa-qrcode" style="margin-right: 6px;"></i>
-                    Arahkan QR Code ke area ini
+
+                <!-- Scan Overlay -->
+                <div class="scan-overlay" id="scanOverlay">
+                    <div class="corner-bracket tl"></div>
+                    <div class="corner-bracket tr"></div>
+                    <div class="corner-bracket bl"></div>
+                    <div class="corner-bracket br"></div>
+                    <div class="scan-laser"></div>
+                    <div class="scan-hint-box">
+                        <i class="fas fa-qrcode"></i>
+                        Arahkan QR Code ke area ini
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="scan-status inactive" id="scanStatus">
-            <span class="dot"></span>
-            <span id="statusText">Kamera mati</span>
-        </div>
+            <!-- Controls Row -->
+            <div class="controls-row">
+                <div class="status-pill inactive" id="scanStatus">
+                    <span class="pulse-dot"></span>
+                    <span id="statusText">Kamera mati</span>
+                </div>
 
-        <div class="camera-toggle-container">
-            <span class="camera-toggle-label" id="toggleLabelOff">OFF</span>
-            <button class="toggle-switch" id="cameraToggle" onclick="toggleCamera()">
-                <span class="toggle-icon off"><i class="fas fa-power-off"></i></span>
-                <span class="toggle-icon on"><i class="fas fa-video"></i></span>
-            </button>
-            <span class="camera-toggle-label on" id="toggleLabelOn" style="opacity: 0.3;">ON</span>
+                <div class="toggle-control">
+                    <span class="toggle-label" id="toggleLabelOff">OFF</span>
+                    <button class="switch-btn" id="cameraToggle" onclick="toggleCamera()" aria-label="Toggle camera"></button>
+                    <span class="toggle-label active" id="toggleLabelOn" style="opacity:0.3;">ON</span>
+                </div>
+            </div>
         </div>
 
         <!-- Manual Input -->
-        <div class="manual-fallback">
+        <div class="manual-section">
             <div class="manual-header">
-                <i class="fas fa-keyboard" style="color: #FF6B00; font-size: 20px;"></i>
+                <i class="fas fa-keyboard"></i>
                 <span>Masukkan Manual</span>
             </div>
             <p class="manual-desc">Ketik nomor booking untuk mencari data</p>
-            
-            <div class="manual-input-group">
-                <div class="input-wrapper">
+
+            <div class="manual-form">
+                <div class="input-field">
                     <span class="input-prefix">PB-</span>
                     <input 
                         type="text" 
@@ -867,31 +944,33 @@
                         onkeypress="if(event.key==='Enter')processManual()"
                         oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
                 </div>
-                <button class="btn-submit-manual" id="btnSubmitManual" onclick="processManual()">
+                <button class="btn-verify" id="btnSubmitManual" onclick="processManual()">
                     <i class="fas fa-search"></i>
                     <span>Verifikasi</span>
                 </button>
             </div>
-            
-            <div class="manual-loading" id="manualLoading" style="display: none;">
-                <div class="spinner-small"></div>
-                <span>Mencari booking...</span>
-            </div>
-            
-            <div class="manual-error" id="manualError" style="display: none;">
-                <i class="fas fa-exclamation-circle"></i>
-                <span id="manualErrorText">Nomor booking tidak ditemukan</span>
+
+            <div class="feedback-area">
+                <div class="manual-loading" id="manualLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>Mencari booking...</span>
+                </div>
+
+                <div class="manual-error" id="manualError" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="manualErrorText">Nomor booking tidak ditemukan</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Result Modal -->
-<div class="result-overlay" id="resultOverlay" onclick="closeResult(event)">
-    <div class="result-card" onclick="event.stopPropagation()">
-        <div class="confetti-container" id="confettiContainer"></div>
+<div class="result-backdrop" id="resultOverlay" onclick="closeResult(event)">
+    <div class="result-box" onclick="event.stopPropagation()">
+        <div class="confetti-box" id="confettiContainer"></div>
         <div id="resultContent"></div>
-        <button class="btn-close-result" onclick="closeResult()">
+        <button class="btn-close-modal" onclick="closeResult()">
             <i class="fas fa-check"></i> Tutup
         </button>
     </div>
@@ -908,19 +987,17 @@
 // ═══════════════════════════════════════════════════════════════
 // DEBUG LOGGER
 // ═══════════════════════════════════════════════════════════════
-
 function debug(msg, type = 'info') {
     const log = document.getElementById('debugLog');
     const time = new Date().toLocaleTimeString('id-ID', {hour12:false});
-    const color = type === 'error' ? '#E74C3C' : type === 'success' ? '#27AE60' : '#333';
-    log.innerHTML += `<div style="color:${color};margin:2px 0;">[${time}] ${msg}</div>`;
+    const color = type === 'error' ? '#E74C3C' : type === 'success' ? '#27AE60' : '#555';
+    log.innerHTML += `<div style="color:${color};">[${time}] ${msg}</div>`;
     console.log(`[${type.toUpperCase()}] ${msg}`);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// QR CAMERA SCANNER
+// QR CAMERA SCANNER (NO MIRROR FIX)
 // ═══════════════════════════════════════════════════════════════
-
 let html5QrCode = null;
 let isScanning = false;
 let lastScan = '';
@@ -938,20 +1015,24 @@ const statusText = document.getElementById('statusText');
 const beepSound = document.getElementById('beepSound');
 
 function updateStatus(state, text) {
-    scanStatus.className = 'scan-status ' + state;
+    scanStatus.className = 'status-pill ' + state;
     statusText.textContent = text;
 }
 
 function updateToggleUI(isOn) {
     if (isOn) {
         cameraToggle.classList.add('on');
-        toggleLabelOff.style.opacity = '0.3';
+        toggleLabelOff.classList.remove('active');
+        toggleLabelOn.classList.add('active');
         toggleLabelOn.style.opacity = '1';
+        toggleLabelOff.style.opacity = '0.3';
         scannerBox.classList.add('active');
         cameraOffState.style.display = 'none';
         scanOverlay.classList.add('show');
     } else {
         cameraToggle.classList.remove('on');
+        toggleLabelOff.classList.add('active');
+        toggleLabelOn.classList.remove('active');
         toggleLabelOff.style.opacity = '1';
         toggleLabelOn.style.opacity = '0.3';
         scannerBox.classList.remove('active');
@@ -980,53 +1061,69 @@ async function getBackCamera() {
 
 async function startScanner() {
     if (isScanning || isToggling) return;
-    
+
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         showResult('error', 'Tidak Didukung', 'Browser tidak mendukung akses kamera.', null);
         return;
     }
-    
+
     isToggling = true;
-    cameraToggle.classList.add('loading');
+    cameraToggle.disabled = true;
     updateStatus('inactive', 'Memulai kamera...');
-    
+
     try {
         const cameraId = await getBackCamera();
-        
-        html5QrCode = new Html5Qrcode("reader");
-        
+
+        // ═══════════════════════════════════════════════════════════════
+        // 🔥 FIX: Set mirror = false di config html5-qrcode
+        // ═══════════════════════════════════════════════════════════════
+        html5QrCode = new Html5Qrcode("reader", false);
+
         const config = {
             fps: 15,
             qrbox: { width: 250, height: 250 },
             aspectRatio: 1.0,
             disableFlip: false,
+            // 🔥 mirror: false — jangan mirror video
             videoConstraints: {
                 width: { min: 640, ideal: 1280 },
                 height: { min: 480, ideal: 720 },
                 facingMode: cameraId ? undefined : "environment"
             }
         };
-        
+
         const cameraConfig = cameraId ? { deviceId: { exact: cameraId } } : { facingMode: "environment" };
-        
+
         await html5QrCode.start(
             cameraConfig,
             config,
             onScanSuccess,
             onScanFailure
         );
-        
+
+        // ═══════════════════════════════════════════════════════════════
+        // 🔥 FIX: Force video element to NOT mirror via JS
+        // ═══════════════════════════════════════════════════════════════
+        setTimeout(() => {
+            const videos = document.querySelectorAll('#reader video, #reader__scan_region video');
+            videos.forEach(v => {
+                v.style.transform = 'scaleX(1)';
+                v.style.webkitTransform = 'scaleX(1)';
+            });
+            debug('Mirror disabled on video element', 'success');
+        }, 500);
+
         isScanning = true;
         updateToggleUI(true);
         updateStatus('active', 'Mencari QR Code...');
-        debug('Kamera berhasil dijalankan', 'success');
-        
+        debug('Kamera berhasil dijalankan (no mirror)', 'success');
+
     } catch (err) {
         debug('Start failed: ' + err.name + ' - ' + err.message, 'error');
-        
+
         let errorMsg = 'Tidak dapat mengakses kamera.';
         let errorTitle = 'Gagal Memulai';
-        
+
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
             errorMsg = 'Izin kamera ditolak. Izinkan akses kamera di pengaturan browser.';
             errorTitle = 'Izin Ditolak';
@@ -1037,22 +1134,22 @@ async function startScanner() {
             errorMsg = 'Kamera sedang digunakan aplikasi lain.';
             errorTitle = 'Kamera Sibuk';
         }
-        
+
         showResult('error', errorTitle, errorMsg, null);
         updateStatus('error', 'Gagal memulai');
         updateToggleUI(false);
     } finally {
         isToggling = false;
-        cameraToggle.classList.remove('loading');
+        cameraToggle.disabled = false;
     }
 }
 
 async function stopScanner() {
     if (!html5QrCode || !isScanning) return;
-    
+
     isToggling = true;
-    cameraToggle.classList.add('loading');
-    
+    cameraToggle.disabled = true;
+
     try {
         await html5QrCode.stop();
         await html5QrCode.clear();
@@ -1064,13 +1161,13 @@ async function stopScanner() {
         debug('Stop failed: ' + err.message, 'error');
     } finally {
         isToggling = false;
-        cameraToggle.classList.remove('loading');
+        cameraToggle.disabled = false;
     }
 }
 
 function toggleCamera() {
     if (isToggling) return;
-    
+
     if (isScanning) {
         stopScanner();
     } else {
@@ -1080,22 +1177,22 @@ function toggleCamera() {
 
 function onScanSuccess(decodedText, decodedResult) {
     if (scanCooldown || decodedText === lastScan) return;
-    
+
     lastScan = decodedText;
     scanCooldown = true;
-    
+
     beepSound.currentTime = 0;
     beepSound.play().catch(() => {});
-    
+
     let noBooking = decodedText;
     const match = decodedText.match(/\/scan\/([A-Z0-9-]+)/i);
     if (match) noBooking = match[1];
-    
+
     noBooking = noBooking.toUpperCase().trim();
-    
+
     updateStatus('active', 'Memproses...');
     processBooking(noBooking);
-    
+
     setTimeout(() => {
         scanCooldown = false;
         lastScan = '';
@@ -1110,30 +1207,27 @@ function onScanFailure(error) {
 // ═══════════════════════════════════════════════════════════════
 // MANUAL INPUT
 // ═══════════════════════════════════════════════════════════════
-
 function processManual() {
     const input = document.getElementById('manualInput');
     const btn = document.getElementById('btnSubmitManual');
     const loading = document.getElementById('manualLoading');
     const errorDiv = document.getElementById('manualError');
-    
+
     let noBooking = input.value.trim().toUpperCase();
-    
-    // Auto-tambah prefix PB- kalau belum ada
+
     if (noBooking && !noBooking.startsWith('PB-')) {
         noBooking = 'PB-' + noBooking;
     }
-    
-    // Validasi
+
     if (!noBooking || noBooking === 'PB-') {
         showManualError('Masukkan nomor booking dulu!');
         shakeInput();
         return;
     }
-    
+
     hideManualError();
     setManualLoading(true);
-    
+
     processBooking(noBooking);
 }
 
@@ -1149,7 +1243,7 @@ function processBooking(noBooking) {
     .then(r => r.json())
     .then(data => {
         setManualLoading(false);
-        
+
         if (data.status === 'success') {
             document.getElementById('manualInput').value = '';
             showResult('success', 'Berhasil!', data.message, data.booking);
@@ -1173,9 +1267,8 @@ function processBooking(noBooking) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// MANUAL INPUT HELPERS
+// HELPERS
 // ═══════════════════════════════════════════════════════════════
-
 function showManualError(msg) {
     const errorDiv = document.getElementById('manualError');
     document.getElementById('manualErrorText').textContent = msg;
@@ -1190,95 +1283,92 @@ function hideManualError() {
 function setManualLoading(isLoading) {
     const btn = document.getElementById('btnSubmitManual');
     const loading = document.getElementById('manualLoading');
-    
+
     if (isLoading) {
         btn.disabled = true;
-        btn.innerHTML = '<div class="spinner-small" style="border-color:rgba(255,255,255,0.3);border-top-color:#fff;width:16px;height:16px;"></div> <span>Mencari...</span>';
+        btn.innerHTML = '<div class="spinner" style="border-color:rgba(255,255,255,0.3);border-top-color:#fff;width:14px;height:14px;"></div> <span>Mencari...</span>';
         loading.style.display = 'flex';
     } else {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-search"></i> <span>Cari</span>';
+        btn.innerHTML = '<i class="fas fa-search"></i> <span>Verifikasi</span>';
         loading.style.display = 'none';
     }
 }
 
 function shakeInput() {
-    const wrapper = document.querySelector('.input-wrapper');
-    wrapper.style.animation = 'none';
-    wrapper.offsetHeight;
-    wrapper.style.animation = 'shake 0.4s ease';
+    const wrapper = document.querySelector('.input-field');
+    wrapper.style.animation = 'shakeSoft 0.4s ease';
     setTimeout(() => wrapper.style.animation = '', 400);
 }
 
 // ═══════════════════════════════════════════════════════════════
 // RESULT MODAL
 // ═══════════════════════════════════════════════════════════════
-
 function showResult(type, title, message, booking) {
     const overlay = document.getElementById('resultOverlay');
     const content = document.getElementById('resultContent');
     const confettiContainer = document.getElementById('confettiContainer');
-    
+
     let iconHtml = '';
     let animClass = '';
-    
+
     switch(type) {
         case 'success':
-            animClass = 'anim-success';
+            animClass = 'success';
             iconHtml = '<i class="fas fa-check"></i>';
             createConfetti();
             break;
         case 'error':
-            animClass = 'anim-error';
+            animClass = 'error';
             iconHtml = '<i class="fas fa-times"></i>';
             break;
         case 'warning':
-            animClass = 'anim-warning';
+            animClass = 'warning';
             iconHtml = '<i class="fas fa-exclamation"></i>';
             break;
         default:
-            animClass = 'anim-info';
+            animClass = 'success';
             iconHtml = '<i class="fas fa-info"></i>';
     }
-    
+
     let bookingHtml = '';
     if (booking) {
         bookingHtml = `
-            <div class="booking-detail-scan">
-                <div class="detail-row-scan">
-                    <span class="label"><i class="fas fa-hashtag" style="color: #FF6B00;"></i>No. Booking</span>
-                    <span class="value">${booking.no_booking}</span>
+            <div class="detail-card">
+                <div class="detail-row">
+                    <span class="lbl"><i class="fas fa-hashtag"></i>No. Booking</span>
+                    <span class="val">${booking.no_booking}</span>
                 </div>
-                <div class="detail-row-scan">
-                    <span class="label"><i class="fas fa-concierge-bell" style="color: #FF6B00;"></i>Layanan</span>
-                    <span class="value">${booking.nama_layanan || '-'}</span>
+                <div class="detail-row">
+                    <span class="lbl"><i class="fas fa-concierge-bell"></i>Layanan</span>
+                    <span class="val">${booking.nama_layanan || '-'}</span>
                 </div>
-                <div class="detail-row-scan">
-                    <span class="label"><i class="fas fa-user" style="color: #FF6B00;"></i>Nama</span>
-                    <span class="value">${booking.nama_pendaftar || '-'}</span>
+                <div class="detail-row">
+                    <span class="lbl"><i class="fas fa-user"></i>Nama</span>
+                    <span class="val">${booking.nama_pendaftar || '-'}</span>
                 </div>
-                <div class="detail-row-scan">
-                    <span class="label"><i class="fas fa-info-circle" style="color: #FF6B00;"></i>Status</span>
-                    <span class="value"><span class="status-badge-scan status-${booking.status}">${booking.status}</span></span>
+                <div class="detail-row">
+                    <span class="lbl"><i class="fas fa-info-circle"></i>Status</span>
+                    <span class="val"><span class="status-chip status-${booking.status}">${booking.status}</span></span>
                 </div>
                 ${booking.nomor_antrian ? `
-                <div class="detail-row-scan">
-                    <span class="label"><i class="fas fa-list-ol" style="color: #FF6B00;"></i>Antrean</span>
-                    <span class="value" style="color: #FF6B00;">#${booking.nomor_antrian}</span>
+                <div class="detail-row">
+                    <span class="lbl"><i class="fas fa-list-ol"></i>Antrean</span>
+                    <span class="val" style="color: #FF6B00;">#${booking.nomor_antrian}</span>
                 </div>` : ''}
             </div>
         `;
     }
-    
+
     content.innerHTML = `
-        <div class="anim-circle ${animClass}">${iconHtml}</div>
+        <div class="icon-circle ${animClass}">${iconHtml}</div>
         <h3 class="result-title">${title}</h3>
-        <p class="result-message">${message}</p>
+        <p class="result-desc">${message}</p>
         ${bookingHtml}
     `;
-    
+
     overlay.classList.add('show');
-    
+
     if (type === 'success') {
         setTimeout(() => closeResult(), 2500);
     }
@@ -1292,37 +1382,35 @@ function closeResult(e) {
 
 function createConfetti() {
     const container = document.getElementById('confettiContainer');
-    const colors = ['#FF6B00', '#FF8C00', '#4CAF50', '#FFB347', '#FFD700', '#FF5722', '#2196F3'];
-    
-    for (let i = 0; i < 25; i++) {
+    const colors = ['#FF6B00', '#FF8C00', '#4CAF50', '#FFB347', '#FFD700', '#FF5722', '#2196F3', '#E91E63'];
+
+    for (let i = 0; i < 30; i++) {
         const confetti = document.createElement('div');
-        confetti.className = 'confetti';
+        confetti.className = 'confetti-piece';
         confetti.style.left = Math.random() * 100 + '%';
         confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
         confetti.style.animationDelay = Math.random() * 1.5 + 's';
         confetti.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
         confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-        confetti.style.width = (Math.random() * 6 + 5) + 'px';
-        confetti.style.height = (Math.random() * 6 + 5) + 'px';
+        confetti.style.width = (Math.random() * 6 + 4) + 'px';
+        confetti.style.height = (Math.random() * 6 + 4) + 'px';
         container.appendChild(confetti);
     }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// AUTO START BACK CAMERA ON PAGE LOAD
+// INIT
 // ═══════════════════════════════════════════════════════════════
-
 document.addEventListener('DOMContentLoaded', () => {
     debug('=== HALAMAN LOADED ===');
     debug('URL: ' + window.location.href);
     debug('Protocol: ' + window.location.protocol);
-    
+
     setTimeout(() => {
         startScanner();
     }, 800);
 });
 
-// Cleanup saat meninggalkan halaman
 window.addEventListener('beforeunload', () => {
     if (html5QrCode && isScanning) {
         html5QrCode.stop().catch(() => {});

@@ -6,40 +6,96 @@
 
 {% block extra_css %}
 <style>
-  /* Modal Styles - Shared */
-  .modal-overlay {
+  /* ===== GLOBAL SCROLLBAR HIDE (tetep bisa scroll) ===== */
+  html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow: auto;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* ===== MODAL SYSTEM - REFERENSI DARI HALAMAN USERS ===== */
+  .pb-modal {
     display: none;
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 2000;
-    backdrop-filter: blur(4px);
-    animation: fadeIn 0.2s ease;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2147483647;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px) saturate(1.1);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    isolation: isolate;
+    transform: translateZ(0);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  .modal-overlay.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  
+  .pb-modal::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
-  .modal-box {
+  
+  .pb-modal.active {
+    display: block;
+  }
+  
+  .pb-modal-wrapper {
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .pb-modal-wrapper::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  
+  .pb-modal-box {
+    position: relative;
+    margin: 0 auto;
     background: #fff;
     border-radius: 20px;
     width: 100%;
     max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 0;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    animation: slideUp 0.3s ease;
+    animation: pbSlideUp 0.3s ease;
+    height: auto;
   }
-  .modal-header {
+  
+  @keyframes pbSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pbFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MODAL HEADER ===== */
+  .pb-modal-header {
     padding: 24px 28px 0;
     display: flex;
     align-items: center;
     gap: 14px;
     margin-bottom: 24px;
   }
-  .modal-header-icon {
+  
+  .pb-modal-header-icon {
     width: 48px;
     height: 48px;
     background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
@@ -49,26 +105,33 @@
     justify-content: center;
     color: var(--pb-orange);
     font-size: 20px;
+    flex-shrink: 0;
   }
-  .modal-header-icon.edit {
+  
+  .pb-modal-header-icon.edit {
     background: linear-gradient(135deg, #DBEAFE, #EFF6FF);
     color: var(--pb-blue);
   }
-  .modal-header-icon.delete {
+  
+  .pb-modal-header-icon.delete {
     background: linear-gradient(135deg, #FEE2E2, #FEF2F2);
     color: var(--pb-red);
   }
-  .modal-header-text h3 {
+  
+  .pb-modal-header-text h3 {
     font-size: 18px;
     font-weight: 700;
     color: #1a1a1a;
     margin-bottom: 2px;
   }
-  .modal-header-text p {
+  
+  .pb-modal-header-text p {
     font-size: 13px;
     color: #888;
+    margin: 0;
   }
-  .modal-close {
+  
+  .pb-modal-close {
     margin-left: auto;
     width: 36px;
     height: 36px;
@@ -81,18 +144,24 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    flex-shrink: 0;
   }
-  .modal-close:hover {
+  
+  .pb-modal-close:hover {
     background: #fee2e2;
     color: #e74c3c;
   }
-  .modal-form {
+
+  /* ===== MODAL FORM ===== */
+  .pb-modal-form {
     padding: 0 28px 28px;
   }
-  .modal-form .form-group {
+  
+  .pb-form-group {
     margin-bottom: 16px;
   }
-  .modal-form .form-group label {
+  
+  .pb-form-group label {
     display: block;
     font-size: 12px;
     font-weight: 600;
@@ -101,21 +170,25 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  .modal-form .input-wrap {
+  
+  .pb-input-wrap {
     position: relative;
     display: flex;
     align-items: center;
   }
-  .modal-form .input-wrap > i:first-child {
+  
+  .pb-input-wrap > i:first-child {
     position: absolute;
     left: 14px;
     color: #aaa;
     font-size: 14px;
     z-index: 2;
+    pointer-events: none;
   }
-  .modal-form .input-wrap input,
-  .modal-form .input-wrap select,
-  .modal-form .input-wrap textarea {
+  
+  .pb-input-wrap input,
+  .pb-input-wrap select,
+  .pb-input-wrap textarea {
     width: 100%;
     padding: 14px 14px 14px 44px;
     border: 2px solid #f0f0f0;
@@ -126,24 +199,29 @@
     outline: none;
     background: #fafafa;
     color: #333;
+    box-sizing: border-box;
   }
-  .modal-form .input-wrap textarea {
+  
+  .pb-input-wrap textarea {
     padding-left: 16px;
     min-height: 80px;
     resize: vertical;
   }
-  .modal-form .input-wrap input:focus,
-  .modal-form .input-wrap select:focus,
-  .modal-form .input-wrap textarea:focus {
+  
+  .pb-input-wrap input:focus,
+  .pb-input-wrap select:focus,
+  .pb-input-wrap textarea:focus {
     border-color: var(--pb-orange);
     background: #fff;
     box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.08);
   }
-  .modal-form .input-wrap input::placeholder,
-  .modal-form .input-wrap textarea::placeholder {
+  
+  .pb-input-wrap input::placeholder,
+  .pb-input-wrap textarea::placeholder {
     color: #bbb;
   }
-  .modal-form .btn-submit {
+  
+  .pb-btn-submit {
     width: 100%;
     padding: 16px;
     background: linear-gradient(135deg, var(--pb-orange), var(--pb-orange-2));
@@ -161,23 +239,30 @@
     gap: 8px;
     margin-top: 8px;
   }
-  .modal-form .btn-submit:hover {
+  
+  .pb-btn-submit:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(255, 107, 0, 0.35);
   }
-  .modal-form .btn-submit.edit {
+  
+  .pb-btn-submit.edit {
     background: linear-gradient(135deg, var(--pb-blue), #60A5FA);
   }
-  .modal-form .btn-submit.edit:hover {
+  
+  .pb-btn-submit.edit:hover {
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
   }
-  .modal-form .btn-submit.delete {
+  
+  .pb-btn-submit.delete {
     background: linear-gradient(135deg, var(--pb-red), var(--pb-red-2));
   }
-  .modal-form .btn-submit.delete:hover {
+  
+  .pb-btn-submit.delete:hover {
     box-shadow: 0 8px 25px rgba(231, 76, 60, 0.35);
   }
-  .delete-warning {
+
+  /* Delete specific styles */
+  .pb-delete-warning {
     background: #FEF2F2;
     border: 1px solid #FECACA;
     border-radius: 12px;
@@ -189,29 +274,44 @@
     color: #991B1B;
     font-size: 13px;
   }
-  .delete-warning i {
+  
+  .pb-delete-warning i {
     font-size: 20px;
     color: var(--pb-red);
+    flex-shrink: 0;
   }
-  .delete-info {
+  
+  .pb-delete-info {
     text-align: center;
     padding: 20px 0;
     color: #666;
     font-size: 14px;
   }
-  .delete-info strong {
+  
+  .pb-delete-info strong {
     color: #1a1a1a;
     display: block;
     margin-bottom: 4px;
     font-size: 16px;
   }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .pb-modal-wrapper {
+      padding: 20px 12px 40px;
+    }
+    
+    .pb-modal-box {
+      border-radius: 16px;
+    }
+    
+    .pb-modal-header {
+      padding: 20px 20px 0;
+    }
+    
+    .pb-modal-form {
+      padding: 0 20px 20px;
+    }
   }
 </style>
 {% endblock %}
@@ -283,163 +383,181 @@
     </div>
   </div>
 
+  <!-- MODAL CONTAINERS (akan di-append ke body via JS) -->
   <!-- Modal Tambah Layanan -->
-  <div class="modal-overlay" id="modalAdd" onclick="closeModalOutside(event, 'add')">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-header-icon">
-          <i class="fas fa-plus-circle"></i>
+  <div class="pb-modal" id="modalAdd" data-modal-type="add">
+    <div class="pb-modal-wrapper" onclick="closeModalWrapper(event, 'add')">
+      <div class="pb-modal-box" onclick="event.stopPropagation()">
+        <div class="pb-modal-header">
+          <div class="pb-modal-header-icon">
+            <i class="fas fa-plus-circle"></i>
+          </div>
+          <div class="pb-modal-header-text">
+            <h3>Tambah Layanan Baru</h3>
+            <p>Tambahkan layanan publik yang dapat dipesan</p>
+          </div>
+          <button class="pb-modal-close" onclick="closeModal('add')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="modal-header-text">
-          <h3>Tambah Layanan Baru</h3>
-          <p>Tambahkan layanan publik yang dapat dipesan</p>
-        </div>
-        <button class="modal-close" onclick="closeModal('add')">
-          <i class="fas fa-times"></i>
-        </button>
+        <form class="pb-modal-form" method="POST" action="{{ url_for('admin_routes.tambah_layanan') }}">
+          <div class="pb-form-group">
+            <label>Nama Layanan</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-concierge-bell"></i>
+              <input type="text" name="nama_layanan" placeholder="Masukkan nama layanan" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Instansi</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-building"></i>
+              <input type="text" name="instansi" placeholder="Masukkan nama instansi" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Jam Operasional</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-clock"></i>
+              <input type="text" name="jam_operasional" placeholder="Contoh: 08:00 - 16:00">
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Deskripsi</label>
+            <div class="pb-input-wrap">
+              <textarea name="deskripsi" placeholder="Deskripsi layanan (opsional)"></textarea>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Status</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-toggle-on"></i>
+              <select name="status" style="padding-left: 44px;">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="pb-btn-submit">
+            <i class="fas fa-save"></i>
+            Simpan Layanan
+          </button>
+        </form>
       </div>
-      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.tambah_layanan') }}">
-        <div class="form-group">
-          <label>Nama Layanan</label>
-          <div class="input-wrap">
-            <i class="fas fa-concierge-bell"></i>
-            <input type="text" name="nama_layanan" placeholder="Masukkan nama layanan" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Instansi</label>
-          <div class="input-wrap">
-            <i class="fas fa-building"></i>
-            <input type="text" name="instansi" placeholder="Masukkan nama instansi" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Jam Operasional</label>
-          <div class="input-wrap">
-            <i class="fas fa-clock"></i>
-            <input type="text" name="jam_operasional" placeholder="Contoh: 08:00 - 16:00">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Deskripsi</label>
-          <div class="input-wrap">
-            <textarea name="deskripsi" placeholder="Deskripsi layanan (opsional)"></textarea>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <div class="input-wrap">
-            <i class="fas fa-toggle-on"></i>
-            <select name="status" style="padding-left: 44px;">
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
-        <button type="submit" class="btn-submit">
-          <i class="fas fa-save"></i>
-          Simpan Layanan
-        </button>
-      </form>
     </div>
   </div>
 
   <!-- Modal Edit Layanan -->
-  <div class="modal-overlay" id="modalEdit" onclick="closeModalOutside(event, 'edit')">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-header-icon edit">
-          <i class="fas fa-pencil-alt"></i>
+  <div class="pb-modal" id="modalEdit" data-modal-type="edit">
+    <div class="pb-modal-wrapper" onclick="closeModalWrapper(event, 'edit')">
+      <div class="pb-modal-box" onclick="event.stopPropagation()">
+        <div class="pb-modal-header">
+          <div class="pb-modal-header-icon edit">
+            <i class="fas fa-pencil-alt"></i>
+          </div>
+          <div class="pb-modal-header-text">
+            <h3>Edit Layanan</h3>
+            <p>Perbarui data layanan yang sudah ada</p>
+          </div>
+          <button class="pb-modal-close" onclick="closeModal('edit')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="modal-header-text">
-          <h3>Edit Layanan</h3>
-          <p>Perbarui data layanan yang sudah ada</p>
-        </div>
-        <button class="modal-close" onclick="closeModal('edit')">
-          <i class="fas fa-times"></i>
-        </button>
+        <form class="pb-modal-form" method="POST" action="{{ url_for('admin_routes.edit_layanan') }}" id="editForm">
+          <input type="hidden" name="service_id" id="editServiceId">
+          <div class="pb-form-group">
+            <label>Nama Layanan</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-concierge-bell"></i>
+              <input type="text" name="nama_layanan" id="editNama" placeholder="Masukkan nama layanan" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Instansi</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-building"></i>
+              <input type="text" name="instansi" id="editInstansi" placeholder="Masukkan nama instansi" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Jam Operasional</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-clock"></i>
+              <input type="text" name="jam_operasional" id="editJam" placeholder="Contoh: 08:00 - 16:00">
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Deskripsi</label>
+            <div class="pb-input-wrap">
+              <textarea name="deskripsi" id="editDeskripsi" placeholder="Deskripsi layanan (opsional)"></textarea>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Status</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-toggle-on"></i>
+              <select name="status" id="editStatus" style="padding-left: 44px;">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="pb-btn-submit edit">
+            <i class="fas fa-save"></i>
+            Update Layanan
+          </button>
+        </form>
       </div>
-      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.edit_layanan') }}" id="editForm">
-        <input type="hidden" name="service_id" id="editServiceId">
-        <div class="form-group">
-          <label>Nama Layanan</label>
-          <div class="input-wrap">
-            <i class="fas fa-concierge-bell"></i>
-            <input type="text" name="nama_layanan" id="editNama" placeholder="Masukkan nama layanan" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Instansi</label>
-          <div class="input-wrap">
-            <i class="fas fa-building"></i>
-            <input type="text" name="instansi" id="editInstansi" placeholder="Masukkan nama instansi" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Jam Operasional</label>
-          <div class="input-wrap">
-            <i class="fas fa-clock"></i>
-            <input type="text" name="jam_operasional" id="editJam" placeholder="Contoh: 08:00 - 16:00">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Deskripsi</label>
-          <div class="input-wrap">
-            <textarea name="deskripsi" id="editDeskripsi" placeholder="Deskripsi layanan (opsional)"></textarea>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <div class="input-wrap">
-            <i class="fas fa-toggle-on"></i>
-            <select name="status" id="editStatus" style="padding-left: 44px;">
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
-        <button type="submit" class="btn-submit edit">
-          <i class="fas fa-save"></i>
-          Update Layanan
-        </button>
-      </form>
     </div>
   </div>
 
   <!-- Modal Hapus Layanan -->
-  <div class="modal-overlay" id="modalDelete" onclick="closeModalOutside(event, 'delete')">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-header-icon delete">
-          <i class="fas fa-trash-alt"></i>
+  <div class="pb-modal" id="modalDelete" data-modal-type="delete">
+    <div class="pb-modal-wrapper" onclick="closeModalWrapper(event, 'delete')">
+      <div class="pb-modal-box" onclick="event.stopPropagation()">
+        <div class="pb-modal-header">
+          <div class="pb-modal-header-icon delete">
+            <i class="fas fa-trash-alt"></i>
+          </div>
+          <div class="pb-modal-header-text">
+            <h3>Hapus Layanan</h3>
+            <p>Tindakan ini tidak dapat dibatalkan</p>
+          </div>
+          <button class="pb-modal-close" onclick="closeModal('delete')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="modal-header-text">
-          <h3>Hapus Layanan</h3>
-          <p>Tindakan ini tidak dapat dibatalkan</p>
-        </div>
-        <button class="modal-close" onclick="closeModal('delete')">
-          <i class="fas fa-times"></i>
-        </button>
+        <form class="pb-modal-form" method="POST" action="{{ url_for('admin_routes.hapus_layanan') }}" id="deleteForm">
+          <input type="hidden" name="service_id" id="deleteServiceId">
+          <div class="pb-delete-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Layanan yang dihapus tidak dapat dikembalikan. Pastikan Anda yakin dengan tindakan ini.</span>
+          </div>
+          <div class="pb-delete-info">
+            <span>Anda akan menghapus layanan:</span>
+            <strong id="deleteServiceName">-</strong>
+          </div>
+          <button type="submit" class="pb-btn-submit delete">
+            <i class="fas fa-trash-alt"></i>
+            Ya, Hapus Layanan
+          </button>
+        </form>
       </div>
-      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.hapus_layanan') }}" id="deleteForm">
-        <input type="hidden" name="service_id" id="deleteServiceId">
-        <div class="delete-warning">
-          <i class="fas fa-exclamation-triangle"></i>
-          <span>Layanan yang dihapus tidak dapat dikembalikan. Pastikan Anda yakin dengan tindakan ini.</span>
-        </div>
-        <div class="delete-info">
-          <span>Anda akan menghapus layanan:</span>
-          <strong id="deleteServiceName">-</strong>
-        </div>
-        <button type="submit" class="btn-submit delete">
-          <i class="fas fa-trash-alt"></i>
-          Ya, Hapus Layanan
-        </button>
-      </form>
     </div>
   </div>
 
   <script>
+    // ===== MODAL SYSTEM - SAMA PERSIS KAYAK HALAMAN USERS =====
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const modals = document.querySelectorAll('.pb-modal');
+      modals.forEach(modal => {
+        modal.parentNode.removeChild(modal);
+        document.body.appendChild(modal);
+      });
+      console.log('Modals moved to body level');
+    });
+
     function filterService() {
       const input = document.getElementById('searchService').value.toLowerCase();
       const rows = document.querySelectorAll('#serviceTable tbody tr');
@@ -449,24 +567,38 @@
       });
     }
 
-    // Modal Functions
     function openModal(type) {
-      document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+      const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+      if (!modal) return;
+      
+      modal.classList.add('active');
+      
+      setTimeout(() => {
+        modal.scrollTop = 0;
+        const wrapper = modal.querySelector('.pb-modal-wrapper');
+        if (wrapper) wrapper.scrollTop = 0;
+      }, 10);
+      
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     }
 
     function closeModal(type) {
-      document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.remove('active');
+      const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+      if (!modal) return;
+      
+      modal.classList.remove('active');
+      
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
 
-    function closeModalOutside(event, type) {
-      if (event.target === document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1))) {
+    function closeModalWrapper(event, type) {
+      if (event.target === event.currentTarget) {
         closeModal(type);
       }
     }
 
-    // Edit Modal
     function openEditModal(id, nama, instansi, jam, deskripsi, status) {
       document.getElementById('editServiceId').value = id;
       document.getElementById('editNama').value = nama;
@@ -477,7 +609,6 @@
       openModal('edit');
     }
 
-    // Delete Modal
     function openDeleteModal(id, nama) {
       document.getElementById('deleteServiceId').value = id;
       document.getElementById('deleteServiceName').textContent = nama;
@@ -505,7 +636,6 @@
           } else {
             statusCell.innerHTML = '<span class="status-stopped">Sedang Dihentikan</span>';
           }
-          // Show toast notification
           showToast(data.message, 'success');
         } else {
           showToast(data.message || 'Gagal mengubah status', 'danger');
@@ -567,13 +697,13 @@
       }, 3000);
     }
 
-    // Close modal with Escape key
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
-        ['Add', 'Edit', 'Delete'].forEach(type => {
-          document.getElementById('modal' + type).classList.remove('active');
+        document.querySelectorAll('.pb-modal.active').forEach(modal => {
+          modal.classList.remove('active');
         });
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
       }
     });
   </script>

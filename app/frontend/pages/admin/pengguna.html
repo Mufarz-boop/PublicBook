@@ -6,40 +6,96 @@
 
 {% block extra_css %}
 <style>
-  /* Modal Styles - Shared */
-  .modal-overlay {
+  /* ===== GLOBAL SCROLLBAR HIDE (tetep bisa scroll) ===== */
+  html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow: auto;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* ===== MODAL SYSTEM - TOTAL REWRITE ===== */
+  .pb-modal {
     display: none;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2147483647;
     background: rgba(0,0,0,0.5);
-    z-index: 2000;
     backdrop-filter: blur(4px);
-    animation: fadeIn 0.2s ease;
+    -webkit-backdrop-filter: blur(4px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    isolation: isolate;
+    transform: translateZ(0);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  .modal-overlay.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  
+  .pb-modal::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
-  .modal-box {
+  
+  .pb-modal.active {
+    display: block;
+  }
+  
+  .pb-modal-wrapper {
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .pb-modal-wrapper::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  
+  .pb-modal-box {
+    position: relative;
+    margin: 0 auto;
     background: #fff;
     border-radius: 20px;
     width: 100%;
     max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 0;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    animation: slideUp 0.3s ease;
+    animation: pbSlideUp 0.3s ease;
+    height: auto;
   }
-  .modal-header {
+  
+  @keyframes pbSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pbFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MODAL HEADER ===== */
+  .pb-modal-header {
     padding: 24px 28px 0;
     display: flex;
     align-items: center;
     gap: 14px;
     margin-bottom: 24px;
   }
-  .modal-header-icon {
+  
+  .pb-modal-header-icon {
     width: 48px;
     height: 48px;
     background: linear-gradient(135deg, #FFE5D0, #FFF0E0);
@@ -49,26 +105,33 @@
     justify-content: center;
     color: var(--pb-orange);
     font-size: 20px;
+    flex-shrink: 0;
   }
-  .modal-header-icon.edit {
+  
+  .pb-modal-header-icon.edit {
     background: linear-gradient(135deg, #DBEAFE, #EFF6FF);
     color: var(--pb-blue);
   }
-  .modal-header-icon.delete {
+  
+  .pb-modal-header-icon.delete {
     background: linear-gradient(135deg, #FEE2E2, #FEF2F2);
     color: var(--pb-red);
   }
-  .modal-header-text h3 {
+  
+  .pb-modal-header-text h3 {
     font-size: 18px;
     font-weight: 700;
     color: #1a1a1a;
     margin-bottom: 2px;
   }
-  .modal-header-text p {
+  
+  .pb-modal-header-text p {
     font-size: 13px;
     color: #888;
+    margin: 0;
   }
-  .modal-close {
+  
+  .pb-modal-close {
     margin-left: auto;
     width: 36px;
     height: 36px;
@@ -81,18 +144,24 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    flex-shrink: 0;
   }
-  .modal-close:hover {
+  
+  .pb-modal-close:hover {
     background: #fee2e2;
     color: #e74c3c;
   }
-  .modal-form {
+
+  /* ===== MODAL FORM ===== */
+  .pb-modal-form {
     padding: 0 28px 28px;
   }
-  .modal-form .form-group {
+  
+  .pb-form-group {
     margin-bottom: 16px;
   }
-  .modal-form .form-group label {
+  
+  .pb-form-group label {
     display: block;
     font-size: 12px;
     font-weight: 600;
@@ -101,20 +170,25 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  .modal-form .input-wrap {
+  
+  .pb-input-wrap {
     position: relative;
     display: flex;
     align-items: center;
   }
-  .modal-form .input-wrap > i:first-child {
+  
+  .pb-input-wrap > i:first-child {
     position: absolute;
     left: 14px;
     color: #aaa;
     font-size: 14px;
     z-index: 2;
+    pointer-events: none;
   }
-  .modal-form .input-wrap input,
-  .modal-form .input-wrap select {
+  
+  .pb-input-wrap input,
+  .pb-input-wrap select,
+  .pb-input-wrap textarea {
     width: 100%;
     padding: 14px 14px 14px 44px;
     border: 2px solid #f0f0f0;
@@ -125,17 +199,29 @@
     outline: none;
     background: #fafafa;
     color: #333;
+    box-sizing: border-box;
   }
-  .modal-form .input-wrap input:focus,
-  .modal-form .input-wrap select:focus {
+  
+  .pb-input-wrap textarea {
+    padding-left: 16px;
+    min-height: 80px;
+    resize: vertical;
+  }
+  
+  .pb-input-wrap input:focus,
+  .pb-input-wrap select:focus,
+  .pb-input-wrap textarea:focus {
     border-color: var(--pb-orange);
     background: #fff;
     box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.08);
   }
-  .modal-form .input-wrap input::placeholder {
+  
+  .pb-input-wrap input::placeholder,
+  .pb-input-wrap textarea::placeholder {
     color: #bbb;
   }
-  .modal-form .btn-submit {
+  
+  .pb-btn-submit {
     width: 100%;
     padding: 16px;
     background: linear-gradient(135deg, var(--pb-orange), var(--pb-orange-2));
@@ -153,23 +239,30 @@
     gap: 8px;
     margin-top: 8px;
   }
-  .modal-form .btn-submit:hover {
+  
+  .pb-btn-submit:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(255, 107, 0, 0.35);
   }
-  .modal-form .btn-submit.edit {
+  
+  .pb-btn-submit.edit {
     background: linear-gradient(135deg, var(--pb-blue), #60A5FA);
   }
-  .modal-form .btn-submit.edit:hover {
+  
+  .pb-btn-submit.edit:hover {
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
   }
-  .modal-form .btn-submit.delete {
+  
+  .pb-btn-submit.delete {
     background: linear-gradient(135deg, var(--pb-red), var(--pb-red-2));
   }
-  .modal-form .btn-submit.delete:hover {
+  
+  .pb-btn-submit.delete:hover {
     box-shadow: 0 8px 25px rgba(231, 76, 60, 0.35);
   }
-  .delete-warning {
+
+  /* Delete specific styles */
+  .pb-delete-warning {
     background: #FEF2F2;
     border: 1px solid #FECACA;
     border-radius: 12px;
@@ -181,31 +274,45 @@
     color: #991B1B;
     font-size: 13px;
   }
-  .delete-warning i {
+  
+  .pb-delete-warning i {
     font-size: 20px;
     color: var(--pb-red);
+    flex-shrink: 0;
   }
-  .delete-info {
+  
+  .pb-delete-info {
     text-align: center;
     padding: 20px 0;
     color: #666;
     font-size: 14px;
   }
-  .delete-info strong {
+  
+  .pb-delete-info strong {
     color: #1a1a1a;
     display: block;
     margin-bottom: 4px;
     font-size: 16px;
   }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .pb-modal-wrapper {
+      padding: 20px 12px 40px;
+    }
+    
+    .pb-modal-box {
+      border-radius: 16px;
+    }
+    
+    .pb-modal-header {
+      padding: 20px 20px 0;
+    }
+    
+    .pb-modal-form {
+      padding: 0 20px 20px;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -271,165 +378,183 @@
     </div>
   </div>
 
+  <!-- MODAL CONTAINERS (akan di-append ke body via JS) -->
   <!-- Modal Tambah User -->
-  <div class="modal-overlay" id="modalAdd" onclick="closeModalOutside(event, 'add')">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-header-icon">
-          <i class="fas fa-user-plus"></i>
+  <div class="pb-modal" id="modalAdd" data-modal-type="add">
+    <div class="pb-modal-wrapper" onclick="closeModalWrapper(event, 'add')">
+      <div class="pb-modal-box" onclick="event.stopPropagation()">
+        <div class="pb-modal-header">
+          <div class="pb-modal-header-icon">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <div class="pb-modal-header-text">
+            <h3>Tambah User Baru</h3>
+            <p>Isi data user untuk mendaftarkan akun baru</p>
+          </div>
+          <button class="pb-modal-close" onclick="closeModal('add')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="modal-header-text">
-          <h3>Tambah User Baru</h3>
-          <p>Isi data user untuk mendaftarkan akun baru</p>
-        </div>
-        <button class="modal-close" onclick="closeModal('add')">
-          <i class="fas fa-times"></i>
-        </button>
+        <form class="pb-modal-form" method="POST" action="{{ url_for('admin_routes.tambah_user') }}">
+          <div class="pb-form-group">
+            <label>Nama Lengkap</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-user"></i>
+              <input type="text" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Email</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-envelope"></i>
+              <input type="email" name="email" placeholder="Masukkan email" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>No. HP</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-phone"></i>
+              <input type="tel" name="nomor_telepon" placeholder="Masukkan nomor telepon">
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Password</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-lock"></i>
+              <input type="password" name="password" placeholder="Masukkan password (min. 6 karakter)" required minlength="6">
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Status</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-toggle-on"></i>
+              <select name="status" style="padding-left: 44px;">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="pb-btn-submit">
+            <i class="fas fa-save"></i>
+            Simpan User
+          </button>
+        </form>
       </div>
-      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.tambah_user') }}">
-        <div class="form-group">
-          <label>Nama Lengkap</label>
-          <div class="input-wrap">
-            <i class="fas fa-user"></i>
-            <input type="text" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <div class="input-wrap">
-            <i class="fas fa-envelope"></i>
-            <input type="email" name="email" placeholder="Masukkan email" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>No. HP</label>
-          <div class="input-wrap">
-            <i class="fas fa-phone"></i>
-            <input type="tel" name="nomor_telepon" placeholder="Masukkan nomor telepon">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <div class="input-wrap">
-            <i class="fas fa-lock"></i>
-            <input type="password" name="password" placeholder="Masukkan password (min. 6 karakter)" required minlength="6">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <div class="input-wrap">
-            <i class="fas fa-toggle-on"></i>
-            <select name="status" style="padding-left: 44px;">
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
-        <button type="submit" class="btn-submit">
-          <i class="fas fa-save"></i>
-          Simpan User
-        </button>
-      </form>
     </div>
   </div>
 
   <!-- Modal Edit User -->
-  <div class="modal-overlay" id="modalEdit" onclick="closeModalOutside(event, 'edit')">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-header-icon edit">
-          <i class="fas fa-pencil-alt"></i>
+  <div class="pb-modal" id="modalEdit" data-modal-type="edit">
+    <div class="pb-modal-wrapper" onclick="closeModalWrapper(event, 'edit')">
+      <div class="pb-modal-box" onclick="event.stopPropagation()">
+        <div class="pb-modal-header">
+          <div class="pb-modal-header-icon edit">
+            <i class="fas fa-pencil-alt"></i>
+          </div>
+          <div class="pb-modal-header-text">
+            <h3>Edit User</h3>
+            <p>Perbarui data user yang sudah terdaftar</p>
+          </div>
+          <button class="pb-modal-close" onclick="closeModal('edit')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="modal-header-text">
-          <h3>Edit User</h3>
-          <p>Perbarui data user yang sudah terdaftar</p>
-        </div>
-        <button class="modal-close" onclick="closeModal('edit')">
-          <i class="fas fa-times"></i>
-        </button>
+        <form class="pb-modal-form" method="POST" action="{{ url_for('admin_routes.edit_user') }}" id="editForm">
+          <input type="hidden" name="user_id" id="editUserId">
+          <div class="pb-form-group">
+            <label>Nama Lengkap</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-user"></i>
+              <input type="text" name="nama_lengkap" id="editNama" placeholder="Masukkan nama lengkap" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Email</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-envelope"></i>
+              <input type="email" name="email" id="editEmail" placeholder="Masukkan email" required>
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>No. HP</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-phone"></i>
+              <input type="tel" name="nomor_telepon" id="editTelepon" placeholder="Masukkan nomor telepon">
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Password Baru <small style="text-transform: none; color: #888;">(kosongkan jika tidak ingin mengubah)</small></label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-lock"></i>
+              <input type="password" name="password" placeholder="Password baru (min. 6 karakter)" minlength="6">
+            </div>
+          </div>
+          <div class="pb-form-group">
+            <label>Status</label>
+            <div class="pb-input-wrap">
+              <i class="fas fa-toggle-on"></i>
+              <select name="status" id="editStatus" style="padding-left: 44px;">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="pb-btn-submit edit">
+            <i class="fas fa-save"></i>
+            Update User
+          </button>
+        </form>
       </div>
-      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.edit_user') }}" id="editForm">
-        <input type="hidden" name="user_id" id="editUserId">
-        <div class="form-group">
-          <label>Nama Lengkap</label>
-          <div class="input-wrap">
-            <i class="fas fa-user"></i>
-            <input type="text" name="nama_lengkap" id="editNama" placeholder="Masukkan nama lengkap" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <div class="input-wrap">
-            <i class="fas fa-envelope"></i>
-            <input type="email" name="email" id="editEmail" placeholder="Masukkan email" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>No. HP</label>
-          <div class="input-wrap">
-            <i class="fas fa-phone"></i>
-            <input type="tel" name="nomor_telepon" id="editTelepon" placeholder="Masukkan nomor telepon">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Password Baru <small style="text-transform: none; color: #888;">(kosongkan jika tidak ingin mengubah)</small></label>
-          <div class="input-wrap">
-            <i class="fas fa-lock"></i>
-            <input type="password" name="password" placeholder="Password baru (min. 6 karakter)" minlength="6">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <div class="input-wrap">
-            <i class="fas fa-toggle-on"></i>
-            <select name="status" id="editStatus" style="padding-left: 44px;">
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
-        <button type="submit" class="btn-submit edit">
-          <i class="fas fa-save"></i>
-          Update User
-        </button>
-      </form>
     </div>
   </div>
 
   <!-- Modal Hapus User -->
-  <div class="modal-overlay" id="modalDelete" onclick="closeModalOutside(event, 'delete')">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-header-icon delete">
-          <i class="fas fa-trash-alt"></i>
+  <div class="pb-modal" id="modalDelete" data-modal-type="delete">
+    <div class="pb-modal-wrapper" onclick="closeModalWrapper(event, 'delete')">
+      <div class="pb-modal-box" onclick="event.stopPropagation()">
+        <div class="pb-modal-header">
+          <div class="pb-modal-header-icon delete">
+            <i class="fas fa-trash-alt"></i>
+          </div>
+          <div class="pb-modal-header-text">
+            <h3>Hapus User</h3>
+            <p>Tindakan ini tidak dapat dibatalkan</p>
+          </div>
+          <button class="pb-modal-close" onclick="closeModal('delete')">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="modal-header-text">
-          <h3>Hapus User</h3>
-          <p>Tindakan ini tidak dapat dibatalkan</p>
-        </div>
-        <button class="modal-close" onclick="closeModal('delete')">
-          <i class="fas fa-times"></i>
-        </button>
+        <form class="pb-modal-form" method="POST" action="{{ url_for('admin_routes.hapus_user') }}" id="deleteForm">
+          <input type="hidden" name="user_id" id="deleteUserId">
+          <div class="pb-delete-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>User yang dihapus tidak dapat dikembalikan. Pastikan Anda yakin dengan tindakan ini.</span>
+          </div>
+          <div class="pb-delete-info">
+            <span>Anda akan menghapus user:</span>
+            <strong id="deleteUserName">-</strong>
+          </div>
+          <button type="submit" class="pb-btn-submit delete">
+            <i class="fas fa-trash-alt"></i>
+            Ya, Hapus User
+          </button>
+        </form>
       </div>
-      <form class="modal-form" method="POST" action="{{ url_for('admin_routes.hapus_user') }}" id="deleteForm">
-        <input type="hidden" name="user_id" id="deleteUserId">
-        <div class="delete-warning">
-          <i class="fas fa-exclamation-triangle"></i>
-          <span>User yang dihapus tidak dapat dikembalikan. Pastikan Anda yakin dengan tindakan ini.</span>
-        </div>
-        <div class="delete-info">
-          <span>Anda akan menghapus user:</span>
-          <strong id="deleteUserName">-</strong>
-        </div>
-        <button type="submit" class="btn-submit delete">
-          <i class="fas fa-trash-alt"></i>
-          Ya, Hapus User
-        </button>
-      </form>
     </div>
   </div>
 
   <script>
+    // ===== MODAL SYSTEM - TOTAL REWRITE =====
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const modals = document.querySelectorAll('.pb-modal');
+      modals.forEach(modal => {
+        modal.parentNode.removeChild(modal);
+        document.body.appendChild(modal);
+      });
+      console.log('Modals moved to body level');
+    });
+
     function filterUser() {
       const input = document.getElementById('searchUser').value.toLowerCase();
       const rows = document.querySelectorAll('#userTable tbody tr');
@@ -439,24 +564,38 @@
       });
     }
 
-    // Modal Functions
     function openModal(type) {
-      document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+      const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+      if (!modal) return;
+      
+      modal.classList.add('active');
+      
+      setTimeout(() => {
+        modal.scrollTop = 0;
+        const wrapper = modal.querySelector('.pb-modal-wrapper');
+        if (wrapper) wrapper.scrollTop = 0;
+      }, 10);
+      
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     }
 
     function closeModal(type) {
-      document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.remove('active');
+      const modal = document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1));
+      if (!modal) return;
+      
+      modal.classList.remove('active');
+      
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
 
-    function closeModalOutside(event, type) {
-      if (event.target === document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1))) {
+    function closeModalWrapper(event, type) {
+      if (event.target === event.currentTarget) {
         closeModal(type);
       }
     }
 
-    // Edit Modal
     function openEditModal(id, nama, email, telepon, status) {
       document.getElementById('editUserId').value = id;
       document.getElementById('editNama').value = nama;
@@ -466,20 +605,19 @@
       openModal('edit');
     }
 
-    // Delete Modal
     function openDeleteModal(id, nama) {
       document.getElementById('deleteUserId').value = id;
       document.getElementById('deleteUserName').textContent = nama;
       openModal('delete');
     }
 
-    // Close modal with Escape key
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
-        ['Add', 'Edit', 'Delete'].forEach(type => {
-          document.getElementById('modal' + type).classList.remove('active');
+        document.querySelectorAll('.pb-modal.active').forEach(modal => {
+          modal.classList.remove('active');
         });
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
       }
     });
   </script>
