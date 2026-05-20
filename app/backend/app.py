@@ -333,52 +333,6 @@ def redirect_back():
     return redirect(url_for('user_routes.profil'))
 
 # ═══════════════════════════════════════════════════════════════════
-# NGROK TUNNEL (Auto HTTPS untuk QR Scanner)
-# ═══════════════════════════════════════════════════════════════════
-def start_ngrok_tunnel():
-    """Start ngrok tunnel untuk akses HTTPS dari HP"""
-    try:
-        from pyngrok import ngrok
-        
-        # Cek kalau sudah ada tunnel yang aktif
-        tunnels = ngrok.get_tunnels()
-        if tunnels:
-            public_url = tunnels[0].public_url
-            print("\n" + "="*60)
-            print("🚀 NGROK TUNNEL SUDAH AKTIF!")
-            print("="*60)
-            print(f"🔗 URL Publik (buka di HP):")
-            print(f"   {public_url}")
-            print(f"   {public_url}/scan")
-            print("="*60 + "\n")
-            return public_url
-        
-        # Buka tunnel baru kalau belum ada
-        public_url = ngrok.connect(5000)
-        
-        # Simpan URL ke file
-        with open('ngrok_url.txt', 'w') as f:
-            f.write(f"{public_url}/scan")
-        
-        print("\n" + "="*60)
-        print("🚀 NGROK TUNNEL AKTIF!")
-        print("="*60)
-        print(f"🔗 URL Publik (buka di HP):")
-        print(f"   {public_url}")
-        print(f"   {public_url}/scan")
-        print("="*60)
-        print(f"💾 URL juga disimpan di: ngrok_url.txt")
-        print("="*60 + "\n")
-        
-        return public_url
-        
-    except Exception as e:
-        print(f"\n⚠️  Ngrok error: {e}")
-        print("   Tunnel mungkin sudah aktif di proses lain.")
-        print("   Coba tutup terminal lama dan jalankan ulang.")
-        return None
-
-# ═══════════════════════════════════════════════════════════════════
 # REGISTER BLUEPRINTS
 # ═══════════════════════════════════════════════════════════════════
 from routes.static import bp as static_bp
@@ -399,8 +353,6 @@ app.register_blueprint(scan_bp)
 # RUN APP
 # ═══════════════════════════════════════════════════════════════════
 if __name__ == '__main__':
-    # Start ngrok tunnel (HTTPS untuk kamera HP)
-    start_ngrok_tunnel()
     
     # Jalankan Flask
     app.run(
